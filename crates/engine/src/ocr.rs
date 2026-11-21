@@ -2087,12 +2087,8 @@ mod tests {
         assert!(needs_tesseract("sq") && needs_tesseract("sq+en") && !needs_tesseract("en"));
         let missing = std::env::temp_dir().join("no-such-dir").join(if cfg!(windows) { "tesseract.exe" } else { "tesseract" });
         for engine in [EngineChoice::Ocrs, EngineChoice::Auto, EngineChoice::Tesseract] {
-            let settings = OcrSettings {
-                language: "sq".into(),
-                engine,
-                tesseract_path: Some(missing.to_string_lossy().into_owned()),
-                ..OcrSettings::default()
-            };
+            let settings =
+                OcrSettings { language: "sq".into(), engine, tesseract_path: Some(missing.to_string_lossy().into_owned()), ..OcrSettings::default() };
             let err = recognizers(&settings).err().unwrap_or_else(|| panic!("{engine:?} must not run Albanian without Tesseract"));
             assert!(!err.is_empty());
         }
