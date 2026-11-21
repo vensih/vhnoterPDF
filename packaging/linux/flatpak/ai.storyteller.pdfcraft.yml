@@ -110,7 +110,7 @@ modules:
         CRAFT_I18N_REQUIRED: '1'
     build-commands:
       - cargo --offline build --release --locked -p pdfcraft
-      - install -Dm755 target/release/pdfcraft /app/bin/pdfcraft
+      - install -Dm755 target/release/vhnoterpdf /app/bin/vhnoterpdf
       - install -Dm644 NOTICE /app/share/doc/pdfcraft/NOTICE
       - install -Dm644 packaging/linux/ai.storyteller.pdfcraft.desktop /app/share/applications/ai.storyteller.pdfcraft.desktop
       - install -Dm644 packaging/linux/ai.storyteller.pdfcraft.mime.xml /app/share/mime/packages/ai.storyteller.pdfcraft.xml

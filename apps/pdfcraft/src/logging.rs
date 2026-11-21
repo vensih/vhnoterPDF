@@ -34,7 +34,7 @@ pub const MAX_FILE_BYTES: u64 = 16 * 1024 * 1024;
 /// Records kept in memory until the log file is attached.
 pub const MAX_PENDING: usize = 512;
 /// The built-in filter when `RUST_LOG` is unset or empty.
-pub const DEFAULT_FILTER: &str = "warn,pdfcraft*=info";
+pub const DEFAULT_FILTER: &str = "warn,pdfcraft*=info,vhnoterpdf=info";
 
 /// Per-target level filter parsed from env_logger-style directives.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -274,6 +274,8 @@ mod tests {
         let f = Filter::parse(DEFAULT_FILTER);
         assert_eq!(f.level_for("pdfcraft"), LevelFilter::Info);
         assert_eq!(f.level_for("pdfcraft::updates"), LevelFilter::Info);
+        // The app's own records: its executable (and so its crate) is vhnoterpdf.
+        assert_eq!(f.level_for(module_path!()), LevelFilter::Info);
         assert_eq!(f.level_for("pdfcraft_ui_egui::recovery"), LevelFilter::Info);
         assert_eq!(f.level_for("pdfcraft_render::raster"), LevelFilter::Info);
         assert_eq!(f.level_for("wgpu_core::device"), LevelFilter::Warn);

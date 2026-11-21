@@ -5,7 +5,7 @@ combines, splits, protects and exports PDFs. Documents are processed on this com
 
 ## Portable copy
 
-Run `pdfcraft.exe`. Settings, recent files and recovery data are kept in the `PdfCraftData`
+Run `vhnoterpdf.exe`. Settings, recent files and recovery data are kept in the `PdfCraftData`
 folder beside it when that folder exists (portable mode); otherwise they are kept in your user
 profile.
 

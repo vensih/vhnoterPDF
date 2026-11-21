@@ -111,7 +111,7 @@ modules:
       env:
         CRAFT_I18N_DIR: /run/build/pdfcraft/craft-i18n
     build-commands:
-      - install -Dm755 bin/pdfcraft /app/bin/pdfcraft
+      - install -Dm755 bin/vhnoterpdf /app/bin/vhnoterpdf
       - install -Dm755 bin/pdfcraft-cli /app/bin/pdfcraft-cli
       - install -Dm644 share/applications/ai.storyteller.pdfcraft.desktop /app/share/applications/ai.storyteller.pdfcraft.desktop
       - install -Dm644 share/mime/packages/ai.storyteller.pdfcraft.xml /app/share/mime/packages/ai.storyteller.pdfcraft.xml

@@ -15,6 +15,11 @@
 pub const UPDATE_APP: craft_update::app::App = craft_update::app::App {
     icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/ai.storyteller.pdfcraft.png")),
     accent: Some([0xb7, 0x02, 0x28]),
+    // The executable is vhnoterpdf(.exe); release files and packages may still be named after
+    // pdfcraft, which former_ids keeps matching. The bundle and app id stay ai.storyteller.pdfcraft.
+    id: "vhnoterpdf",
+    former_ids: &["pdfcraft", "printcraft"],
+    bundle_id_override: Some("ai.storyteller.pdfcraft"),
     name: "vhnoterPDF",
     // Installs made before the rename still register under the upstream names.
     former_names: &["PdfCraft", "PrintCraft"],
