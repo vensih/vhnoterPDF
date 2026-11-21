@@ -56,7 +56,7 @@ pub struct PageImage {
 }
 
 impl PageImage {
-    /// Whether an active clip was written by PdfCraft's image crop tool.
+    /// Whether an active clip was written by vhnoterPDF's image crop tool.
     pub fn has_editor_crop(&self) -> bool {
         self.clips.iter().any(|clip| clip.app_crop)
     }
@@ -1621,7 +1621,7 @@ fn app_crop_ranges(ops: &[Op], start: usize, target: usize) -> Vec<std::ops::Ran
     ranges
 }
 
-/// Remove only crops written by PdfCraft, preserving the document author's clipping paths.
+/// Remove only crops written by vhnoterPDF, preserving the document author's clipping paths.
 fn remove_image_crop(doc: &mut Document, p: &pdfcraft_model::Page, all: &[ContentStream], img: &PageImage) -> Result<(), EditError> {
     let pieces = joined(all);
     let ops = pieces.parse().ops;
@@ -1634,7 +1634,7 @@ fn remove_image_crop(doc: &mut Document, p: &pdfcraft_model::Page, all: &[Conten
     if crops_there.is_empty() {
         // A crop in a scope that closes past a stream not read whole may clip what that stream draws.
         return Err(EditError::Invalid(if crops(ops.len())?.is_empty() {
-            "the image has no PdfCraft crop to remove".into()
+            "the image has no vhnoterPDF crop to remove".into()
         } else {
             "the image's crop may also clip what a content stream that is damaged or can't be decoded draws, so it isn't removed".into()
         }));

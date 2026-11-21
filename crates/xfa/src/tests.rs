@@ -879,7 +879,7 @@ fn screen_only_and_print_only_objects_are_written_with_flags_and_layers() {
     let (tpl, _) = parse(&xdp).unwrap();
     rerender(&mut doc, &tpl).unwrap();
     check(&doc);
-    // Stripping the XFA keeps the layers the pages use, without PdfCraft's key.
+    // Stripping the XFA keeps the layers the pages use, without vhnoterPDF's key.
     strip(&mut doc).unwrap();
     let catalog = doc.get(doc.root().unwrap());
     let props = doc.resolve(catalog.as_dict().unwrap().get(b"OCProperties").unwrap()).as_dict().unwrap().clone();

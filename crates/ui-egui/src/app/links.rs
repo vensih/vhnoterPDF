@@ -139,7 +139,7 @@ impl PdfCraftApp {
     }
 
     /// Open a web link in the system browser (a new `noopener` tab on the web). Only for
-    /// PdfCraft's own links; an address that came from a document goes through
+    /// vhnoterPDF's own links; an address that came from a document goes through
     /// [`Self::request_document_url`].
     pub fn open_url(&mut self, url: &str) {
         #[cfg(not(target_arch = "wasm32"))]
@@ -175,9 +175,9 @@ impl PdfCraftApp {
             Err(e) => {
                 use pdfcraft_engine::links::BlockedLink;
                 let template = if matches!(e, BlockedLink::MailFile | BlockedLink::MailEncodedWord) {
-                    "{who} in this document tried to open an address PdfCraft won't open: {e}."
+                    "{who} in this document tried to open an address vhnoterPDF won't open: {e}."
                 } else {
-                    "{who} in this document tried to open an address PdfCraft won't open: {e}. Only web (http, https) and email (mailto) links open from documents."
+                    "{who} in this document tried to open an address vhnoterPDF won't open: {e}. Only web (http, https) and email (mailto) links open from documents."
                 };
                 self.notify_fmt(template, &[("who", tl!(origin.noun())), ("e", &e.to_string())]);
             }

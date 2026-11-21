@@ -1,4 +1,4 @@
-//! pdfcraft-automation — agent control for PdfCraft (architecture §13).
+//! pdfcraft-automation — agent control for vhnoterPDF (architecture §13).
 //!
 //! - **Layer:** L7. Headless: depends on the engine, never on a UI toolkit.
 //! - [`Automation`] is a tool set over an engine [`Session`]: open, inspect, render, extract and
@@ -83,7 +83,7 @@ struct OcrReview {
     pages: Vec<pdfcraft_engine::ocr::OcrPage>,
 }
 
-/// A headless PdfCraft session driven by tool calls.
+/// A headless vhnoterPDF session driven by tool calls.
 pub struct Automation {
     session: Session,
     root: Option<PathBuf>,

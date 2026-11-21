@@ -360,7 +360,7 @@ fn a_signature_added_with_respelled_strings_is_signing() {
     assert_eq!(verdict(&restyled.open(), signed.open(), None), Modification::Allowed(vec![super::kind::FORM_FILL, super::kind::SIGNATURE]));
 }
 
-/// A signed widget whose /Rect was written with reals, filled and saved by PdfCraft's own writer,
+/// A signed widget whose /Rect was written with reals, filled and saved by vhnoterPDF's own writer,
 /// which writes a whole real as an integer: the rectangle is the same numbers (ISO 32000-2
 /// §7.3.3, "wherever a real number is expected, an integer may be used instead"), so the save is a
 /// form fill. A rectangle whose numbers did change is still a moved widget.

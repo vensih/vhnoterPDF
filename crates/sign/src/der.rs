@@ -1,6 +1,6 @@
 //! BER/DER codecs delegated to the existing shared `craft-pkcs7` implementation.
 //!
-//! This facade preserves PdfCraft's error type and borrowed signed encodings. Certificate
+//! This facade preserves vhnoterPDF's error type and borrowed signed encodings. Certificate
 //! trust, signing policy and document interpretation remain in their existing app modules.
 
 use crate::SignError;

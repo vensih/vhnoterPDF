@@ -40,7 +40,7 @@ impl Session {
         self.write_new(&pdfcraft_create::from_text(title, text, pdfcraft_create::LETTER, 11.0)?)
     }
 
-    /// [`Self::create_from_text`] for a report PdfCraft writes from documents (comment summaries,
+    /// [`Self::create_from_text`] for a report vhnoterPDF writes from documents (comment summaries,
     /// compare reports), which can quote any language: when the bundled Inter face can't draw it
     /// all, characters Helvetica can't draw are written as `[U+XXXX]`, and the report's first line
     /// says so, rather than the report being refused.

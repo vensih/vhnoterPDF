@@ -515,7 +515,7 @@ fn frame(doc: &Document, wd: &Dict, w: f64, h: f64) -> (String, f64) {
     (c, 0.0)
 }
 
-/// Whether `wd` is a check box or radio button PdfCraft laid out for a round XFA check button
+/// Whether `wd` is a check box or radio button vhnoterPDF laid out for a round XFA check button
 /// (`/PCXfaRound true`, written by the XFA layout).
 pub(crate) fn is_round(doc: &Document, wd: &Dict) -> bool {
     matches!(wd.get(b"PCXfaRound").map(|o| doc.resolve(o)).as_deref(), Some(Object::Bool(true)))
@@ -637,7 +637,7 @@ fn comb_dividers(doc: &Document, wd: &Dict, w: f64, h: f64, cells: usize) -> Str
 }
 
 /// Where a list box draws its options: one row per option from the top, starting with option
-/// `top` (`/TI`, §12.7.4.4). The appearance PdfCraft writes and the viewer's in-place list share
+/// `top` (`/TI`, §12.7.4.4). The appearance vhnoterPDF writes and the viewer's in-place list share
 /// it, so a click picks the option drawn under the pointer (#1524).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct ListRows {
@@ -725,7 +725,7 @@ pub fn field_appearance_as(doc: &Document, f: &Field, w: &Widget, values: &[Stri
 }
 
 /// [`field_appearance_as`] with the first character it drew as `?` because no font it draws with
-/// holds it: the form's font is a simple (WinAnsi) font, or Helvetica stands in for one PdfCraft
+/// holds it: the form's font is a simple (WinAnsi) font, or Helvetica stands in for one vhnoterPDF
 /// can't write with (an embedded subset, `Identity-H`), and the character is not one the bundled
 /// Inter face draws either (CJK, emoji, Thai without a Thai face); or a UCS-2 CMap meets a
 /// character beyond U+FFFF. Greek such as "Γειά σου" is drawn, not reported (#6822).
@@ -1223,7 +1223,7 @@ pub(crate) fn button_state_shown(doc: &Document, f: &Field, w: &Widget, on: bool
 /// How a push button widget `w` of field `f` with no normal appearance looks: its `/MK`
 /// background and border, in the `/BS` width and style ([`frame`]: Table 168, `B` beveled, `I`
 /// inset), with its caption `/MK /CA` (Table 192) centred in the `/DA` font, size and colour.
-/// A button with an icon (`/MK /I`) is drawn as PdfCraft draws its own buttons, icon included.
+/// A button with an icon (`/MK /I`) is drawn as vhnoterPDF draws its own buttons, icon included.
 pub(crate) fn push_button_shown(doc: &Document, f: &Field, w: &Widget) -> Stream {
     let wobj = doc.get(w.obj);
     let wd = wobj.as_dict().cloned().unwrap_or_default();
@@ -1240,7 +1240,7 @@ pub(crate) fn push_button_shown(doc: &Document, f: &Field, w: &Widget) -> Stream
     let mut fonts = Dict::new();
     if !caption.is_empty() && mk.get(b"TP").and_then(|t| doc.resolve(t).as_int()) != Some(1) {
         let da = wd.get(b"DA").and_then(|o| doc.resolve(o).as_string().map(|s| s.to_text()));
-        // The automatic size PdfCraft's own buttons use.
+        // The automatic size vhnoterPDF's own buttons use.
         let auto = ((height - 4.0) * 0.6).clamp(4.0, 14.0);
         let (ops, name, font, _) = button_caption(doc, da.as_deref().unwrap_or(&f.da), &caption, width, height, auto);
         content.extend(ops);

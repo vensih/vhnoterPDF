@@ -1,5 +1,5 @@
 //! System print spooler supplied by craft-print. PDF composition and permission checks
-//! stay in PdfCraft; these adapters retain the application's print-error surface.
+//! stay in vhnoterPDF; these adapters retain the application's print-error surface.
 
 pub use craft_print::{
     AUTO_SELECT, Duplex, HANDLED_OPTIONS, HAS_PRINTER_PREFERENCES, Job, Printer, PrinterOption, Scaling, apply_queue_defaults, lp_args,
@@ -411,7 +411,7 @@ pub(crate) fn with_job_info(job: &Job, owner: Option<&str>) -> Job {
     let mut named = job.clone();
     for (key, value) in [(JOB_NAME_KEY, job.title.as_str()), (JOB_OWNER_KEY, owner.unwrap_or_default())] {
         if !job.options.iter().any(|(k, _)| k.eq_ignore_ascii_case(key)) {
-            named.options.push((key.to_string(), job_option_value(value, "PdfCraft")));
+            named.options.push((key.to_string(), job_option_value(value, "vhnoterPDF")));
         }
     }
     named
@@ -699,7 +699,7 @@ pub(crate) fn nominal_media_size(media: &str) -> Option<(f64, f64)> {
 /// CUPS: the job with its `media` named by the printer's own PPD keyword when it names one of
 /// the PPD's papers by its label (as [`printer_papers`] lists them), as `Custom.<w>x<h>` points
 /// of one of their sizes ([`crate::custom_media`]), or by a standard name of one of their sizes
-/// ([`nominal_media_size`], such as the `w288h432` of PdfCraft's 4 × 6 in label). Fed under the
+/// ([`nominal_media_size`], such as the `w288h432` of vhnoterPDF's 4 × 6 in label). Fed under the
 /// PPD's keyword, the paper is the driver's own: a driver may take no custom sizes, and a label
 /// printer's stock is set up under its keyword. A keyword the PPD has, any other value, a job
 /// without `media` and one for the default destination go as they are.

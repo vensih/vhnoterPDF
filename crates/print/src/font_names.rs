@@ -7,7 +7,7 @@
 //! subset's glyph numbers but draws them with the installed font of the same name, so every letter
 //! prints as the installed glyph with that number: `Revisión de clientes,` in the bold subset comes
 //! out as `Wj{nxn s%ij%hqnjsyjx1`, its `z` as `Ä`. Both Brother queues and the Adobe PDF printer
-//! show it; PdfCraft's renderer, CUPS and Chrome on Windows draw the embedded program and are right.
+//! show it; vhnoterPDF's renderer, CUPS and Chrome on Windows draw the embedded program and are right.
 //!
 //! [`distinct`] renames each program to `PdfCraftPrint<n>`: the identity records of its `name`
 //! table, `/FontName` of its descriptors and `/BaseFont` of the fonts drawn with it (a subset keeps

@@ -3966,7 +3966,7 @@ trailer << /Root 1 0 R >>
 /// A Replace Text proposal: a strikeout and a caret grouped by `/IRT` and `/RT /Group`, with the
 /// pop-up `open`. `caret_first` writes the caret as the group's primary, holding the replacement,
 /// with the strikeout grouped under it; otherwise the strikeout is the primary and the
-/// replacement is on the caret grouped under it, as PdfCraft used to write it.
+/// replacement is on the caret grouped under it, as vhnoterPDF used to write it.
 fn replace_text_pdf(caret_first: bool, open: bool) -> Vec<u8> {
     let primary = if caret_first { 4 } else { 5 };
     let strike = format!(

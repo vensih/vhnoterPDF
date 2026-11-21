@@ -677,7 +677,7 @@ pub enum Edit {
     /// Sanitize Document: every category, then a full rewrite on save.
     Sanitize,
     /// An XFA form made an ordinary (static) PDF form: the XFA packets, `/NeedsRendering` and
-    /// PdfCraft's private keys go, the pages as laid out and the fields with their values
+    /// vhnoterPDF's private keys go, the pages as laid out and the fields with their values
     /// stay, so every viewer shows the same form and none lays it out again. Its scripts no
     /// longer run.
     XfaToStatic,

@@ -2667,9 +2667,9 @@ fn copied_marks_and_text_boxes_show_what_they_are_while_placed_and_once_pasted()
 }
 
 /// A pasted copy is what the original was: typewriter text stays typewriter text (`/IT`) and a
-/// Fill & Sign item, a cloud keeps its cloudy border, and PdfCraft's own keys (a turned comment's
+/// Fill & Sign item, a cloud keeps its cloudy border, and vhnoterPDF's own keys (a turned comment's
 /// `/PCBox` and `/PCAngle`) come along. A reference into the source document stays behind, and
-/// keys that aren't PdfCraft's, or a malformed attribute, are not taken from the attribute.
+/// keys that aren't vhnoterPDF's, or a malformed attribute, are not taken from the attribute.
 #[test]
 fn copies_keep_their_intent_cloud_and_pdfcraft_keys() {
     let mut src = blank();
@@ -2722,7 +2722,7 @@ fn copies_keep_their_intent_cloud_and_pdfcraft_keys() {
     // File ▸ Export comments writes the standard attributes only.
     let exported = export_xfdf(&src, true, false, "src.pdf");
     assert!(exported.contains("intent=\"FreeTextTypeWriter\"") && !exported.contains("pdfcraft:keys"), "{exported}");
-    // A hand-made attribute: only PdfCraft keys with values of their own are taken.
+    // A hand-made attribute: only vhnoterPDF keys with values of their own are taken.
     let crafted = format!(
         "<xfdf xmlns=\"http://ns.adobe.com/xfdf/\" xmlns:pdfcraft=\"{PDFCRAFT_NS}\"><annots>\
          <square page=\"0\" rect=\"10,10,50,50\" pdfcraft:keys=\"&lt;&lt; /PCAngle 45 /Subtype /Ink /PCRef 3 0 R &gt;&gt;\"/>\

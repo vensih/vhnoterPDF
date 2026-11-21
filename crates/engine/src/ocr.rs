@@ -15,8 +15,8 @@ use pdfcraft_render::text::TextFilter;
 use pdfcraft_render::{PageInfo, PageRenderer, RenderConfig, RenderRequest, RequestKind};
 
 pub use pdfcraft_ocr::{
-    ConfidenceBand, DETECTION_MODEL, LANGUAGES, Line, MergeStrategy, Models, Ocr, OcrError, OcrImage, PlacedWord, RECOGNITION_MODEL, Recognizer,
-    StrategyOutcome, Word, band_for, is_suspect, lines_from_json, low_confidence,
+    ConfidenceBand, DETECTION_MODEL, DOCUMENT_LANGUAGES as LANGUAGES, Line, MergeStrategy, Models, Ocr, OcrError, OcrImage, PlacedWord,
+    RECOGNITION_MODEL, Recognizer, StrategyOutcome, Word, band_for, is_suspect, lines_from_json, low_confidence, needs_tesseract,
 };
 
 use crate::{DocId, Edit, EditError, Session};
@@ -550,6 +550,13 @@ pub fn recognizers(settings: &OcrSettings) -> Result<Recognizers, String> {
         cache.ocrs = pdfcraft_ocr::OcrsRecognizer::find().ok().map(|r| Arc::new(r) as Arc<dyn Recognizer>);
     }
     let ocrs = cache.ocrs.clone();
+    if pdfcraft_ocr::needs_tesseract(&settings.language) {
+        // Never read Albanian with ocrs, which has no `ë` or `ç`: Tesseract alone, or an error.
+        return match settings.engine {
+            EngineChoice::Ocrs => Err(ocrs_cannot_read()),
+            EngineChoice::Tesseract | EngineChoice::Auto => Ok(Recognizers { primary: tesseract.ok_or_else(tesseract_needed)?, secondary: None }),
+        };
+    }
     match settings.engine {
         EngineChoice::Ocrs => Ok(Recognizers { primary: ocrs.ok_or_else(models_missing)?, secondary: None }),
         EngineChoice::Tesseract => Ok(Recognizers { primary: tesseract.ok_or_else(tesseract_unavailable)?, secondary: None }),
@@ -559,6 +566,16 @@ pub fn recognizers(settings: &OcrSettings) -> Result<Recognizers, String> {
             (None, None) => Err(models_missing()),
         },
     }
+}
+
+/// Why the ocrs engine refuses a language it has no letters for.
+pub fn ocrs_cannot_read() -> String {
+    "the built-in engine cannot read this language's letters; choose Tesseract with its language data".into()
+}
+
+/// Why a language that only Tesseract reads cannot run.
+pub fn tesseract_needed() -> String {
+    "this language needs the tesseract program and its language data (for Albanian, sqi.traineddata)".into()
 }
 
 /// Why Tesseract cannot run, named for the user.
@@ -2031,6 +2048,54 @@ mod tests {
         s.apply(id, Edit::AddOcrText { page: 0, words: vec![word] }).unwrap();
         let text = crate::tests::page_texts(&s, id)[0].clone();
         assert!(text.contains("日本語"), "{text}");
+    }
+
+    /// Albanian words take the WinAnsi path (ë, Ë, ç, Ç are in it), not the fontless one, and
+    /// still come back from the saved file letter for letter, where they were placed.
+    #[test]
+    fn searchable_layer_keeps_albanian_letters_through_save() {
+        let mut s = Session::new().with_clock(|| 1_700_000_000);
+        let id = s.open("src.pdf", None, Arc::new(fixture(1)), None).unwrap();
+        let lines = ["Përkthim i noterizuar", "Çështje nr. 12/2026", "Është vërtetuar: ë Ë ç Ç"];
+        let words: Vec<_> = lines
+            .iter()
+            .enumerate()
+            .map(|(i, line)| PlacedWord {
+                text: (*line).into(),
+                origin: [20.0, 250.0 - 20.0 * i as f64],
+                across: [150.0, 0.0],
+                up: [0.0, 10.0],
+                confidence: None,
+                source: "tesseract".into(),
+            })
+            .collect();
+        s.apply(id, Edit::AddOcrText { page: 0, words }).unwrap();
+        let saved = s.save_bytes(id).unwrap();
+        let reopened = s.open("searchable.pdf", None, saved, None).unwrap();
+        let text = crate::tests::page_texts(&s, reopened)[0].clone();
+        for line in lines {
+            assert!(text.contains(line), "{line:?} in {text:?}");
+        }
+        let first = text.find("Përkthim").unwrap();
+        assert!(first < text.find("Çështje").unwrap() && text.find("Çështje").unwrap() < text.find("Është").unwrap(), "reading order: {text}");
+    }
+
+    /// Albanian is never read by ocrs, which has no ë or ç: a job that names ocrs fails, and
+    /// Automatic without Tesseract fails rather than reading the page with ocrs alone.
+    #[test]
+    fn albanian_needs_tesseract_and_never_falls_back_to_ocrs() {
+        assert!(needs_tesseract("sq") && needs_tesseract("sq+en") && !needs_tesseract("en"));
+        let missing = std::env::temp_dir().join("no-such-dir").join(if cfg!(windows) { "tesseract.exe" } else { "tesseract" });
+        for engine in [EngineChoice::Ocrs, EngineChoice::Auto, EngineChoice::Tesseract] {
+            let settings = OcrSettings {
+                language: "sq".into(),
+                engine,
+                tesseract_path: Some(missing.to_string_lossy().into_owned()),
+                ..OcrSettings::default()
+            };
+            let err = recognizers(&settings).err().unwrap_or_else(|| panic!("{engine:?} must not run Albanian without Tesseract"));
+            assert!(!err.is_empty());
+        }
     }
 
     /// The fontless searchable layer retains its original pixels, handles multiple code

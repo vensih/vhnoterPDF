@@ -1,5 +1,5 @@
 //! Preferences › Appearance: the appearance mode (follow the system, light or dark) above a light
-//! and a dark theme card, each with a small picture of PdfCraft in that theme.
+//! and a dark theme card, each with a small picture of vhnoterPDF in that theme.
 
 use egui::{CornerRadius, Rect, RichText, Stroke, pos2, vec2};
 
@@ -26,7 +26,7 @@ fn mode_command(preference: ThemePreference) -> &'static str {
     }
 }
 
-/// A miniature PdfCraft window in `kind`'s colours: title bar and tabs, the tool bar, the page
+/// A miniature vhnoterPDF window in `kind`'s colours: title bar and tabs, the tool bar, the page
 /// thumbnails, a page on the pasteboard and the right-hand panel.
 fn preview(ui: &mut egui::Ui, kind: ThemeKind, width: f32) {
     let p = Tokens::for_kind(kind);

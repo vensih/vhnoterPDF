@@ -4,12 +4,12 @@
 use super::as_word::{Meta, flow_doc};
 use super::layout::Page;
 
-/// The body text's font, as PdfCraft's RTF has always named it (a reader without Helvetica draws
+/// The body text's font, as vhnoterPDF's RTF has always named it (a reader without Helvetica draws
 /// it in its sans-serif, which the font table's `\fswiss` asks for).
 const FONT: &str = "Helvetica";
 
 /// The application the RTF names as its writer (`{\*\generator}`).
-pub(crate) const GENERATOR: &str = "PdfCraft";
+pub(crate) const GENERATOR: &str = "vhnoterPDF";
 
 /// Rich Text Format: paragraphs with their sizes, bold, italic and colours, headings, tables,
 /// pictures, and each page in a section of its own size.

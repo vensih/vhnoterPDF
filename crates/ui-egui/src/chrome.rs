@@ -32,7 +32,7 @@ const TAB_HEIGHT: f32 = 30.0;
 const STRIP_BUTTON: f32 = 28.0;
 
 /// Whether AppKit lays the traffic lights out from the right end of the title bar, or `None` when
-/// no window can say yet. It does when the system language is right-to-left, whatever PdfCraft's
+/// no window can say yet. It does when the system language is right-to-left, whatever vhnoterPDF's
 /// own interface language is, so the window is asked rather than the interface language
 /// (Apple: `NSWindow.windowTitlebarLayoutDirection`, for apps with controls under the title bar).
 #[cfg(target_os = "macos")]
@@ -61,7 +61,7 @@ pub fn tab_strip(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
     }
     // With the lights at the right (a right-to-left system language), the strip is the mirror
     // image of the usual one: Home beside the lights, the tabs and Open after it, and the
-    // Discord, shortcuts and theme buttons at the far end.
+    // shortcuts and theme buttons at the far end.
     let mirrored = mac && app.titlebar_lights_right == Some(true);
     let (left, right) = match (mac, mirrored) {
         (true, false) => (MAC_CONTENT_LEFT as i8, 10),
@@ -108,11 +108,8 @@ pub fn tab_strip(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                     app.active = None;
                     app.combine_tab.focused = false;
                 }
-                // Reserve the three icon buttons, Discord and their gaps outside the scrolling tabs.
-                let controls_width = ui.fonts_mut(|f| f.layout_no_wrap("Discord".into(), theme::medium(13.0), t.text).size().x)
-                    + 3.0 * button
-                    + 54.0
-                    + window_controls::width(&controls.right);
+                // Reserve the three icon buttons and their gaps outside the scrolling tabs.
+                let controls_width = 3.0 * button + 30.0 + window_controls::width(&controls.right);
                 // Open stays in sight after the tabs: its icon, text and padding, and the gaps around it.
                 let open_width = ui.fonts_mut(|f| f.layout_no_wrap(tl!("Open").into(), theme::medium(13.0), t.text).size().x) + 38.0 + 12.0;
                 let mut tabs_width = (ui.available_width() - controls_width - open_width).max(0.0);
@@ -325,10 +322,6 @@ pub fn tab_strip(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                     egui::Popup::context_menu(&response).id(response.id.with("theme_menu")).show(|ui| appearance_menu(app, ui));
                     if icons::button(ui, "circle-help", button, false, tl!("Keyboard shortcuts")).clicked() {
                         app.dialog = Some(Dialog::Shortcuts);
-                    }
-                    // One click to the community, from anywhere in the app.
-                    if widgets::ghost_button_sized(ui, "messages-square", "Discord", tab_h).on_hover_text(pdfcraft_engine::links::DISCORD).clicked() {
-                        app.execute("help.discord");
                     }
                 });
             });
@@ -705,7 +698,7 @@ fn tab(ui: &mut egui::Ui, spec: TabSpec<'_>, close: &mut Option<usize>) -> egui:
         Some(file) => format!("{name}\n{file}"),
         None => name.to_string(),
     };
-    theme::hand(resp).on_hover_text(if dirty { crate::i18n::fmt(tl!("{name} — unsaved changes"), &[("name", &shown)]) } else { shown })
+    theme::hand(resp).on_hover_text(if dirty { crate::i18n::fmt(tl!("{name} (unsaved changes)"), &[("name", &shown)]) } else { shown })
 }
 
 /// Width the print, save and info buttons and their gaps take in the mode bar: three buttons, the
@@ -922,7 +915,7 @@ pub fn right_rail(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                     .text_color(t.text)
                     .frame(egui::Frame::NONE)
                     .margin(RAIL_FIELD_MARGIN);
-                let r = rail_field(ui, &t, edit).on_hover_text(tl!("Zoom — type a percentage and press Enter"));
+                let r = rail_field(ui, &t, edit).on_hover_text(tl!("Zoom: type a percentage and press Enter"));
                 ui.ctx().accesskit_node_builder(id, |node| node.set_label(tl!("Zoom")));
                 if r.gained_focus() {
                     let mut state = egui::TextEdit::load_state(ui.ctx(), id).unwrap_or_default();
@@ -987,7 +980,7 @@ pub fn right_rail(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                     .frame(egui::Frame::NONE)
                     .margin(RAIL_FIELD_MARGIN);
                 let r = rail_field(ui, &t, edit)
-                    .on_hover_text(tl!("Current page — type a page number or label (such as iv) and press Enter"))
+                    .on_hover_text(tl!("Current page: type a page number or label (such as iv) and press Enter"))
                     .accessible_name(tl!("Current page"));
                 if r.lost_focus() {
                     if ui.input(|i| i.key_pressed(egui::Key::Enter)) {

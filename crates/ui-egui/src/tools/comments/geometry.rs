@@ -30,7 +30,7 @@ pub(super) fn reshapable(a: &Annotation) -> bool {
         && !a.intent.as_deref().is_some_and(|i| i.ends_with("Dimension"))
 }
 
-/// A callout whose text box and leader line PdfCraft can read.
+/// A callout whose text box and leader line vhnoterPDF can read.
 pub(super) fn is_callout(a: &Annotation) -> bool {
     a.subtype == "FreeText" && a.text_box.is_some()
 }

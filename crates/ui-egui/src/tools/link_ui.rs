@@ -487,7 +487,7 @@ mod tests {
     #[test]
     fn a_zoom_label_stays_short_for_any_factor() {
         assert_eq!(zoom_label(LinkZoom::Percent(200.0)), "200%");
-        // The destination's own zoom, past what PdfCraft writes, is shown as it is.
+        // The destination's own zoom, past what vhnoterPDF writes, is shown as it is.
         assert_eq!(zoom_label(LinkZoom::Percent(10000.0)), "10000%");
         assert_eq!(zoom_label(LinkZoom::Percent(f64::MAX)), "1.8e308%");
         // A fractional zoom keeps its places instead of rounding to 0%.

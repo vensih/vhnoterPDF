@@ -1597,13 +1597,13 @@ fn rtf_headings_have_heading_styles() {
     assert_eq!(style, Some(Some(0)), "Annual Report is a level 1 heading: {r}");
 }
 
-/// The document's title goes into the RTF's information group, and PdfCraft is named as the
+/// The document's title goes into the RTF's information group, and vhnoterPDF is named as the
 /// application that wrote it.
 #[test]
 fn rtf_names_the_title_and_pdfcraft() {
     let r = crate::rtf_with_title(&[page()], "Annual Report");
     assert_eq!(craft_rtf::doc::import(r.as_bytes()).unwrap().core.title, "Annual Report", "{r}");
-    assert!(r.contains(r"{\*\generator PdfCraft;}") && !r.contains("WordCraft"), "{r}");
+    assert!(r.contains(r"{\*\generator vhnoterPDF;}") && !r.contains("WordCraft"), "{r}");
 }
 
 /// Two tables one under the other stay two tables: in RTF, rows that follow each other are one
@@ -1655,12 +1655,12 @@ fn rtf_keeps_hard_line_breaks_in_paragraphs_and_cells() {
     assert!(cells.contains(&"Meter\nnumber".to_string()) && cells.contains(&"kWh\nunit".to_string()), "{cells:?}");
 }
 
-/// The Word export names PdfCraft as its application, its body font (Arial) in a font table that
+/// The Word export names vhnoterPDF as its application, its body font (Arial) in a font table that
 /// says it is a sans-serif, so a reader without it draws a like face.
 #[test]
 fn word_names_pdfcraft_and_its_fonts() {
     let zip = docx(&[page()], "Report");
-    assert!(part(&zip, "docProps/app.xml").contains("<Application>PdfCraft</Application>"));
+    assert!(part(&zip, "docProps/app.xml").contains("<Application>vhnoterPDF</Application>"));
     let fonts = part(&zip, "word/fontTable.xml");
     assert!(fonts.contains(r#"<w:font w:name="Arial"><w:family w:val="swiss"/>"#), "{fonts}");
     assert_eq!(craft_docx::read(&zip).unwrap().styles.default_chr.font.as_deref(), Some("Arial"));

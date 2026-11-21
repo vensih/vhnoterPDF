@@ -304,6 +304,18 @@ pub(crate) fn body(ui: &mut egui::Ui, app: &mut PdfCraftApp, t: &Tokens) -> (boo
                         }
                     });
                     ui.end_row();
+                    if pdfcraft_engine::ocr::needs_tesseract(&d.language) {
+                        ui.label("");
+                        let note = if d.engine == EngineChoice::Ocrs {
+                            tl!("The built-in engine cannot read Albanian letters. Choose Tesseract or Automatic.")
+                        } else if pdfcraft_engine::ocr::engine_unavailable_reason(EngineChoice::Tesseract).is_some() {
+                            tl!("Albanian needs Tesseract with its Albanian language data (sqi.traineddata), and Tesseract isn't available.")
+                        } else {
+                            tl!("Albanian is read by Tesseract with its Albanian language data (sqi.traineddata).")
+                        };
+                        ui.add(egui::Label::new(egui::RichText::new(note).color(t.text_muted)).wrap());
+                        ui.end_row();
+                    }
                     ui.label(tl!("Combine engines"));
                     let strategy_name = match d.strategy {
                         MergeStrategy::PrimaryOnly => tl!("Primary only"),
@@ -414,7 +426,7 @@ pub(crate) fn body(ui: &mut egui::Ui, app: &mut PdfCraftApp, t: &Tokens) -> (boo
         // notice users know; Tesseract's reasons are catalog keys of their own.
         let text = match d.engine {
             pdfcraft_engine::ocr::EngineChoice::Tesseract => crate::i18n::t(&why).to_string(),
-            _ => tl!("Text recognition isn't installed: its model files are missing. Reinstall PdfCraft, or set PDFCRAFT_MODELS to the folder that holds them.")
+            _ => tl!("Text recognition isn't installed: its model files are missing. Reinstall vhnoterPDF, or set PDFCRAFT_MODELS to the folder that holds them.")
                 .to_string(),
         };
         ui.label(egui::RichText::new(text).small().color(t.text_muted));
@@ -1071,7 +1083,7 @@ fn batch_summary(ok: usize, words: usize, skipped: usize, failed: &[String], not
         msg.push_str(&crate::i18n::fmt(tl!("; failed: {list}"), &[("list", &failed.join("; "))]));
     }
     if let Some(rest) = not_run {
-        msg.push_str(&crate::i18n::fmt(tl!("; cancelled — {n} files were not run"), &[("n", &rest.to_string())]));
+        msg.push_str(&crate::i18n::fmt(tl!("; cancelled: {n} files were not run"), &[("n", &rest.to_string())]));
     }
     for note in notes {
         msg.push_str("; ");
@@ -1353,7 +1365,7 @@ mod tests {
             Ok(())
         });
         assert_eq!(writes.load(std::sync::atomic::Ordering::SeqCst), 0, "nothing is written for skipped files, and the cancel came first");
-        assert!(msg.contains("cancelled — 2 files were not run"), "{msg}");
+        assert!(msg.contains("cancelled: 2 files were not run"), "{msg}");
         // Without the cancel, the skipped bucket is named and still nothing is written.
         let files = vec![("a.pdf".into(), pdf.to_vec()), ("b.pdf".into(), pdf.to_vec())];
         let progress = Mutex::new(BatchProgress { total: files.len(), ..Default::default() });

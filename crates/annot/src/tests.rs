@@ -143,7 +143,7 @@ fn every_tool_creates_a_drawable_comment() {
 }
 
 /// #260 (page 7): Acrobat draws an Ink annotation as a smooth curve through its `/InkList`
-/// points, where PdfCraft drew straight segments between them. Three or more points now make a
+/// points, where vhnoterPDF drew straight segments between them. Three or more points now make a
 /// Catmull-Rom spline through every point (as cubic Béziers); two points stay a line, one a dot.
 #[test]
 fn ink_strokes_are_smooth_curves_through_their_points() {
@@ -292,7 +292,7 @@ fn a_state_model_without_a_state_is_the_default_state() {
     let next = set_review_state(&mut doc, 0, 0, ReviewState::Accepted, "Bob", &meta("next")).unwrap();
     assert_eq!(list(&doc, 0)[next].reference(b"IRT"), Some(r));
 
-    // A model PdfCraft doesn't know isn't a state: a status replying to such a reply is about
+    // A model vhnoterPDF doesn't know isn't a state: a status replying to such a reply is about
     // that reply, not about the comment, so Bob's next change on the comment starts afresh.
     let mut doc = fixture();
     let other = add_reply(&mut doc, 0, 0, "", "Ann", &meta("other")).unwrap();
@@ -1191,7 +1191,7 @@ fn page_links_keep_their_zoom() {
         ("Dest", dest("FitBV", vec![Object::Int(20)]), LinkZoom::FitHeight),
         ("Dest", dest("FitR", vec![Object::Int(0), Object::Int(0), Object::Int(10), Object::Int(10)]), LinkZoom::FitPage),
         ("A", dest("XYZ", vec![null.clone(), null.clone(), Object::Real(1.5)]), LinkZoom::Percent(150.0)),
-        // A factor outside what PdfCraft writes reads as the destination has it, not capped, so
+        // A factor outside what vhnoterPDF writes reads as the destination has it, not capped, so
         // it agrees with the viewer's `destination`; one whose percentage overflows stays finite.
         ("Dest", dest("XYZ", vec![null.clone(), null.clone(), Object::Real(100.0)]), LinkZoom::Percent(10000.0)),
         ("Dest", dest("XYZ", vec![null.clone(), null.clone(), Object::Real(0.005)]), LinkZoom::Percent(0.5)),
@@ -2362,7 +2362,7 @@ fn a_stamp_without_an_appearance_draws_the_stamp_it_names() {
         let content = drawn(&stamp_dict(extra));
         assert!(!content.contains("Tj") && content.contains(" re\n") && content.matches(" l\n").count() == 2, "{extra}: {content}");
     }
-    // `/C` colours the stamp, as it does PdfCraft's own.
+    // `/C` colours the stamp, as it does vhnoterPDF's own.
     assert!(drawn(&stamp_dict("/Name /Final /C [1 0 1]")).contains("1 0 1 RG"));
     // The placeholder stays grey whatever the `/C`: it is not the stamp, so it takes none of its colour.
     let placeholder = drawn(&stamp_dict("/Name /MyCustomStamp /C [1 0 0]"));
@@ -2371,7 +2371,7 @@ fn a_stamp_without_an_appearance_draws_the_stamp_it_names() {
     // (restyling, flattening) still find nothing they may write.
     assert!(appearance::display_stamp(&stamp_dict("/Name /Draft /AP << /N 9 0 R >>")).is_none());
     assert!(appearance::build(&bare_doc(), &stamp_dict("/Name /Draft")).is_none());
-    assert!(appearance::display_stamp(&stamp_dict("/Name /Draft /PCStamp true")).is_none(), "PdfCraft's own stamps are drawn by `build`");
+    assert!(appearance::display_stamp(&stamp_dict("/Name /Draft /PCStamp true")).is_none(), "vhnoterPDF's own stamps are drawn by `build`");
     assert!(appearance::display_stamp(&stamp_dict("/Name /Draft /Rect [5 5 5 50]")).is_none(), "no width");
 }
 
@@ -3042,7 +3042,7 @@ fn note_drawing(name: Option<&str>, color: [f64; 3]) -> Vec<u8> {
 }
 
 /// ISO 32000-2 §12.5.6.4, Table 175: a viewer shall provide icons for the seven standard names,
-/// and may support more. Each of the fourteen names PdfCraft offers draws a shape of its own, so
+/// and may support more. Each of the fourteen names vhnoterPDF offers draws a shape of its own, so
 /// a note shows the icon it names; a name it doesn't know, and a note without one, draw `Note`
 /// (the table's default).
 #[test]
@@ -3365,7 +3365,7 @@ fn a_caption_from_rich_text_and_one_the_font_cant_draw() {
     assert!(s.windows(17).any(|w| w == b"(Dim & 50 mm <x>)"), "{}", String::from_utf8_lossy(&s));
     let cjk = table_178_line([0.0, 0.0, 100.0, 0.0], &[("Cap", Object::Bool(true)), ("Contents", Object::String(PdfString::text("長さ")))]);
     assert_eq!(crate::appearance::undrawable_text(&cjk), Some(("the line's caption", '長')));
-    // A PdfCraft measurement's label is its caption: the comment text isn't drawn a second time.
+    // A vhnoterPDF measurement's label is its caption: the comment text isn't drawn a second time.
     let mut measured = cjk.clone();
     measured.set(b"PCMeasureValue".to_vec(), Object::String(PdfString::text("5 mm")));
     assert_eq!(crate::appearance::undrawable_text(&measured), None);
@@ -3419,7 +3419,7 @@ fn degenerate_and_absurd_leader_and_caption_values_do_not_panic() {
 }
 
 /// A comment's built appearance for the dictionary `body` (no `/AP`), as text, or `None` when
-/// PdfCraft can't draw it.
+/// vhnoterPDF can't draw it.
 fn built(body: &str) -> Option<String> {
     let doc = document_of(&[
         b"<< /Type /Catalog /Pages 2 0 R >>",
@@ -3553,7 +3553,7 @@ fn plain_squares_and_circles_are_drawn_inside_rect_less_rd() {
     assert!(circle.starts_with("1 0 0 RG\n3 w\n183.5 150 m"), "{circle}");
 }
 
-/// The circles and rectangles PdfCraft draws write no `/RD`, so their appearance is unchanged by
+/// The circles and rectangles vhnoterPDF draws write no `/RD`, so their appearance is unchanged by
 /// it: the stroke still sits half its width inside `/Rect`.
 #[test]
 fn pdfcraft_rectangles_and_ellipses_still_fill_their_rect() {
@@ -3778,7 +3778,7 @@ fn a_cloud_around_a_rotated_rectangle_bulges_outwards_either_way_round() {
     }
 }
 
-/// PdfCraft's own text boxes, typewriter text and redaction marks write `/BS` (width 0 for text
+/// vhnoterPDF's own text boxes, typewriter text and redaction marks write `/BS` (width 0 for text
 /// boxes and typewriter text), `/DA /Helv` and a `/DS` that agrees with it, and quadrilaterals:
 /// the default border, `/DA` fonts, `/DS` and the `/Rect` outline leave them exactly as they were.
 #[test]
@@ -3786,7 +3786,7 @@ fn pdfcraft_text_boxes_and_redaction_marks_look_as_before() {
     let mut doc = fixture();
     let mut tb = new(0, Shape::TextBox { rect: [100.0, 100.0, 220.0, 160.0], font_size: 12.5 });
     tb.style = Style { color: [0.1, 0.2, 0.3], fill: Some([1.0, 1.0, 0.8]), ..Style::default_for(&tb.shape) };
-    tb.contents = "PdfCraft text box that wraps onto a second line".into();
+    tb.contents = "vhnoterPDF text box that wraps onto a second line".into();
     let t = add_annotation(&mut doc, &tb, &meta("t")).unwrap();
     let mut tw = new(0, Shape::Typewriter { rect: [100.0, 300.0, 300.0, 320.0], font_size: 10.0 });
     tw.style = Style::default_for(&tw.shape);
@@ -3798,7 +3798,7 @@ fn pdfcraft_text_boxes_and_redaction_marks_look_as_before() {
     let all = list(&doc, 0);
     assert_eq!(
         ap_content(&doc, &all[t]),
-        "1 1 0.8 rg\n100 100 120 60 re f\n100 100 120 60 re W n\nBT\n/Helv 12.5 Tf\n0.1 0.2 0.3 rg\n1 0 0 1 102 146.75 Tm (PdfCraft text box) Tj\n1 0 0 1 102 131.75 Tm (that wraps onto a) Tj\n1 0 0 1 102 116.75 Tm (second line) Tj\nET\n"
+        "1 1 0.8 rg\n100 100 120 60 re f\n100 100 120 60 re W n\nBT\n/Helv 12.5 Tf\n0.1 0.2 0.3 rg\n1 0 0 1 102 146.75 Tm (vhnoterPDF text box) Tj\n1 0 0 1 102 131.75 Tm (that wraps onto a) Tj\n1 0 0 1 102 116.75 Tm (second line) Tj\nET\n"
     );
     assert_eq!(text(&all[t], b"DS"), "font: Helvetica 12.5pt; text-align:left; color:#1A334D");
     assert_eq!(ap_content(&doc, &all[w]), "100 300 200 20 re W n\nBT\n/Helv 10 Tf\n0 0 0 rg\n1 0 0 1 102 309 Tm (hello) Tj\nET\n");
@@ -4547,7 +4547,7 @@ fn every_callout_edit_keeps_four_or_six_numbers() {
 
 /// Review on #4094: a `/CL` that is neither four nor six finite numbers (two, three, five or eight
 /// numbers, an infinite or not-a-number value, an empty array, a nested array, a name or a string)
-/// is not a callout line PdfCraft can reshape. No edit panics, the arrow point and knee are
+/// is not a callout line vhnoterPDF can reshape. No edit panics, the arrow point and knee are
 /// refused, and none writes a `/CL` of another length: resizing leaves it as it was and moving
 /// shifts its numbers in place. A `/CL` held as an indirect object is read as the line it is.
 #[test]

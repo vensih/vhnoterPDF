@@ -377,7 +377,7 @@ fn selected_fill_text(app: &PdfCraftApp) -> Option<(usize, usize)> {
 fn fill_text_border_controls(ui: &mut egui::Ui, app: &mut PdfCraftApp, picked: Option<(usize, usize)>, vertical: bool) {
     // The selected text's own border (Comment Properties may have changed it
     // since): the controls below show it and change only it. Without one they
-    // set what new text gets until PdfCraft quits; Make Current Properties
+    // set what new text gets until vhnoterPDF quits; Make Current Properties
     // Default on typed text keeps it.
     let selected = picked.and_then(|(page, annotation)| {
         let p = app.active_ids().and_then(|(_, id)| app.session.get(id))?.comment_props(page, annotation)?;

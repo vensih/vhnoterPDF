@@ -35,7 +35,7 @@ pub struct DigitalIdEntry {
     pub issuer: String,
     pub email: String,
     pub expires: String,
-    /// Why the ID can't sign (a Windows store certificate whose key PdfCraft can't use): shown
+    /// Why the ID can't sign (a Windows store certificate whose key vhnoterPDF can't use): shown
     /// greyed with the reason, and never selectable.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub unusable: Option<String>,

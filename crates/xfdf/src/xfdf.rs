@@ -54,7 +54,7 @@ fn annots_with_replies(doc: &Document, which: &[(usize, usize)]) -> HashSet<(usi
 
 /// Every comment as an XFDF element (one line per comment, replies included), or only those at
 /// the positions in `only`.
-/// The namespace of PdfCraft's own attributes in XFDF (`pdfcraft:keys`): other readers skip them.
+/// The namespace of vhnoterPDF's own attributes in XFDF (`pdfcraft:keys`): other readers skip them.
 pub(crate) const PDFCRAFT_NS: &str = "https://github.com/storytold/pdfcraft#xfdf";
 /// At most this much text in a `pdfcraft:keys` attribute is read.
 const MAX_OWN_KEYS: usize = 64 * 1024;
@@ -69,7 +69,7 @@ fn portable(o: &Object, depth: usize) -> bool {
     }
 }
 
-/// The annotation's own PdfCraft keys (`/PC…`: a Fill & Sign item, a turned comment's box and
+/// The annotation's own vhnoterPDF keys (`/PC…`: a Fill & Sign item, a turned comment's box and
 /// angle, …) as one PDF dictionary, for a copy that is what the original was. Values that point
 /// into this document stay behind.
 fn own_keys(d: &Dict) -> Option<String> {
@@ -91,7 +91,7 @@ fn own_keys(d: &Dict) -> Option<String> {
     String::from_utf8(out).ok()
 }
 
-/// The `pdfcraft:keys` of an XFDF comment back as dictionary entries: PdfCraft's keys only, with
+/// The `pdfcraft:keys` of an XFDF comment back as dictionary entries: vhnoterPDF's keys only, with
 /// values that mean the same here. Anything malformed is skipped.
 fn read_own_keys(node: &craft_xml::El, ns: &[(String, String)], d: &mut Dict) {
     let mut keys_text = None;
@@ -351,7 +351,7 @@ fn xfdf_annot_children(doc: &Document, out: &mut String, d: &Dict, pi: usize, ap
     }
 }
 
-/// `own`: write each comment's PdfCraft keys too (see [`own_keys`]), for a copy and paste.
+/// `own`: write each comment's vhnoterPDF keys too (see [`own_keys`]), for a copy and paste.
 fn xfdf_annots(doc: &Document, out: &mut String, only: Option<&HashSet<(usize, usize)>>, own: bool) {
     let pages = pdfcraft_model::pages(doc);
     // NM of every annotation, for inreplyto. A selected or replied-to annotation without one
@@ -445,7 +445,7 @@ fn xfdf_annots(doc: &Document, out: &mut String, only: Option<&HashSet<(usize, u
             let _ = write!(out, "<{tag}{attrs}>");
             // XFDF 3.0 carries a stamp's appearance, and none for a rect with no area; a copy and
             // paste (`own`) carries every comment's, so the copy looks the same, except a
-            // redaction mark's, which import never reads (PdfCraft draws the mark) and which would
+            // redaction mark's, which import never reads (vhnoterPDF draws the mark) and which would
             // only use up the budget the others share.
             let has_area = rect.len() == 4 && rect[0] != rect[2] && rect[1] != rect[3];
             let carried = has_area && sub != b"Redact" && (own || sub == b"Stamp");
@@ -871,7 +871,7 @@ fn annot_from_xml(node: &craft_xml::El, ns: &[(String, String)], subtype: &str, 
 /// `<contents-richtext>` back as `/RC` (XFDF 3.0 "The contents and contents-richtext elements in
 /// annotations"): its markup, as written in the file, after an XML declaration. Plain text in it is the comment's text
 /// (`/Contents`) when the element comes alone; beside `<contents>` it is kept as `/RC` (rich text
-/// PdfCraft exported as text because it was not well-formed XML). Markup without `<contents>`
+/// vhnoterPDF exported as text because it was not well-formed XML). Markup without `<contents>`
 /// gives `/Contents` its plain text too, so the comment's text shows where rich text is not read.
 fn read_rich_text(rich: &craft_xml::El, ns: &[(String, String)], has_contents: bool, d: &mut Dict) {
     let elements: Vec<&craft_xml::El> = rich.elements().collect();
@@ -944,7 +944,7 @@ pub(crate) fn place(doc: &mut Document, page_ref: ObjRef, mut d: Dict) -> Result
         // without usable /QuadPoints removes its /Rect, which the outline is then drawn from.
         d.remove(b"CA");
         d.remove(b"ca");
-        // The outline is PdfCraft's own (an appearance the file carries could hide the mark), and
+        // The outline is vhnoterPDF's own (an appearance the file carries could hide the mark), and
         // a redaction has no border effect (ISO 32000-2 Table 195 lists none; §12.5.4 gives
         // /BE to squares, circles, polygons and free text), which the outline could not draw.
         d.remove(b"AP");
@@ -1001,7 +1001,7 @@ pub(crate) fn place(doc: &mut Document, page_ref: ObjRef, mut d: Dict) -> Result
     }
     // An appearance the file carries is how the comment looked where it came from, and is kept
     // (XFDF 3.0 "stamp": it takes precedence over the icon). A redaction mark is always drawn by
-    // PdfCraft, so what it marks for removal is shown.
+    // vhnoterPDF, so what it marks for removal is shown.
     let redact = d.name(b"Subtype") == Some(b"Redact".as_slice());
     // A redaction mark with an area removes something when applied.
     let marks = redact && d.contains(b"QuadPoints");
@@ -1165,7 +1165,7 @@ pub(crate) fn import_xfdf_with(
             let Some(page) = target_page.or(own_page).and_then(|p| pages.get(p).copied()) else { continue };
             let Some(mut d) = annot_from_xml(node, &annot_ns, subtype, page) else { continue };
             // The appearance the file carries (XFDF 3.0 "appearance"), when it can be read.
-            // A redaction mark is always drawn by PdfCraft (see `place`): its appearance is not read.
+            // A redaction mark is always drawn by vhnoterPDF (see `place`): its appearance is not read.
             if let Some(ap) = node.child(craft_xml::Local("appearance")).filter(|_| *subtype != "Redact") {
                 let text = el_text(ap);
                 match super::appearance::decode(&text, &mut appearance_budget) {

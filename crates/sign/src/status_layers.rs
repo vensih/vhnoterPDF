@@ -128,7 +128,7 @@ fn script_of(words: &[&str]) -> Option<&'static str> {
 }
 
 /// A face that draws all of `words`: Inter when `script` is `None`, else a craft-fonts face that
-/// PdfCraft writes `script` into documents with. A face's scripts alone don't decide it: the
+/// vhnoterPDF writes `script` into documents with. A face's scripts alone don't decide it: the
 /// Chinese one is for the interface alone (ATTRIBUTION.toml), whatever scripts it is meant for.
 fn face_for(script: Option<&str>, words: &[&str]) -> Option<&'static [u8]> {
     let draws = |bytes: &[u8]| words.iter().all(|w| embedding::covers(bytes, w));

@@ -227,7 +227,7 @@ mod tests {
             })
             .sum();
         assert_eq!(count, 2);
-        let rtf = craft_rtf::doc::export_with_generator(&doc, "PdfCraft");
+        let rtf = craft_rtf::doc::export_with_generator(&doc, "vhnoterPDF");
         assert_eq!(rtf.matches("\\pngblip").count(), 2);
     }
 

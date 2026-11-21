@@ -180,14 +180,14 @@ pub struct StrategyOutcome {
 /// The note recorded when an ensemble partner fails: the page keeps the primary reading and
 /// the cause is named for the report.
 fn degraded_note(id: &str, error: &OcrError) -> String {
-    format!("the {id} engine failed ({error}) — the page keeps the primary reading alone")
+    format!("the {id} engine failed ({error}); the page keeps the primary reading alone")
 }
 
 /// The note recorded when the two readings are too large to merge: the page keeps the primary
 /// reading alone and the discarded partner reading is named, never silent.
 fn cap_note(id: &str, primary_words: usize, secondary_words: usize) -> String {
     format!(
-        "the readings were too large to merge ({primary_words} × {secondary_words} comparisons, over the cap of {ROVER_MAX_COMPARISONS}) — the page keeps the primary reading alone and the {id} reading is unused"
+        "the readings were too large to merge ({primary_words} × {secondary_words} comparisons, over the cap of {ROVER_MAX_COMPARISONS}); the page keeps the primary reading alone and the {id} reading is unused"
     )
 }
 

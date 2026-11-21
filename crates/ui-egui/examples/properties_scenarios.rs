@@ -195,7 +195,7 @@ impl Adapter {
                 self.h.state_mut().session.undo(id).map_err(|e| e.to_string())?;
             }
             Event::Switch { document } => {
-                // Scenario document numbers are 1-based, like PdfCraft's automation pages.
+                // Scenario document numbers are 1-based, like vhnoterPDF's automation pages.
                 let index = document.checked_sub(1).ok_or("document numbers start at 1")?;
                 if self.h.state().views.get(index).is_none() {
                     return Err("document is not open".into());

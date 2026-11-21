@@ -8,7 +8,7 @@
 //! - consecutive `q … cm /Name Do Q` groups in a page's content stream, with nothing else
 //!   between them, each drawing an image upright (no rotation, skew or flip);
 //! - the images are 8-bit grey or RGB in the same colour space, without masks or a decode array
-//!   that changes anything, in a codec PdfCraft decodes;
+//!   that changes anything, in a codec vhnoterPDF decodes;
 //! - they tile one rectangle edge to edge with no gap or overlap — stacked top to bottom, placed
 //!   side by side, or arranged in a grid of rows and columns (in any drawing order), at least
 //!   [`MIN_FRAGMENTS`] of them.

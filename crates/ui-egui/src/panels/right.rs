@@ -378,7 +378,7 @@ pub fn right_panel(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                                 })
                             });
                             // A double-click opens a PDF in a new tab, as Acrobat opens an attachment;
-                            // any other file is saved, since PdfCraft opens only PDFs.
+                            // any other file is saved, since vhnoterPDF opens only PDFs.
                             if row.response.double_clicked() {
                                 attachment_action = Some((ai, is_pdf));
                             }
@@ -638,7 +638,7 @@ fn field_tip(f: &pdfcraft_render::Field) -> String {
     let kind = format!("{:?}", f.kind);
     let mut tip = crate::i18n::fmt(tl!("{kind} field"), &[("kind", tl!(&kind))]);
     if let Some(tt) = &f.tooltip {
-        tip.push_str(&format!(" — {tt}"));
+        tip.push_str(&format!(": {tt}"));
     }
     if f.has_actions {
         tip.push_str(&format!("\n{}", tl!("Has JavaScript actions (run in M6)")));

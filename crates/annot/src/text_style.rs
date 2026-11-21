@@ -1,4 +1,4 @@
-//! The face, size and colour a text box's text is drawn in when PdfCraft draws its appearance:
+//! The face, size and colour a text box's text is drawn in when vhnoterPDF draws its appearance:
 //! `/DA` (ISO 32000-2 Table 177; the font named there is looked up in the interactive form's
 //! `/DR` font resources, §12.7.4.3) and `/DS`, the default style string (Table 177), which is
 //! read for its CSS `font`, `font-family`, `font-size`, `font-weight`, `font-style` and `color`.
@@ -379,7 +379,7 @@ mod tests {
         assert_eq!(text_style(&dict("/Cour 12 Tf", Some("font-weight:700")), None).face, Std14::CourierBold);
     }
 
-    /// PdfCraft writes `/DS` from `/DA` (8-bit colour): `/DA`'s exact colour, size and face stay.
+    /// vhnoterPDF writes `/DS` from `/DA` (8-bit colour): `/DA`'s exact colour, size and face stay.
     #[test]
     fn pdfcraft_written_ds_matches_da() {
         let s = text_style(&dict("0.1 0.2 0.3 rg /Helv 12.5 Tf", Some("font: Helvetica 12.5pt; text-align:left; color:#1A334D")), None);

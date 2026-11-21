@@ -46,7 +46,7 @@ pub(crate) fn room_for(media: &[(String, &Image)], im: &Image) -> bool {
 const FONT: &str = "Arial";
 
 /// The application `docProps/app.xml` names.
-const APPLICATION: &str = "PdfCraft";
+const APPLICATION: &str = "vhnoterPDF";
 
 /// A Word document (.docx, Office Open XML). Ordinary pages flow as paragraphs and tables;
 /// pages with rotated text, or text that overlaps artwork, use floating shapes to retain their layout.

@@ -402,8 +402,8 @@ impl PdfCraftApp {
     }
 
     /// Add the files at `paths` to the Combine files list and show it: `pdfcraft --combine` and
-    /// File Explorer's "Combine files in PdfCraft" (#585), where each selected file arrives as a
-    /// launch of its own and the running PdfCraft collects them here. Nothing to add shows the
+    /// File Explorer's "Combine files in vhnoterPDF" (#585), where each selected file arrives as a
+    /// launch of its own and the running vhnoterPDF collects them here. Nothing to add shows the
     /// tab all the same.
     #[cfg(not(target_arch = "wasm32"))]
     pub fn combine_paths(&mut self, paths: &[String]) {

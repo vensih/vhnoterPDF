@@ -260,7 +260,7 @@ fn body(ui: &mut egui::Ui, d: &mut FieldTableDraft, info: &PageInfo, form: &[For
                 let label = ui.label(RichText::new(column_label(c)).strong());
                 column_label_response = Some(label.id);
                 ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-                    let size = width.map_or_else(|| "—".to_owned(), |w| format!("{w:.1} pt · {:.0}%", share * 100.0));
+                    let size = width.map_or_else(|| "–".to_owned(), |w| format!("{w:.1} pt · {:.0}%", share * 100.0));
                     ui.label(RichText::new(size).color(t.text_muted).size(11.0));
                 });
             });

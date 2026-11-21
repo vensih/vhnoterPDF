@@ -2,7 +2,7 @@
 //! alignment; bold, italic, underline, superscript and subscript; line and paragraph spacing;
 //! horizontal scale and character spacing. One panel serves a paragraph being edited (with the
 //! fonts already on its page and the spacing controls) and added text (the standard families,
-//! size, colour, style, alignment and character spacing). What PdfCraft can't apply yet (lists,
+//! size, colour, style, alignment and character spacing). What vhnoterPDF can't apply yet (lists,
 //! or line and paragraph spacing and scale for added text) is shown
 //! disabled and says so.
 //!
@@ -288,7 +288,7 @@ pub(crate) fn panel(
         let align = ui
             .add_enabled_ui(supported, |ui| icons::button(ui, current, 30.0, false, tl!("Alignment")))
             .inner
-            .on_disabled_hover_text(format!("{} — {}", tl!("Alignment"), tl!("Planned")));
+            .on_disabled_hover_text(format!("{} ({})", tl!("Alignment"), tl!("Planned")));
         let align = flyout(ui, t, align);
         egui::Popup::menu(&align).show(|ui| {
             ui.horizontal(|ui| {
@@ -434,12 +434,12 @@ fn row<R>(ui: &mut egui::Ui, add: impl FnOnce(&mut egui::Ui) -> R) -> R {
     .inner
 }
 
-/// A control PdfCraft doesn't have yet: its icon, disabled, saying so when hovered.
+/// A control vhnoterPDF doesn't have yet: its icon, disabled, saying so when hovered.
 fn planned(ui: &mut egui::Ui, icon: &str, label: &str) {
     let _ = ui
         .add_enabled_ui(false, |ui| icons::button(ui, icon, 30.0, false, label))
         .inner
-        .on_disabled_hover_text(format!("{label} — {}", tl!("Planned")));
+        .on_disabled_hover_text(format!("{label} ({})", tl!("Planned")));
 }
 
 /// The small corner mark Acrobat puts on a button that opens a menu.

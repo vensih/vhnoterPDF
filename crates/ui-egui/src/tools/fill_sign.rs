@@ -1,6 +1,6 @@
 //! Fill & Sign (Acrobat's Fill & Sign tool, execution plan M5.7): type text onto the page, place
 //! ✓ ✕ ● ─ marks and today's date (in Preferences ▸ Date format), and sign with a drawn
-//! signature. Everything is an annotation (typewriter text, PdfCraft-drawn stamps, ink), so it
+//! signature. Everything is an annotation (typewriter text, vhnoterPDF-drawn stamps, ink), so it
 //! can be moved, deleted and undone like any comment.
 
 use crate::file_filter::AddFilterAnyCase as _;

@@ -70,7 +70,7 @@ pub(crate) const NODE_MEMBERS: &[&str] =
 // - which `<items>` a field's `items` reaches when it has a shown and a saved list:
 //   [`FIELD_ITEMS_INDEX`];
 // - `items.nodes` lists the entries as the template lists them ([`list_entries`]). The list
-//   state `HNode::items` is the hook for PdfCraft's choice-list methods (`addItem`,
+//   state `HNode::items` is the hook for vhnoterPDF's choice-list methods (`addItem`,
 //   `clearItems`, from the Series 1 work, not on main yet), which will set it; nothing sets it
 //   until then, so reads follow the template;
 // - `caption.className` and `caption.value.oneOfChild.className`: the element's tag
