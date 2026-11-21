@@ -278,7 +278,7 @@ Every asset vhnoterPDF includes, bundles or uses to build its published material
 | `hayro-interpret` 0.7.0 | `src/font/generated/metrics.rs` | Standard-14 font metrics and encodings (as Rust tables) (non-visual data, AGENTS.md §1.1) | Adobe (Core 14 AFM metrics, PDF specification encodings); tables by The Hayro Authors | MIT OR Apache-2.0 | ISO 32000-2 Annex D; Adobe Core14 AFM files (via vendored hayro-interpret) | Glyph widths and encodings for non-embedded standard fonts. Non-visual data, allowed by AGENTS.md §1.1 |
 | `icu_segmenter_data` 2.3.0 | `data/segmenter_dictionary_extended_v1.rs.data` | Southeast Asian word dictionaries for line breaking (Thai, Lao, Khmer, Burmese) | The ICU4X Project Developers; word lists from the ICU project (Unicode, Inc.) | Unicode-3.0 | https://github.com/unicode-org/icu4x (via icu_segmenter_data) | Word boundaries for wrapping Thai text in Edit text and Add text (crates/edit/src/linebreak.rs). Non-visual data; the line segmenter loads only these dictionaries, not the Chinese and Japanese one |
 
-## Downloaded at build time (22)
+## Downloaded at build time (24)
 
 Fonts are fetched by `cargo xtask demo-pdf` into `target/demo-fonts/`, OCR models by `cargo xtask models` into `assets/models/`; each is verified by SHA-256 and never committed.
 
@@ -306,6 +306,8 @@ Fonts are fetched by `cargo xtask demo-pdf` into `target/demo-fonts/`, OCR model
 | `Inter-Italic[opsz,wght].ttf` | Inter Italic (variable) | The Inter Project Authors (Rasmus Andersson) | OFL-1.1 | https://github.com/google/fonts/tree/9710da1eacb3be272583c3224dcb70f9da6eadbb/ofl/inter | Showcase PDF (cargo xtask demo-pdf) |
 | `text-detection.onnx` | Ocrs text detection model | Robert Knight (ocrs-models; trained on HierText, CC-BY-SA-4.0) | CC-BY-SA-4.0 | https://github.com/robertknight/ocrs/blob/0c826441362a701c55560fefc17bf356b6d1037e/ocrs/examples/download-models.sh (author-published ONNX models; model card: https://huggingface.co/robertknight/ocrs/blob/df0edd170279ab971b53e094c627255a87e1a503/README.md, cc-by-sa-4.0) | Scan & OCR: finds words on page images (cargo xtask models) |
 | `text-recognition.onnx` | Ocrs text recognition model | Robert Knight (ocrs-models; trained on HierText, CC-BY-SA-4.0) | CC-BY-SA-4.0 | https://github.com/robertknight/ocrs/blob/0c826441362a701c55560fefc17bf356b6d1037e/ocrs/examples/download-models.sh (author-published ONNX models; model card: https://huggingface.co/robertknight/ocrs/blob/df0edd170279ab971b53e094c627255a87e1a503/README.md, cc-by-sa-4.0) | Scan & OCR: reads the words it finds (cargo xtask models) |
+| `sqi.traineddata` | Tesseract Albanian language data (best) | Google, Inc. and the Tesseract OCR contributors | Apache-2.0 | https://github.com/tesseract-ocr/tessdata_best/tree/e12c65a915945e4c28e237a9b52bc4a8f39a0cec | Scan & OCR: Albanian for an installed Tesseract that has no sqi pack of its own (cargo xtask models) |
+| `eng.traineddata` | Tesseract English language data (fast) | Google, Inc. and the Tesseract OCR contributors | Apache-2.0 | https://github.com/tesseract-ocr/tessdata_fast/tree/87416418657359cb625c412a48b6e1d6d41c29bd | Scan & OCR: English beside the bundled Albanian data, for Albanian + English (cargo xtask models) |
 
 ## Optional build inputs (2)
 

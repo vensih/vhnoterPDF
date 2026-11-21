@@ -126,5 +126,5 @@ modules:
         path: stage
       - type: git
         url: https://github.com/vensih/craft-i18n
-        commit: 8e35ce14405447ef450d2ee42dce18ae7f4ab80e
+        commit: 2b61501bf1a4e781c591a949876ef5f382918ded
         dest: craft-i18n

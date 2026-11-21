@@ -3139,6 +3139,32 @@ kind = "model"
 usage = "Scan & OCR: reads the words it finds (cargo xtask models)"
 sha256 = "86c145c2edb96c8caed5b1ebb8f44d706408922211451c309c625157dd6061c5"
 
+[[fetched]]
+file = "sqi.traineddata"
+url = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/e12c65a915945e4c28e237a9b52bc4a8f39a0cec/sqi.traineddata"
+title = "Tesseract Albanian language data (best)"
+author = "Google, Inc. and the Tesseract OCR contributors"
+source = "https://github.com/tesseract-ocr/tessdata_best/tree/e12c65a915945e4c28e237a9b52bc4a8f39a0cec"
+licence = "Apache-2.0"
+licence_url = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_best/e12c65a915945e4c28e237a9b52bc4a8f39a0cec/LICENSE"
+licence_sha256 = "a6cba85bc92e0cff7a450b1d873c0eaa2e9fc96bf472df0247a26bec77bf3ff9"
+kind = "model"
+usage = "Scan & OCR: Albanian for an installed Tesseract that has no sqi pack of its own (cargo xtask models)"
+sha256 = "42fa3ff84e1684b8989423d53c9f7d4fb8adaa65a54a3d87f9d259228d01226c"
+
+[[fetched]]
+file = "eng.traineddata"
+url = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/eng.traineddata"
+title = "Tesseract English language data (fast)"
+author = "Google, Inc. and the Tesseract OCR contributors"
+source = "https://github.com/tesseract-ocr/tessdata_fast/tree/87416418657359cb625c412a48b6e1d6d41c29bd"
+licence = "Apache-2.0"
+licence_url = "https://raw.githubusercontent.com/tesseract-ocr/tessdata_fast/87416418657359cb625c412a48b6e1d6d41c29bd/LICENSE"
+licence_sha256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+kind = "model"
+usage = "Scan & OCR: English beside the bundled Albanian data, for Albanian + English (cargo xtask models)"
+sha256 = "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+
 [[build_input]]
 name = "craft-i18n"
 option = "CRAFT_I18N_DIR"

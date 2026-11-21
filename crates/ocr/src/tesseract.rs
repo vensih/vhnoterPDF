@@ -97,7 +97,22 @@ fn locate(configured: Option<std::ffi::OsString>, search: impl FnOnce() -> Optio
 /// directory, which is neither stable nor a safe place to find a program. Also named by
 /// `ocr_status` (the engine reports where it would look, without probing).
 pub fn path_search() -> Option<PathBuf> {
-    path_search_in(std::env::split_paths(&std::env::var_os("PATH")?))
+    let path = std::env::var_os("PATH").map(|p| std::env::split_paths(&p).collect::<Vec<_>>()).unwrap_or_default();
+    path_search_in(path.into_iter().chain(install_dirs()))
+}
+
+/// Where the usual Windows installer (`winget install UB-Mannheim.TesseractOCR`, which doesn't add
+/// itself to the PATH) puts Tesseract, after the PATH: `%ProgramFiles%\Tesseract-OCR` and the
+/// per-user `%LOCALAPPDATA%\Programs\Tesseract-OCR`. Taken from the environment the OS sets, never
+/// from document data. Nothing elsewhere.
+fn install_dirs() -> Vec<PathBuf> {
+    if !cfg!(windows) {
+        return Vec::new();
+    }
+    [("ProgramFiles", r"Tesseract-OCR"), ("LOCALAPPDATA", r"Programs\Tesseract-OCR")]
+        .into_iter()
+        .filter_map(|(var, sub)| std::env::var_os(var).map(|base| PathBuf::from(base).join(sub)))
+        .collect()
 }
 
 /// [`path_search`] over an explicit directory list (so tests can pass one).
@@ -332,7 +347,9 @@ impl TesseractCli {
     }
 
     /// Run the program with fixed argv, its stdout in a private temp file, under `timeout`
-    /// seconds and an output cap of `max_output` bytes. Returns the (capped) stdout.
+    /// seconds and an output cap of `max_output` bytes. Returns the (capped) stdout. (Recognition
+    /// calls [`Self::run_capture_in`], which can also point Tesseract at the shipped data.)
+    #[cfg(test)]
     fn run(&self, args: &[&str], timeout: Duration, max_output: u64) -> Result<String, OcrError> {
         self.run_capture(args, timeout, max_output).map(|(out, _)| out)
     }
@@ -341,6 +358,12 @@ impl TesseractCli {
     /// [`MAX_STDERR`] bytes, its end kept): some Tesseract versions print the `--list-langs`
     /// list there instead of on stdout.
     fn run_capture(&self, args: &[&str], timeout: Duration, max_output: u64) -> Result<(String, String), OcrError> {
+        self.run_capture_in(args, timeout, max_output, None)
+    }
+
+    /// [`Self::run_capture`], with `TESSDATA_PREFIX` set to `tessdata` when given (the language
+    /// data shipped with the app), instead of the caller's.
+    fn run_capture_in(&self, args: &[&str], timeout: Duration, max_output: u64, tessdata: Option<&Path>) -> Result<(String, String), OcrError> {
         let dir = TempDir::create()?;
         let out_path = dir.path.join("out.txt");
         let err_path = dir.path.join("err.txt");
@@ -377,6 +400,7 @@ impl TesseractCli {
                 }))
                 .env("TMP", &dir.path)
                 .env("TEMP", &dir.path)
+                .envs(tessdata.map(|d| ("TESSDATA_PREFIX", d.as_os_str())))
                 .spawn()
                 .map_err(|e| OcrError::NoTesseract(format!("{} could not start: {e}", self.program.display())))?;
         let started = Instant::now();
@@ -481,11 +505,13 @@ impl Recognizer for TesseractCli {
     /// Write the page as a PNG and read it back as TSV.
     fn recognize(&self, image: &OcrImage, options: &RecognizeOptions) -> Result<Vec<Line>, OcrError> {
         let lang = language_code(&options.language);
-        // A pack Tesseract lacks would make it fail with its own message, or (for `eng`) read with
-        // the wrong letters; name the missing pack instead.
-        if let Some(missing) = missing_packs(lang, &self.languages()) {
-            return Err(OcrError::MissingLanguage(missing));
-        }
+        // A pack the installed Tesseract lacks is read from the data shipped with the app
+        // (`cargo xtask models`) when that has every pack; otherwise it is named as missing, never
+        // read with the wrong letters.
+        let tessdata = match missing_packs(lang, &self.languages()) {
+            None => None,
+            Some(missing) => Some(bundled_tessdata_for(lang).ok_or(OcrError::MissingLanguage(missing))?),
+        };
         let png = encode_png(image)?;
         let dir = TempDir::create()?;
         let png_path = dir.path.join("page.png");
@@ -494,14 +520,28 @@ impl Recognizer for TesseractCli {
             set_private(&mut f);
             f.write_all(&png).map_err(|e| OcrError::Process(format!("writing the image failed: {e}")))?;
         }
-        // Fixed argv, no shell: tesseract <png> stdout -l <lang> tsv.
-        let tsv = self.run(&[&png_path.to_string_lossy(), "stdout", "-l", lang, "tsv"], self.timeout, self.max_output)?;
+        // Fixed argv, no shell: tesseract <png> stdout -l <lang> -c tessedit_create_tsv=1. The
+        // variable, not the `tsv` config file, so a data folder without `configs/` still gives
+        // TSV (a missing config made Tesseract print plain text, read as no words at all).
+        let args = [&*png_path.to_string_lossy(), "stdout", "-l", lang, "-c", "tessedit_create_tsv=1"];
+        let tsv = self.run_capture_in(&args, self.timeout, self.max_output, tessdata.as_deref()).map(|(out, _)| out)?;
         let (lines, truncated) = parse_tsv_bounded(&tsv);
         if truncated {
             return Err(OcrError::Recognize(format!("the {MAX_WORDS}-word limit was exceeded; the incomplete reading was rejected")));
         }
         Ok(lines)
     }
+}
+
+/// The language data shipped with the app: the first of [`crate::Models::search_dirs`] that
+/// holds `<pack>.traineddata` for every pack of `lang` (`sqi+eng`).
+pub fn bundled_tessdata_for(lang: &str) -> Option<PathBuf> {
+    crate::Models::search_dirs().into_iter().find(|d| has_packs(d, lang))
+}
+
+/// Whether `dir` holds `<pack>.traineddata` for every pack of `lang`.
+pub fn has_packs(dir: &Path, lang: &str) -> bool {
+    lang.split('+').all(|p| dir.join(format!("{p}.traineddata")).is_file())
 }
 
 /// The packs of `lang` (`sqi+eng`) that are not in `installed` (`--list-langs` codes), joined
@@ -715,6 +755,19 @@ mod tests {
             let mapped = language_code(code);
             assert!(LANGUAGE_CODES.iter().any(|(_, v)| *v == mapped), "{code:?} → {mapped:?} is not allow-listed");
         }
+    }
+
+    /// The shipped data stands in only when it has every pack the job asks for.
+    #[test]
+    fn shipped_language_data_needs_every_pack() {
+        let dir = std::env::temp_dir().join(format!("pdfcraft-tessdata-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("sqi.traineddata"), b"x").unwrap();
+        assert!(has_packs(&dir, "sqi"));
+        assert!(!has_packs(&dir, "sqi+eng"), "eng is missing");
+        std::fs::write(dir.join("eng.traineddata"), b"x").unwrap();
+        assert!(has_packs(&dir, "sqi+eng"));
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]

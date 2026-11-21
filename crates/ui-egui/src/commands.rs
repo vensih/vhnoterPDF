@@ -262,6 +262,7 @@ impl PdfCraftApp {
             "help.shortcuts" => self.dialog = Some(Dialog::Shortcuts),
             "help.about" => self.dialog = Some(Dialog::About),
             "help.check_updates" => self.check_for_updates(),
+            "ocr.install_tesseract" => self.install_tesseract(),
             _ => return None,
         }
         Some(true)
