@@ -131,7 +131,7 @@ modules:
           - .flatpak-builder
       # The interface translations at the commit in craft-i18n.rev (a test keeps the two equal).
       - type: git
-        url: https://github.com/storytold/craft-i18n
-        commit: 866aff71dd63d8369eb100b9c432b5af1400c22a
+        url: https://github.com/vensih/craft-i18n
+        commit: 8e35ce14405447ef450d2ee42dce18ae7f4ab80e
         dest: craft-i18n
       - cargo-sources.json
