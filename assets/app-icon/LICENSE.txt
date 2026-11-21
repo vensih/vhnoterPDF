@@ -1,12 +1,15 @@
-PdfCraft app icon (pdfcraft.svg, pdfcraft-small.svg and every file derived from them in this
-directory: pdfcraft-1024.png, pdfcraft.icns, pdfcraft.ico, hicolor/).
+PdfCraft app icon (v-mark.svg and every file derived from it in this directory:
+pdfcraft-1024.png, pdfcraft.icns, pdfcraft.ico, hicolor/).
 
-Original artwork made for this project by the project owner, drawn in ArtCraft and vectorised for
-PdfCraft (no third-party material). Licensed like the rest of PdfCraft, under either of
+Original work made for PdfCraft by the project owner (no third-party material). Licensed like the
+rest of PdfCraft, under either of
 
   * Apache License, Version 2.0 (https://www.apache.org/licenses/LICENSE-2.0)
   * MIT license (https://opensource.org/licenses/MIT)
 
 at your option.
+
+pdfcraft.svg, the earlier app icon (a lion drawn by the project owner in ArtCraft), is kept under
+the same licence as the source of the macOS DMG window background.
 
 Regenerate the derived files with packaging/icons.sh.
