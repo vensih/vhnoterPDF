@@ -280,11 +280,31 @@ pub struct OcrVerify {
     pub(crate) shown_in: Option<crate::state::Mode>,
 }
 
+/// The dictionary a recognition language reads: its first language (`sq` for Albanian +
+/// English, `sq+en`), whose words are the ones checked.
+fn dictionary_language(language: &str) -> &str {
+    language.split('+').next().unwrap_or(language)
+}
+
 fn dictionary_path(dir: &std::path::Path, language: &str) -> Result<PathBuf, String> {
+    let language = dictionary_language(language);
     if language.is_empty() || language.len() > 32 || !language.bytes().all(|b| b.is_ascii_alphabetic() || b == b'-') {
         return Err("invalid OCR dictionary language".into());
     }
     Ok(dir.join(format!("ocr-dictionary-{language}.txt")))
+}
+
+/// The read-only word list shipped beside the OCR models (`models/ocr-dictionary-<lang>.txt`,
+/// built when the app is packaged), merged with the user's own list. Empty when none ships.
+fn shipped_dictionary(language: &str) -> BTreeSet<String> {
+    let Ok(name) = dictionary_path(std::path::Path::new(""), language) else { return BTreeSet::new() };
+    for dir in pdfcraft_engine::ocr::Models::search_dirs() {
+        let path = dir.join(&name);
+        if path.is_file() {
+            return read_dictionary(&path).and_then(|text| pdfcraft_engine::ocr::dictionary::words(&text)).unwrap_or_default();
+        }
+    }
+    BTreeSet::new()
 }
 
 fn read_dictionary(path: &std::path::Path) -> Result<String, String> {
@@ -579,7 +599,7 @@ impl OcrVerify {
             if let Some(path) = &path { read_dictionary(path)? } else { self.review.dictionary.iter().cloned().collect::<Vec<_>>().join("\n") };
         let before = dictionary::words(&current)?;
         let text = dictionary::update(&current, add, remove)?;
-        let entries = dictionary::words(&text)?;
+        let mut entries = dictionary::words(&text)?;
         let changed = before != entries;
         if let Some(path) = path.filter(|_| changed) {
             if let Some(parent) = path.parent() {
@@ -587,6 +607,7 @@ impl OcrVerify {
             }
             crate::editing::write_atomically(&path.to_string_lossy(), text.as_bytes()).map_err(|e| e.to_string())?;
         }
+        entries.extend(shipped_dictionary(&self.dictionary_language));
         Ok((entries, changed))
     }
 
@@ -601,7 +622,10 @@ impl OcrVerify {
             }
         };
         match read_dictionary(&path).and_then(|text| pdfcraft_engine::ocr::dictionary::words(&text)) {
-            Ok(words) => self.review.dictionary = words,
+            Ok(mut words) => {
+                words.extend(shipped_dictionary(&self.dictionary_language));
+                self.review.dictionary = words;
+            }
             Err(why) => self.message = format!("OCR dictionary: {why}"),
         }
     }
@@ -2284,6 +2308,15 @@ fn refresh_view(app: &mut PdfCraftApp, doc: DocId) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// Albanian + English (`sq+en`) keeps the Albanian dictionary; a `+` never reaches a file name.
+    #[test]
+    fn a_two_language_reading_uses_its_first_language_dictionary() {
+        let dir = std::path::Path::new("dicts");
+        assert_eq!(dictionary_path(dir, "sq+en").unwrap(), dictionary_path(dir, "sq").unwrap());
+        assert!(dictionary_path(dir, "sq+../x").is_ok_and(|p| p == dictionary_path(dir, "sq").unwrap()));
+        assert!(dictionary_path(dir, "../x").is_err());
+    }
     use pdfcraft_engine::Session;
 
     thread_local! {

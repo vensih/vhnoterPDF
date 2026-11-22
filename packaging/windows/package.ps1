@@ -126,6 +126,16 @@ Remove-Item -Force (Join-Path $Models '*.part') -ErrorAction SilentlyContinue
 if (-not (Test-Path (Join-Path $Models 'ATTRIBUTION.txt')) -or -not (Get-ChildItem (Join-Path $Models '*.LICENCE.txt'))) {
   throw "no OCR models in $Models after cargo xtask models"
 }
+# vhnoterPDF: the Albanian OCR word list, from the office's templates (the private app.vhnoter.al
+# checkout beside this repo, or VHNOTER_TEMPLATES). Private input: it ships in the installer only
+# and is never committed; a build without the templates (CI) simply has no shipped word list.
+$Templates = if ($env:VHNOTER_TEMPLATES) { $env:VHNOTER_TEMPLATES } else { Join-Path $Root 'app.vhnoter.al\js\data\documents' }
+if (Test-Path -LiteralPath $Templates) {
+  Push-Location $Root
+  try { Invoke-Native 'cargo xtask ocr-dictionary' { cargo xtask ocr-dictionary (Join-Path $Models 'ocr-dictionary-sq.txt') $Templates } } finally { Pop-Location }
+} else {
+  Write-Host "No office templates at ${Templates}: building without the Albanian OCR word list."
+}
 
 # ---- font notices for the MSI ------------------------------------------------------------------
 # The portable ZIP already carries these notices; stage the complete files before MSI creation too.

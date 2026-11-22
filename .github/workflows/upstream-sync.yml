@@ -1,0 +1,66 @@
+name: Upstream sync
+
+# vhnoterPDF follows storytold/pdfcraft. Every Monday (or on demand) this merges upstream's main
+# into a branch of its own and opens a pull request here, never into main directly. CI is started
+# on that branch, and the maintainer merges once it is green. A merge with conflicts opens an issue
+# naming the files instead; docs/fork-maintenance.md says how to resolve them by hand.
+on:
+  schedule:
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  actions: write
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      GH_TOKEN: ${{ github.token }}
+      REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+      - name: Merge upstream main into a sync branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote add upstream https://github.com/storytold/pdfcraft.git
+          git fetch --quiet upstream main
+          behind=$(git rev-list --count HEAD..upstream/main)
+          if [ "$behind" -eq 0 ]; then
+            echo "Already up to date with storytold/pdfcraft."
+            exit 0
+          fi
+          upstream_sha=$(git rev-parse --short upstream/main)
+          branch="sync/upstream-${upstream_sha}"
+          if git ls-remote --exit-code --heads origin "$branch" >/dev/null; then
+            echo "$branch already exists: its pull request is open or was handled."
+            exit 0
+          fi
+          git switch --quiet -c "$branch"
+          if git merge --no-edit --quiet upstream/main; then
+            git push --quiet origin "$branch"
+            gh pr create --repo "$REPO" --base main --head "$branch" \
+              --title "Merge storytold/pdfcraft ${upstream_sha} (${behind} commits)" \
+              --body "Automatic merge of storytold/pdfcraft main at ${upstream_sha}, ${behind} new commits. It merged without conflicts. Check the rebranded areas listed in docs/fork-maintenance.md (links, names, installer identity, languages), wait for CI, then merge."
+            # A pull request opened with this token starts no pull_request run, so start CI here.
+            gh workflow run ci.yml --repo "$REPO" --ref "$branch"
+          else
+            conflicts=$(git diff --name-only --diff-filter=U | sed 's/^/- /')
+            git merge --abort
+            gh issue create --repo "$REPO" \
+              --title "Upstream sync: storytold/pdfcraft ${upstream_sha} conflicts" \
+              --body "$(printf 'Merging storytold/pdfcraft main at %s (%s new commits) conflicts in:\n\n%s\n\nResolve locally: git fetch upstream, git merge upstream/main, fix these files (see docs/fork-maintenance.md), run the checks, push.' "$upstream_sha" "$behind" "$conflicts")"
+          fi

@@ -11,6 +11,7 @@ mod layers;
 mod license_check;
 mod macos_integration;
 mod netcheck;
+mod ocr_dictionary;
 mod parity;
 mod pdf_deps;
 mod screenshots;
@@ -59,6 +60,11 @@ const COMMANDS: &[(&str, &str, Command)] = &[
     ),
     ("screenshots", "Regenerate the README screenshots in docs/images/ and their ATTRIBUTION entries", screenshots::run),
     ("models", "Fetch the OCR models (ATTRIBUTION.toml kind = \"model\") into assets/models/, verified by SHA-256", assets::models),
+    (
+        "ocr-dictionary",
+        "Build the Albanian OCR word list from the office templates: <out.txt> <source>... (private input; ships in the installer only)",
+        ocr_dictionary::run,
+    ),
     ("demo-pdf", "Build dist/demo/pdfcraft-showcase.pdf (needs Google Chrome or Chromium)", demo_pdf::run),
     (
         "web-worker-link",

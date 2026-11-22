@@ -508,10 +508,7 @@ impl Recognizer for TesseractCli {
         // A pack the installed Tesseract lacks is read from the data shipped with the app
         // (`cargo xtask models`) when that has every pack; otherwise it is named as missing, never
         // read with the wrong letters.
-        let tessdata = match missing_packs(lang, &self.languages()) {
-            None => None,
-            Some(missing) => Some(bundled_tessdata_for(lang).ok_or(OcrError::MissingLanguage(missing))?),
-        };
+        let tessdata = choose_tessdata(lang, &self.languages(), bundled_tessdata_for(lang))?;
         let png = encode_png(image)?;
         let dir = TempDir::create()?;
         let png_path = dir.path.join("page.png");
@@ -537,6 +534,20 @@ impl Recognizer for TesseractCli {
 /// holds `<pack>.traineddata` for every pack of `lang` (`sqi+eng`).
 pub fn bundled_tessdata_for(lang: &str) -> Option<PathBuf> {
     crate::Models::search_dirs().into_iter().find(|d| has_packs(d, lang))
+}
+
+/// Which language data folder Tesseract reads `lang` from (`None`: its own). Albanian always
+/// comes from the shipped data when that has every pack: it is the `tessdata_best` model, more
+/// accurate than the one Tesseract installers carry. Any other pack the installed Tesseract
+/// lacks also comes from the shipped data, or is named as missing.
+pub fn choose_tessdata(lang: &str, installed: &[(String, String)], bundled: Option<PathBuf>) -> Result<Option<PathBuf>, OcrError> {
+    if lang.split('+').any(|p| p == "sqi") && bundled.is_some() {
+        return Ok(bundled);
+    }
+    match missing_packs(lang, installed) {
+        None => Ok(None),
+        Some(missing) => bundled.map(Some).ok_or(OcrError::MissingLanguage(missing)),
+    }
 }
 
 /// Whether `dir` holds `<pack>.traineddata` for every pack of `lang`.
@@ -768,6 +779,18 @@ mod tests {
         std::fs::write(dir.join("eng.traineddata"), b"x").unwrap();
         assert!(has_packs(&dir, "sqi+eng"));
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn albanian_prefers_the_shipped_data_even_when_tesseract_has_its_own() {
+        let installed = |codes: &[&str]| codes.iter().map(|c| ((*c).to_string(), (*c).to_string())).collect::<Vec<_>>();
+        let shipped = Some(PathBuf::from("shipped"));
+        let both = installed(&["sqi", "eng"]);
+        assert_eq!(choose_tessdata("sqi", &both, shipped.clone()).unwrap(), shipped, "the best model wins");
+        assert_eq!(choose_tessdata("sqi+eng", &both, shipped.clone()).unwrap(), shipped);
+        assert_eq!(choose_tessdata("eng", &both, shipped.clone()).unwrap(), None, "other languages keep Tesseract's own");
+        assert_eq!(choose_tessdata("sqi", &both, None).unwrap(), None, "no shipped data: the installed pack");
+        assert!(choose_tessdata("sqi", &installed(&["eng"]), None).is_err(), "missing everywhere is an error");
     }
 
     #[test]

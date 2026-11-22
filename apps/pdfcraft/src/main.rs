@@ -544,6 +544,11 @@ fn app_creator<'a>(
         app.printer_source = Some(pdfcraft_ui_egui::system_printers());
         // The desktop app may start winget for OCR ▸ Install Tesseract; tests and embedders never do.
         app.may_start_installers = true;
+        // vhnoterPDF reads Albanian office scans: Recognize text starts on Albanian + English, with
+        // the page straightened and cleaned first. The dialog still offers every other choice.
+        app.ocr_draft.language = "sq+en".into();
+        app.ocr_draft.deskew = true;
+        app.ocr_draft.denoise = true;
         app.two_sided_source = Some(pdfcraft_ui_egui::system_two_sided());
         app.os_key_store_ids = cfg!(any(target_os = "macos", target_os = "windows"));
         #[cfg(target_os = "macos")]

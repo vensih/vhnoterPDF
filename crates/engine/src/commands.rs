@@ -437,6 +437,7 @@ pub const COMMANDS: &[CommandSpec] = &[
     c("prepress.hairlines", "Fix hairlines…", None, None, Modification, "minus"),
     c("page.properties", "Page properties…", PAGES, None, Modification, "info"),
     c("help.shortcuts", "Keyboard shortcuts", HELP, None, Nothing, "circle-help"),
+    c("help.website", "vhnoter.al", HELP, None, Nothing, "globe"),
     c("help.github", "vhnoterPDF source code", HELP, None, Nothing, "code-xml"),
     c("help.check_updates", "Check for updates…", HELP, None, Nothing, "cloud"),
     c("help.about", "About vhnoterPDF", HELP, None, Nothing, "info"),

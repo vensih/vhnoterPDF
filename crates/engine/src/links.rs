@@ -9,6 +9,8 @@ pub const APP: &str = "pdfcraft";
 
 /// vhnoterPDF's source code and releases.
 pub const GITHUB: &str = "https://github.com/vensih/vhnoterPDF";
+/// vhnoter, the office vhnoterPDF is made for.
+pub const WEBSITE: &str = "https://vhnoter.al";
 /// The project vhnoterPDF is adapted from, named in About for attribution.
 pub const UPSTREAM: &str = "https://github.com/storytold/pdfcraft";
 
@@ -23,7 +25,10 @@ pub struct Link {
 }
 
 /// In the order they are shown.
-pub const LINKS: &[Link] = &[Link { command: "help.github", label: "vhnoterPDF source code", url: GITHUB, icon: "code-xml" }];
+pub const LINKS: &[Link] = &[
+    Link { command: "help.website", label: "vhnoter.al", url: WEBSITE, icon: "globe" },
+    Link { command: "help.github", label: "vhnoterPDF source code", url: GITHUB, icon: "code-xml" },
+];
 
 pub fn for_command(id: &str) -> Option<&'static Link> {
     LINKS.iter().find(|l| l.command == id)
