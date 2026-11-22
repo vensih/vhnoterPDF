@@ -1,55 +1,55 @@
 # PdfCraft app icon
 
-<img src="pdfcraft-small.svg" alt="PdfCraft app icon: an engraved lion's head on red" width="128">
+<img src="v-mark.svg" alt="PdfCraft app icon: a gold folded-ribbon V" width="128">
 
-**Creature:** a lion, in a frontal head-and-shoulders portrait, mane running off the bottom of the tile.
+**Mark:** a folded-ribbon "V" in gold, on a transparent background. The left arm runs cream to gold,
+the right arm gold to darker gold, and the fold at the point is bronze.
 
-**Style:** an engraving (woodcut-weight line work) portrait in the Crafting Apps "owl template" framing:
-a full-bleed colour field, no frame or roundel, the animal looking at the viewer and filling the tile.
-
-**Palette:** exactly three colours.
+**Palette:**
 
 | Colour | Hex | Used for |
 |---|---|---|
-| Ink | `#0b0b0c` | line work and the figure's contour |
-| Paper | `#efe9dc` | the figure (the lion's silhouette) |
-| PdfCraft red (app colour) | `#b70228` | the full-bleed field |
+| Navy | `#163A5C` | brand colour (not used in the icon files) |
+| Gold | `#C9A96E` | the V (gradients `#D4B47A` to `#B8955A`, `#F3E6C8` to `#D9BC85`) |
+| Cream | `#F3E6C8` | the V's light arm; the document icon's page fold |
+| Bronze | `#7A5C2E` | the V's fold; the document icon's small-frame page outline |
 
-**Tile:** `viewBox="0 0 512 512"`, a rounded square with `rx=112` that clips everything. Windows and Linux
-icons use the full-bleed tile. macOS icons put it on Apple's grid (an 824 px body centred on a transparent
-1024 px canvas).
+**Canvas:** `viewBox="0 0 256 256"`, no live text. Windows and Linux icons use the canvas as drawn. macOS
+icons put it on Apple's grid (an 824 px body centred on a transparent 1024 px canvas).
 
-**Provenance:** the project owner's original drawing, made in ArtCraft (2880 px, keyed to the palette), then
-vectorised (potrace; no filtering or warping).
-Licence: [LICENSE.txt](LICENSE.txt) (`MIT OR Apache-2.0`, like the repo).
+**Document icon:** a cream page (`#FBF7EE`, outline `#E4DCC8`) with a folded top-right corner and the
+same V, optically centred. At 16, 24 and 32 px the outline becomes bronze `#7A5C2E` and thicker, so the
+page edge shows on a white background; larger frames keep the master as drawn.
+
+**Provenance:** original work made for PdfCraft by the project owner.
+Licence: [LICENSE.txt](LICENSE.txt) (app icon) and [LICENSE-document.txt](LICENSE-document.txt) (document
+icon), both `MIT OR Apache-2.0`, like the repo.
 
 ## Files
 
 | File | What it is |
 |---|---|
-| `pdfcraft.svg` | the master vector (traced at 2048 px); every PNG, `.ico` and `.icns` is rendered from it |
-| `pdfcraft-small.svg` | a lighter vector (traced at 1024 px) for places where size matters, such as this README |
+| `v-mark.svg` | the app icon master; every app PNG, `.ico` and `.icns` is rendered from it |
+| `v-file.svg` | the Windows PDF file icon master |
 | `pdfcraft-1024.png` | 1024 px on Apple's grid; also the runtime Dock icon on macOS |
-| `pdfcraft.icns` | macOS icon (16–1024 px) |
-| `pdfcraft.ico` | Windows icon (16–256 px), embedded in `pdfcraft.exe` by `apps/pdfcraft/build.rs` |
-| `pdfcraft-document.svg` | Windows PDF file icon master: a Lucide document outline, red badge and outlined PDF lettering; no font dependency |
-| `pdfcraft-document.ico` | Windows PDF file icon (16–256 px), embedded as resource 2 in `pdfcraft.exe` |
-| `hicolor/<n>x<n>/apps/ai.storyteller.pdfcraft.png` | Linux hicolor theme, 16–512 px; the 256 px one is the runtime icon on Windows and Linux |
-| `hicolor/scalable/apps/ai.storyteller.pdfcraft.svg` | Linux scalable icon (copy of the master) |
+| `pdfcraft.icns` | macOS icon (16–1024 px, PNG entries) |
+| `pdfcraft.ico` | Windows icon (16, 24, 32, 48, 64, 128, 256 px), embedded in `vhnoterpdf.exe` by `apps/pdfcraft/build.rs` |
+| `pdfcraft-document.ico` | Windows PDF file icon (same sizes), embedded as resource 2 in `vhnoterpdf.exe` |
+| `hicolor/<n>x<n>/apps/ai.storyteller.pdfcraft.png` | Linux hicolor theme, 16–512 px; the 256 px one is the runtime icon on Windows and Linux, the 128 px one the update prompt's |
+| `hicolor/scalable/apps/ai.storyteller.pdfcraft.svg` | Linux scalable icon (copy of `v-mark.svg`) |
+| `pdfcraft.svg` | the former app icon (a lion); kept only as the source of the macOS DMG window background |
 
 Where it shows: `apps/pdfcraft/src/main.rs` sets the window icon (Dock, taskbar, Alt-Tab, launcher) and the
 Wayland app id `ai.storyteller.pdfcraft`; `packaging/linux/ai.storyteller.pdfcraft.desktop` names the
 hicolor icon.
 
-Windows PDF files use resource 2 (`"pdfcraft.exe",-2`) when PdfCraft is chosen as the default
-reader; the app keeps resource 1. The document outline is adapted from Lucide `file-text`
-1.49.0 (ISC); its badge and outlined lettering are original (`MIT OR Apache-2.0`), covered by
-[LICENSE-document.txt](LICENSE-document.txt). Both icons are embedded, requiring no runtime
-sidecar. This provides a file type icon; first-page thumbnails still need a thumbnail provider.
+Windows PDF files use resource 2 (`"vhnoterpdf.exe",-2`) when PdfCraft is chosen as the default
+reader; the app keeps resource 1. Both icons are embedded, requiring no runtime sidecar. This
+provides a file type icon; first-page thumbnails still need a thumbnail provider.
 
 ## Regenerate
 
 ```sh
-packaging/icons.sh        # needs resvg and python3; iconutil (macOS) for the .icns
+packaging/icons.sh        # needs resvg and python3 (stdlib); writes every file above, the .icns included
 cargo xtask assets        # then update the sha256 values in ATTRIBUTION.toml and run with --write
 ```
