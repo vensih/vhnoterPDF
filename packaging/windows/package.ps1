@@ -69,6 +69,11 @@ if (-not $env:PDFCRAFT_BUILD_DATE) { $env:PDFCRAFT_BUILD_DATE = (Get-Date).ToUni
 
 Write-Output "PdfCraft $Version for Windows $Arch ($Target)"
 
+# vhnoterPDF ships the desktop app alone: no pdfcraft-cli, only the interface languages it
+# offers (English is built in), and no Simplified Chinese UI face (nor its font notice).
+# See docs/fork-maintenance.md. Set for -SkipBuild too, so the staged notices match the build.
+$env:CRAFT_I18N_LOCALES = 'it,de,fr,sq'
+$env:CRAFT_FONTS_NO_CHINESE = '1'
 if (-not $SkipBuild) {
   # Static CRT: no VC++ redistributable needed. Scoped to the target so host build scripts and
   # proc-macros are unaffected.
@@ -76,10 +81,6 @@ if (-not $SkipBuild) {
   [Environment]::SetEnvironmentVariable($flagVar, '-C target-feature=+crt-static')
   # Fail the build (rather than warn) if the icon/VERSIONINFO can't be embedded.
   $env:PDFCRAFT_REQUIRE_WINRES = '1'
-  # vhnoterPDF ships the desktop app alone: no pdfcraft-cli, only the interface languages it
-  # offers (English is built in), and no Simplified Chinese UI face. See docs/fork-maintenance.md.
-  $env:CRAFT_I18N_LOCALES = 'it,de,fr,sq'
-  $env:CRAFT_FONTS_NO_CHINESE = '1'
   Invoke-Native "cargo build ($Target)" { cargo build --release --locked -p pdfcraft --target $Target }
 }
 

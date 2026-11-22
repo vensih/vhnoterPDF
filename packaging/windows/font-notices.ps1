@@ -22,7 +22,11 @@ function Get-CraftFontNoticeRow([string] $rootPath, [string] $manifest, [string]
 function Get-CraftFontNotices([string] $FontRoot, [bool] $RequireChinese = $false) {
   $rootPath = (Resolve-Path -LiteralPath $FontRoot).Path
   $notices = @{}
-  foreach ($name in 'manifest.txt', 'simplified-chinese-manifest.txt') {
+  # vhnoterPDF: CRAFT_FONTS_NO_CHINESE=1 builds without the Simplified Chinese face (crates/fonts/build.rs),
+  # so its notice is not shipped either.
+  $names = @('manifest.txt')
+  if ($env:CRAFT_FONTS_NO_CHINESE -ne '1') { $names += 'simplified-chinese-manifest.txt' }
+  foreach ($name in $names) {
     $manifest = Join-Path $rootPath "fonts/$name"
     if (-not (Test-Path -LiteralPath $manifest -PathType Leaf)) {
       if ($name -eq 'manifest.txt' -or $RequireChinese) { throw "Missing font manifest: $manifest" }

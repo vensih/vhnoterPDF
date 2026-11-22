@@ -38,6 +38,7 @@ vhnoterPDF ships for Windows only. `ci.yml` runs only the `windows-latest` gate 
 - **Version** starts at 1.0.0 (`[workspace.package]` and the internal crates' requirements in `Cargo.toml`). When merging upstream, keep ours.
 - **Install folder** `Programs\vhnoter\vhnoterPDF` (per user) or `Program Files\vhnoter\vhnoterPDF` (`pdfcraft.wxs`, `install-policy.wxi`, `check-install-policy.ps1`).
 - **Data folders** `%APPDATA%\vhnoterPDF` and `%LOCALAPPDATA%\vhnoterPDF` (`DATA_FOLDER` in `crates/ui-egui/src/lib.rs`): settings, logs, recovery, the OCR dictionary, digital IDs, the clipboard cache. The PdfCraft ones are copied once at the first start (`migrate_legacy_folders` in `apps/pdfcraft/src/main.rs`), not moved. The portable `PdfCraftData` folder keeps its name.
+- **Installer identity**, so vhnoterPDF installs beside PdfCraft instead of upgrading over it: its own MSI `UpgradeCode` and component GUIDs (`pdfcraft.wxs`, `install-policy.json`), and its own registry keys `Software\vhnoterPDF`, `vhnoterPDF.Document`, `vhnoterPDF.Edit`, `vhnoterPDF.Combine`, `vhnoterPDF.CreatePdf` and the `RegisteredApplications` name `vhnoterPDF`. When merging upstream installer changes, keep ours.
 - **Release files** `vhnoterpdf-<version>-windows-<arch>.msi` / `-portable.zip`, built by `.github/workflows/release.yml` (ours, Windows x64 and arm64) on a `v*` tag or by hand, as a draft release. Builds are unsigned unless signing secrets are set.
 - **Credits:** `vensih` (shown as vhnoter) in `contributors/contributors.json` and `contributors/people.toml`.
 - **Home screen tip** about Albanian OCR and Install Tesseract (`crates/ui-egui/src/home.rs`).
@@ -50,7 +51,7 @@ upstream merges stay small:
 - Crate and folder names (`pdfcraft-*`, `apps/pdfcraft`), the CLI `pdfcraft-cli`, environment variables `PDFCRAFT_*`.
 - Data folders on macOS and Linux (`~/Library/Application Support/PdfCraft`, `pdfcraft` under XDG), the portable `PdfCraftData` folder and `PdfCraft.portable` marker. (Windows uses `vhnoterPDF`, see above.)
 - The `%PdfCraft` content-stream markers in `crates/edit/src/place.rs`, which recognise PdfCraft's own wrappers in existing files.
-- Bundle and app id `ai.storyteller.pdfcraft`, MSI `UpgradeCode`, registry keys (`Software\PdfCraft`, `PdfCraft.Document`, `PdfCraft.Edit`…), the macOS `PdfCraft.app` and `CFBundleExecutable`.
+- Bundle and app id `ai.storyteller.pdfcraft`, the macOS `PdfCraft.app` and `CFBundleExecutable`.
 - Marker strings that tests match against `vendor/` (for example `"PdfCraft patch: …"` in `apps/pdfcraft/src/tests.rs`).
 - The `pdfcraft` stem in `former_ids`, so release files named `pdfcraft-<version>-…` (none so far) would still match.
 

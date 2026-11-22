@@ -1135,8 +1135,9 @@ fn preferences_menu_and_shortcut_allow_switching_interface_languages() {
     h.run_steps(2);
     h.get_by(menu_row(preferences)).click();
     h.run_steps(2);
-    for (current, next, code) in [("日本語", "English", "en"), ("English", "Українська", "uk"), ("Українська", "日本語", "ja")]
-    {
+    // vhnoterPDF's picker offers only English, Italian, German, French and Albanian (and shows
+    // the current language even when it is not one of them, as Japanese here).
+    for (current, next, code) in [("日本語", "English", "en"), ("English", "Deutsch", "de"), ("Deutsch", "Shqip", "sq")] {
         let selector = ok(&mut h, &c, "ui.inspect", json!({ "query": current }));
         let combo = selector["widgets"].as_array().unwrap().iter().find(|w| w["role"] == "ComboBox").expect("language selector");
         ok(&mut h, &c, "ui.click", json!({ "id": combo["id"] }));
@@ -1145,10 +1146,12 @@ fn preferences_menu_and_shortcut_allow_switching_interface_languages() {
     }
     ok(&mut h, &c, "ui.click", json!({ "label": "OK" }));
     ok(&mut h, &c, "ui.key", json!({ "key": ",", "modifiers": ["command"] }));
-    let prefs = ok(&mut h, &c, "ui.inspect", json!({ "query": "表示言語" }));
+    let prefs = ok(&mut h, &c, "ui.inspect", json!({ "query": "Gjuha e ndërfaqes" }));
     assert!(prefs["count"].as_u64().unwrap() > 0, "{prefs}");
     ok(&mut h, &c, "ui.click", json!({ "label": "OK" }));
 
+    ok(&mut h, &c, "ui.set", json!({ "key": "language", "value": "ja" }));
+    settle(&mut h);
     ok(&mut h, &c, "ui.command", json!({ "id": "help.shortcuts" }));
     for label in ["キーボードショートカット", "開く", "環境設定", "次／前の検索結果", "ダブルクリック", "閉じる"]
     {
