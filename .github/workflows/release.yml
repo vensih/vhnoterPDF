@@ -37,6 +37,13 @@ jobs:
       dry-run: ${{ github.event_name == 'schedule' }}
       app-name: pdfcraft
       app-title: PdfCraft
+      # vhnoterPDF ships for Windows only: no web, RISC-V, FreeBSD or Arch builds. The shared
+      # workflow has no switch for its Linux and macOS jobs, which run unsigned or fail without
+      # their secrets; the Windows packages are what gets published.
+      has-web: false
+      has-riscv64: false
+      has-freebsd: false
+      has-arch: false
       craft-fonts-ref: b076417b5880bd4154bd22f00695b1d28c6bea83
       version: ${{ inputs.version }}
       contributors-artifact: ${{ needs.credits.outputs.artifact-name }}
