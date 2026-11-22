@@ -21,6 +21,10 @@ The full per-file list is at the end.
 | **Packaging text**: installer names, shortcuts, context menus, Info.plist display names, Credits, portable README | `packaging/windows/{pdfcraft.wxs,install-policy.json,test-msi.ps1,package.ps1,PORTABLE-README.md}`, `packaging/linux/*`, `packaging/macos/{Info.plist.in,Credits.rtf}` | Medium. |
 | **Docs**: `docs/localization.md` (English default, Albanian OCR), this page | `docs/` | Low. |
 
+## Windows only
+
+vhnoterPDF ships for Windows only. `ci.yml` runs only the `windows-latest` gate (with `cargo fmt --check`, clippy and the tests), `release.yml` turns off the web, RISC-V, FreeBSD and Arch builds, and the FreeBSD, Nix and macOS-nightly workflows are disabled in the repository's Actions settings. The Linux, macOS and FreeBSD packaging files stay in the tree, unused, so upstream merges don't conflict on them. When merging upstream, keep these workflow settings.
+
 ## Kept on purpose (do not rename)
 
 These still say PdfCraft or pdfcraft so that installs, settings and files carry over, and so that
