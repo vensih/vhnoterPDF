@@ -329,6 +329,7 @@ impl PdfCraftApp {
             bookmark_clipboard: None,
             last_opened_url: None,
             tesseract_install: None,
+            may_start_installers: false,
             pending_link: None,
             pending_full_screen: None,
             pending_window: None,

@@ -542,6 +542,8 @@ fn app_creator<'a>(
         }
         app.set_startup_update_check(true);
         app.printer_source = Some(pdfcraft_ui_egui::system_printers());
+        // The desktop app may start winget for OCR ▸ Install Tesseract; tests and embedders never do.
+        app.may_start_installers = true;
         app.two_sided_source = Some(pdfcraft_ui_egui::system_two_sided());
         app.os_key_store_ids = cfg!(any(target_os = "macos", target_os = "windows"));
         #[cfg(target_os = "macos")]

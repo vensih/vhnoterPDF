@@ -881,6 +881,10 @@ pub struct PdfCraftApp {
     /// The Tesseract install the app last started (`ocr.install_tesseract`): the command line on
     /// Windows, empty elsewhere (tests and automation).
     pub tesseract_install: Option<String>,
+    /// Whether Install Tesseract may start the system installer (winget). Only the desktop app
+    /// sets it: tests and other embedders record the command and open the download page instead,
+    /// so a command sweep never installs software on the machine running it.
+    pub may_start_installers: bool,
     /// A document asked to open this address; the user hasn't answered yet (#90, #91).
     pub pending_link: Option<PendingLink>,
     /// A document just opened asks to be shown in Full Screen mode (`/PageMode /FullScreen`):

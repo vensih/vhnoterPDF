@@ -470,23 +470,25 @@ impl PdfCraftApp {
     /// data shipped with the app. Nothing runs without this command.
     pub fn install_tesseract(&mut self) {
         self.tesseract_install = Some(if cfg!(windows) { format!("winget {}", WINGET_TESSERACT.join(" ")) } else { String::new() });
-        #[cfg(all(windows, not(test)))]
+        #[cfg(windows)]
         {
             use std::os::windows::process::CommandExt as _;
             /// Where Tesseract for Windows is published, for when winget can't be started.
             const TESSERACT_DOWNLOADS: &str = "https://github.com/UB-Mannheim/tesseract/wiki";
             // CREATE_NEW_CONSOLE: winget shows its progress, and Windows its permission prompt.
-            let started = std::process::Command::new("winget").args(WINGET_TESSERACT).creation_flags(0x0000_0010).spawn();
-            match started {
-                Ok(_) => self.notify_tr("Installing Tesseract. Approve the Windows prompt, then run Recognize text again."),
-                Err(_) => {
-                    self.notify_tr("Couldn't start winget. The Tesseract download page is opening instead.");
-                    self.open_url(TESSERACT_DOWNLOADS);
-                }
+            // Only the desktop app may start it ([`PdfCraftApp::may_start_installers`]).
+            let started = if self.may_start_installers {
+                std::process::Command::new("winget").args(WINGET_TESSERACT).creation_flags(0x0000_0010).spawn().is_ok()
+            } else {
+                false
+            };
+            if started {
+                self.notify_tr("Installing Tesseract. Approve the Windows prompt, then run Recognize text again.");
+            } else {
+                self.notify_tr("Couldn't start winget. The Tesseract download page is opening instead.");
+                self.open_url(TESSERACT_DOWNLOADS);
             }
         }
-        #[cfg(all(windows, test))]
-        self.notify_tr("Installing Tesseract. Approve the Windows prompt, then run Recognize text again.");
         #[cfg(target_os = "macos")]
         self.notify_tr("Install Tesseract with Homebrew: brew install tesseract tesseract-lang");
         #[cfg(all(unix, not(target_os = "macos")))]
@@ -1158,14 +1160,17 @@ mod tests {
     use pdfcraft_engine::{Edit, Session};
 
     /// Install Tesseract is a registered command (so automation can run it too) that starts the
-    /// install on Windows and says what to install elsewhere; it never runs under test.
+    /// install on Windows and says what to install elsewhere. An app the desktop shell didn't opt
+    /// in (tests, the command sweep) never starts winget: it points at the download page instead.
     #[test]
     fn install_tesseract_is_a_command_that_says_what_happens() {
         let mut app = PdfCraftApp::new();
+        assert!(!app.may_start_installers, "only the desktop app opts in");
         assert!(app.execute("ocr.install_tesseract"));
         let started = app.tesseract_install.clone().expect("the command ran");
         if cfg!(windows) {
             assert!(started.starts_with("winget install") && started.contains("UB-Mannheim.TesseractOCR"), "{started}");
+            assert!(app.last_opened_url.as_deref().is_some_and(|u| u.contains("tesseract")), "the download page, not winget");
         }
         assert!(app.toast.is_some(), "the user is told what happens next");
     }
