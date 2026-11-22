@@ -578,7 +578,7 @@ fn dialog_properties(ui: &mut egui::Ui, app: &mut PdfCraftApp, req: &mut Pending
         ui.label(egui::RichText::new(tl!(k)).color(t.text_muted));
         ui.horizontal(|ui| {
             ui.add_space(inset);
-            ui.add(egui::Label::new(if v.is_empty() { egui::RichText::new("—").color(t.text_faint) } else { egui::RichText::new(v) }).wrap());
+            ui.add(egui::Label::new(if v.is_empty() { egui::RichText::new("–").color(t.text_faint) } else { egui::RichText::new(v) }).wrap());
         });
         ui.end_row();
     };
@@ -591,7 +591,7 @@ fn dialog_properties(ui: &mut egui::Ui, app: &mut PdfCraftApp, req: &mut Pending
             // Align path text with editable fields while keeping its LTR text order.
             ui.add_space(inset);
             if v.is_empty() {
-                ui.label(egui::RichText::new("—").color(t.text_faint));
+                ui.label(egui::RichText::new("–").color(t.text_faint));
             } else {
                 crate::widgets::label_ltr(ui, v, crate::theme::regular(13.0), t.text);
             }
@@ -751,7 +751,7 @@ fn dialog_properties(ui: &mut egui::Ui, app: &mut PdfCraftApp, req: &mut Pending
             PropsTab::Security => match doc.security_summary() {
                 None => {
                     row(ui, "Security method", tl!("No security").to_string());
-                    row(ui, "Restrictions", tl!("None — everything is allowed").to_string());
+                    row(ui, "Restrictions", tl!("None. Everything is allowed").to_string());
                     if doc.allows_security_change() && ui.button(tl!("Protect using password…")).clicked() {
                         req.link_command = Some("protect.password");
                     }
@@ -763,7 +763,7 @@ fn dialog_properties(ui: &mut egui::Ui, app: &mut PdfCraftApp, req: &mut Pending
                         ui,
                         "Opened with",
                         if sec.pending {
-                            tl!("— (protection is applied when you save)").to_string()
+                            tl!("(protection is applied when you save)").to_string()
                         } else if sec.owner {
                             tl!("Owner password (no restrictions apply)").to_string()
                         } else {
@@ -1576,7 +1576,7 @@ fn dialog_recovery(ui: &mut egui::Ui, app: &mut PdfCraftApp) -> bool {
         ui.label(egui::RichText::new(tl!("Recover unsaved documents?")).font(theme::semibold(18.0)));
     });
     ui.add_space(6.0);
-    ui.label(tl!("PdfCraft didn't shut down normally. These documents had changes that were autosaved:"));
+    ui.label(tl!("vhnoterPDF didn't shut down normally. These documents had changes that were autosaved:"));
     ui.add_space(8.0);
     let now = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs()).unwrap_or(0);
     egui::Grid::new("recoverable").num_columns(2).spacing([18.0, 6.0]).show(ui, |ui| {
@@ -1681,9 +1681,9 @@ fn dialog_about(ui: &mut egui::Ui, req: &mut Pending) -> bool {
         2 => crate::credits::models_ui(ui),
         _ => {
             ui.horizontal(|ui| {
-                widgets::artcraft_mark(ui, 40.0);
+                widgets::app_icon(ui, 40.0);
                 ui.vertical(|ui| {
-                    ui.label(egui::RichText::new("PdfCraft").font(theme::semibold(20.0)));
+                    ui.label(egui::RichText::new("vhnoterPDF").font(theme::semibold(20.0)));
                     ui.label(crate::i18n::fmt(tl!("Version {v}"), &[("v", &pdfcraft_engine::build_info::version())]));
                 });
             });
@@ -1696,13 +1696,13 @@ fn dialog_about(ui: &mut egui::Ui, req: &mut Pending) -> bool {
                 .color(t.text_muted)
                 .small(),
             );
+            ui.label(
+                egui::RichText::new(crate::i18n::fmt(tl!("Adapted from PdfCraft ({url})."), &[("url", pdfcraft_engine::links::UPSTREAM)]))
+                    .color(t.text_muted)
+                    .small(),
+            );
             ui.add_space(12.0);
-            ui.horizontal(|ui| {
-                ui.label(egui::RichText::new(tl!("Part of")).color(t.text_muted));
-                widgets::artcraft_logo(ui, 16.0);
-            });
-            ui.add_space(6.0);
-            if let Some(cmd) = widgets::community_links(ui) {
+            if let Some(cmd) = widgets::app_links(ui) {
                 req.link_command = Some(cmd);
             }
         }

@@ -58,7 +58,7 @@ pub struct Document {
     /// How its page actions and timers show it while it is read (see [`Session::show_page`](crate::Session::show_page)).
     pub(crate) live: crate::live_scripts::LiveView,
     /// Dynamic XFA forms: what laying the template out produced (pages and fields are
-    /// PdfCraft's; Adobe's viewers draw the form from the XFA packets themselves).
+    /// vhnoterPDF's; Adobe's viewers draw the form from the XFA packets themselves).
     pub xfa: Option<XfaLayout>,
     /// The parsed template of a laid-out XFA form, for its scripts.
     pub(crate) xfa_template: Option<Arc<pdfcraft_xfa::model::Template>>,
@@ -180,7 +180,7 @@ pub(crate) fn page_runs(pages: &[usize]) -> String {
 
 /// Text an edit stored as typed but drew with `?` in place of `ch`, because the font it is drawn
 /// with (a form field's, or the standard fonts for comments) can't draw that character. Acrobat
-/// keeps such text too, drawing it with fonts PdfCraft can't embed yet.
+/// keeps such text too, drawing it with fonts vhnoterPDF can't embed yet.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TextNotice {
     /// The form field's full name, or `None` for a comment.
@@ -200,7 +200,7 @@ impl std::fmt::Display for TextNotice {
         match (&self.field, self.redrawn_elsewhere) {
             (Some(name), true) => write!(
                 f,
-                "form field {name:?} (page {page}) holds {ch}, which its font can't draw: the value is saved, PdfCraft shows ? in its place, and other PDF viewers redraw the field from the value"
+                "form field {name:?} (page {page}) holds {ch}, which its font can't draw: the value is saved, vhnoterPDF shows ? in its place, and other PDF viewers redraw the field from the value"
             ),
             (Some(name), false) => write!(
                 f,
@@ -806,7 +806,7 @@ pub(crate) fn is_placeholder_title(title: &str) -> bool {
 }
 
 /// What is displayed: the working file plus, in memory only and never saved, the appearances
-/// PdfCraft draws for comments that have none ([`pdfcraft_annot::with_missing_appearances`]) and
+/// vhnoterPDF draws for comments that have none ([`pdfcraft_annot::with_missing_appearances`]) and
 /// for form fields the file leaves to the viewer (#3470), and the signature states drawn into
 /// named-layer signature appearances ([`pdfcraft_sign::show_status_layers`]). The working file is
 /// unchanged, and so is everything that reads it (saving, signatures, …). Image and text exports

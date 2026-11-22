@@ -1028,7 +1028,7 @@ fn flattening_reads_an_unknown_or_malformed_rt_as_a_reply_and_a_widget_with_irt_
 
 /// Flattening never makes a `?` permanent: it refuses, changing nothing, a text box without an
 /// appearance whose text Helvetica can't draw (another program's), and a comment or form field
-/// whose appearance PdfCraft drew with `?` (marked `PCUndrawn`). A comment another program drew
+/// whose appearance vhnoterPDF drew with `?` (marked `PCUndrawn`). A comment another program drew
 /// with a font that has those characters (an appearance, no mark) flattens as before.
 #[test]
 fn flattening_refuses_what_would_bake_in_question_marks() {
@@ -4388,7 +4388,7 @@ fn paragraphs_are_found_and_rewrapped() {
     assert_eq!(blocks[0].lines, [0, 1, 2]);
     let width = blocks[0].rect[2] - blocks[0].rect[0];
     let next = blocks[1].rect;
-    let long = "PdfCraft rewraps a paragraph to its own width when its text changes, keeping the font, size, colour and line spacing.";
+    let long = "vhnoterPDF rewraps a paragraph to its own width when its text changes, keeping the font, size, colour and line spacing.";
     assert_eq!(text::replace_block(&mut doc, 0, 0, long).unwrap().substituted, None);
     let doc = reopen(&doc);
     let lines = text::text_lines(&doc, 0).unwrap();
@@ -6591,7 +6591,7 @@ fn text_a_stream_not_read_whole_goes_on_from_is_not_edited() {
 /// the square's operands end the stream before it and only its keyword is hidden. Moving the image
 /// leaves that `cm` as it is and gives the `Do` a `cm` of its own, so the square stays, with a clip
 /// on the image too, which then stays where it is as one the square may share. A crop goes around
-/// the `Do` alone, and a crop PdfCraft put in that scope isn't removed. A scope that closes in a
+/// the `Do` alone, and a crop vhnoterPDF put in that scope isn't removed. A scope that closes in a
 /// damaged stream before its damage holds none of it: its `cm` takes the move.
 #[test]
 fn an_image_whose_scope_closes_past_a_stream_not_read_whole_moves_alone() {

@@ -21,7 +21,7 @@ pub(crate) fn xfa_redraw(doc: &mut pdfcraft_cos::Document) -> Result<(), String>
     pdfcraft_forms::redraw_fields(doc, |doc, f| !signed(doc, f)).map_err(|e| e.to_string())
 }
 
-/// A warning for each field whose appearance PdfCraft drew with `?` for a character its font
+/// A warning for each field whose appearance vhnoterPDF drew with `?` for a character its font
 /// can't draw (laying out an XFA form's own values).
 pub(crate) fn undrawn_field_warnings(doc: &pdfcraft_cos::Document) -> Vec<String> {
     pdfcraft_forms::undrawn_fields(doc)
@@ -131,7 +131,7 @@ fn radio_button(doc: &pdfcraft_cos::Document, f: &pdfcraft_forms::Field, datum: 
 
 /// Take the XFA out of `doc` and note what went with it: the packets, data no field showed,
 /// buttons that did nothing but run scripts, and fields whose value differs from the form's
-/// data (data PdfCraft could not read into them, now lost).
+/// data (data vhnoterPDF could not read into them, now lost).
 pub(crate) fn strip_xfa(doc: &mut pdfcraft_cos::Document, cx: &mut EditCtx) -> Result<(), EditError> {
     let fields = pdfcraft_forms::fields(doc);
     let data = xfa_field_data(doc);
@@ -160,7 +160,7 @@ pub(crate) fn strip_xfa(doc: &mut pdfcraft_cos::Document, cx: &mut EditCtx) -> R
     cx.xfa_removed.extend(r.notes());
     if differ > 0 {
         cx.xfa_removed.push(format!(
-            "{differ} field(s) held a value other than the form's XFA data (data PdfCraft could not read into them); the data's version is gone"
+            "{differ} field(s) held a value other than the form's XFA data (data vhnoterPDF could not read into them); the data's version is gone"
         ));
     }
     Ok(())

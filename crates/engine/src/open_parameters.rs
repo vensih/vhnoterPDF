@@ -1,7 +1,7 @@
 //! PDF open parameters on a path (#3425): help systems and other programs start a PDF reader with
 //! `manual.pdf#nameddest=Intro` or `manual.pdf#page=12` to show one place in a document. The
 //! parameters follow Adobe's public "Parameters for Opening PDF Files": `name=value` pairs after a
-//! `#`, separated by `&` or `#`. PdfCraft reads `page` (1-based) and `nameddest`, and, as browsers'
+//! `#`, separated by `&` or `#`. vhnoterPDF reads `page` (1-based) and `nameddest`, and, as browsers'
 //! PDF viewers do, a fragment without `=` as a destination name. Other parameters (`zoom`, `view`,
 //! `pagemode`, `search`, …) are ignored, and the file still opens.
 

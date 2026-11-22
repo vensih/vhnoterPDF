@@ -587,7 +587,7 @@ fn card(ui: &mut egui::Ui, view: &mut DocView, context: CardContext<'_>) -> Opti
     let click = ui
         .interact(hit, ui.scope_id().with(("card", key)), Sense::click())
         .on_hover_cursor(egui::CursorIcon::PointingHand)
-        .on_hover_text(crate::i18n::fmt(tl!("{kind} — click to show it on the page"), &[("kind", tl!(kind_label(a)))]));
+        .on_hover_text(crate::i18n::fmt(tl!("{kind}: click to show it on the page"), &[("kind", tl!(kind_label(a)))]));
     if click.clicked() {
         // ⌘/Ctrl-click adds the comment to the selection, as on the page; ⇧-click selects the
         // cards from the one with the handles to this one, as lists do.

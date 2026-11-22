@@ -334,8 +334,8 @@ fn vendor_provenance_egui_wgpu_surface_fit_identity() {
 fn a_gpu_error_while_a_window_is_set_up_is_returned_not_a_panic() {
     // Issue #519: on a 2015 Intel GPU, wgpu's GL backend couldn't configure the window's
     // surface (`GpuWaitTimeout`), and wgpu's default error handler panicked before the app was
-    // created, so PdfCraft never got to retry with OpenGL. vendor/egui-wgpu configures a new
-    // window's surface inside `catch_errors`. A real device on PdfCraft's own GPU settings,
+    // created, so vhnoterPDF never got to retry with OpenGL. vendor/egui-wgpu configures a new
+    // window's surface inside `catch_errors`. A real device on vhnoterPDF's own GPU settings,
     // and an error wgpu raises before anything reaches the driver: a texture one pixel wider
     // than the device allows.
     use eframe::wgpu;
@@ -735,8 +735,7 @@ fn the_flatpak_manifests_pin_the_craft_i18n_rev() {
     assert!(rev.len() == 40 && rev.bytes().all(|b| b.is_ascii_hexdigit()), "craft-i18n.rev holds one full SHA: {rev:?}");
     for manifest in ["ai.storyteller.pdfcraft.yml", "ai.storyteller.pdfcraft.bundle.yml"] {
         let text = std::fs::read_to_string(root.join("packaging/linux/flatpak").join(manifest)).unwrap();
-        let source =
-            text.split("url: https://github.com/storytold/craft-i18n").nth(1).unwrap_or_else(|| panic!("{manifest}: a craft-i18n git source"));
+        let source = text.split("url: https://github.com/vensih/craft-i18n").nth(1).unwrap_or_else(|| panic!("{manifest}: a craft-i18n git source"));
         let source = source.split("- type:").next().unwrap_or(source);
         let commit = source
             .lines()

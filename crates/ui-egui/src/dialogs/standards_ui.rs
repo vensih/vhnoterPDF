@@ -36,7 +36,7 @@ impl PdfCraftApp {
             let left = self.pdfa.issues.as_ref().map_or(0, Vec::len);
             self.notify(if left == 0 {
                 crate::i18n::fmt(
-                    tl!("PdfCraft's checks now find no problems for {level}. This is not a validator result. Save to keep the changes."),
+                    tl!("vhnoterPDF's checks now find no problems for {level}. This is not a validator result. Save to keep the changes."),
                     &[("level", level.label())],
                 )
             } else if left == 1 {
@@ -95,7 +95,7 @@ pub(crate) fn body(ui: &mut egui::Ui, app: &mut PdfCraftApp, t: &Tokens) -> bool
                 }
                 Some(v) if v.is_empty() => {
                     ui.label(crate::i18n::fmt(
-                        tl!("PdfCraft's checks found no problems for {level}. This is not a validator result."),
+                        tl!("vhnoterPDF's checks found no problems for {level}. This is not a validator result."),
                         &[("level", app.pdfa.level.label())],
                     ));
                 }
@@ -138,7 +138,7 @@ pub(crate) fn body(ui: &mut egui::Ui, app: &mut PdfCraftApp, t: &Tokens) -> bool
 
 #[cfg(test)]
 mod wording_tests {
-    /// The Standards panel reports what PdfCraft's own checks found; only a run of an external
+    /// The Standards panel reports what vhnoterPDF's own checks found; only a run of an external
     /// validator can state the stronger thing, and none is recorded here.
     #[test]
     fn no_standards_panel_wording_claims_conformance() {

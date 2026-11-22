@@ -84,7 +84,7 @@ impl Pages {
 fn set_title(doc: &mut Document, title: &str) {
     let mut info = Dict::new();
     info.set(b"Title".to_vec(), PdfString::text(title));
-    info.set(b"Producer".to_vec(), PdfString::text("PdfCraft"));
+    info.set(b"Producer".to_vec(), PdfString::text("vhnoterPDF"));
     let r = doc.add(info);
     doc.trailer_mut().set(b"Info".to_vec(), Object::Ref(r));
 }
@@ -760,7 +760,7 @@ fn turkish_code_page(bytes: &[u8]) -> bool {
 /// draw (outside Western European) is set in the bundled Inter face instead, whole, when Inter
 /// draws all of it (Latin, Greek and Cyrillic letters); anything else is refused with
 /// [`CreateError::Invalid`] naming the line and the first character neither face draws. Text
-/// PdfCraft generates goes through [`from_text_escaped`] instead.
+/// vhnoterPDF generates goes through [`from_text_escaped`] instead.
 pub fn from_text(title: &str, text: &str, page: (f64, f64), font_size: f64) -> Result<Document, CreateError> {
     // Helvetica in WinAnsiEncoding draws it: set as it always was.
     if first_undrawable_line(text).is_none() {
@@ -779,11 +779,11 @@ fn first_undrawable_line(text: &str) -> Option<(usize, char)> {
     text.split('\n').enumerate().find_map(|(i, l)| pdfcraft_fonts::first_undrawable(&l.replace('\u{c}', "")).map(|c| (i + 1, c)))
 }
 
-/// What a PDF made from text PdfCraft generated says, in its first line, about characters it
+/// What a PDF made from text vhnoterPDF generated says, in its first line, about characters it
 /// wrote as `[U+XXXX]`.
 pub const ESCAPED_NOTE: &str = "Characters Helvetica can't draw are written as [U+XXXX] code points.";
 
-/// [`from_text`] for text PdfCraft generates from documents (a comment summary, a compare
+/// [`from_text`] for text vhnoterPDF generates from documents (a comment summary, a compare
 /// report), which may quote any language. Text the bundled Inter face draws all of is set as
 /// [`from_text`] sets it, nothing escaped. Otherwise each character Helvetica can't draw is
 /// written as `[U+XXXX]` instead of being refused or set as `?`, so nothing is lost, and the first

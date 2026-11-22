@@ -488,7 +488,7 @@ fn typed_text_takes_an_oval_or_a_circle_from_the_toolbar() {
     h.run_steps(3);
     assert!(h.query_all_by_role(egui::accesskit::Role::ComboBox).any(|n| n.value().as_deref() == Some("Rectangle")), "the selected text's own");
 
-    // The circle for new text lasts until PdfCraft quits; a saved default is read back.
+    // The circle for new text lasts until vhnoterPDF quits; a saved default is read back.
     let mut restored = PdfCraftApp::new();
     restored.restore(&h.state().persist());
     assert_eq!(restored.fill_text_border_shape, BorderShape::Rectangle);
@@ -591,7 +591,7 @@ fn fill_text_border_frames_new_and_selected_text() {
     assert!((width(now) - width(plain) - 4.0).abs() < 0.01, "2 pt on each side: {plain:?} {now:?}");
     assert!((plain[0] - now[0] - 2.0).abs() < 0.01 && (now[3] - plain[3] - 2.0).abs() < 0.01, "grown outwards, the text in place: {plain:?} {now:?}");
 
-    // The toolbar's border lasts until PdfCraft quits; a saved default is read back.
+    // The toolbar's border lasts until vhnoterPDF quits; a saved default is read back.
     let settings = h.state().persist();
     let mut restored = PdfCraftApp::new();
     restored.restore(&settings);

@@ -2379,7 +2379,7 @@ fn jbig2_scans_are_averaged_and_stored_again() {
 }
 
 /// A whole 300 dpi letter page of rendered text, more marks than one JBIG2 text region of the
-/// decoder PdfCraft renders with takes, still looks the same as JBIG2 symbols.
+/// decoder vhnoterPDF renders with takes, still looks the same as JBIG2 symbols.
 #[test]
 fn a_dense_page_of_rendered_text_looks_the_same_as_jbig2_symbols() {
     let mut doc = Document::new_empty();
@@ -4960,7 +4960,7 @@ fn indexed_thin_rules_survive_averaging_for_both_palette_orders_and_decodes() {
 }
 
 /// An image past what the JBIG2 decoder takes on a side, or past 2^28 pixels in all, stays as it
-/// is: JBIG2 can state the size, but PdfCraft's decoder refuses such a stream, so stored as JBIG2 it
+/// is: JBIG2 can state the size, but vhnoterPDF's decoder refuses such a stream, so stored as JBIG2 it
 /// drew nothing here. At 65,535 on a side, and at 2^28 in all (past 80 million, which the
 /// monochrome step takes of a one-bit image), the same bars do become JBIG2, so the fixture does
 /// reach that choice, and the coding stored reads back through that decoder. Averaged, an image past

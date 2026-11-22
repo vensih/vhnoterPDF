@@ -27,7 +27,7 @@ const MAX_STDERR: u64 = 256 * 1024;
 /// is truncated at the cap — corrupt or runaway output must not become unbounded memory in
 /// the word list, the text layer and the review UI.
 pub const MAX_WORDS: usize = 50_000;
-/// Tesseract's code for each language PdfCraft offers (ISO 639-1 → tessdata name). Only these
+/// Tesseract's code for each language vhnoterPDF offers (ISO 639-1 → tessdata name). Only these
 /// codes ever reach the process, whatever the settings say.
 pub const LANGUAGE_CODES: &[(&str, &str)] = &[
     ("en", "eng"),
@@ -42,6 +42,9 @@ pub const LANGUAGE_CODES: &[(&str, &str)] = &[
     ("ko", "kor"),
     ("ar", "ara"),
     ("nl", "nld"),
+    ("sq", "sqi"),
+    // Two packs read together (`-l sqi+eng`): Albanian documents that quote English.
+    ("sq+en", "sqi+eng"),
 ];
 
 /// English names for [`LANGUAGE_CODES`] (dropdowns show code + name).
@@ -58,6 +61,8 @@ pub const LANGUAGE_NAMES: &[(&str, &str)] = &[
     ("ko", "Korean"),
     ("ar", "Arabic"),
     ("nl", "Dutch"),
+    ("sq", "Albanian"),
+    ("sq+en", "Albanian + English"),
 ];
 
 /// Map a settings language code to a Tesseract one: trimmed, case-insensitive, allow-listed;
@@ -476,6 +481,11 @@ impl Recognizer for TesseractCli {
     /// Write the page as a PNG and read it back as TSV.
     fn recognize(&self, image: &OcrImage, options: &RecognizeOptions) -> Result<Vec<Line>, OcrError> {
         let lang = language_code(&options.language);
+        // A pack Tesseract lacks would make it fail with its own message, or (for `eng`) read with
+        // the wrong letters; name the missing pack instead.
+        if let Some(missing) = missing_packs(lang, &self.languages()) {
+            return Err(OcrError::MissingLanguage(missing));
+        }
         let png = encode_png(image)?;
         let dir = TempDir::create()?;
         let png_path = dir.path.join("page.png");
@@ -492,6 +502,16 @@ impl Recognizer for TesseractCli {
         }
         Ok(lines)
     }
+}
+
+/// The packs of `lang` (`sqi+eng`) that are not in `installed` (`--list-langs` codes), joined
+/// with `+`; `None` when all are there, or when nothing is known about what is installed.
+pub fn missing_packs(lang: &str, installed: &[(String, String)]) -> Option<String> {
+    if installed.is_empty() {
+        return None;
+    }
+    let missing: Vec<&str> = lang.split('+').filter(|p| !installed.iter().any(|(c, _)| c == p)).collect();
+    (!missing.is_empty()).then(|| missing.join("+"))
 }
 
 /// Encode an RGBA raster as PNG (the interchange format Tesseract reads best).
@@ -685,6 +705,8 @@ mod tests {
         assert_eq!(language_code("ja"), "jpn");
         assert_eq!(language_code("ko"), "kor");
         assert_eq!(language_code("nl"), "nld");
+        assert_eq!(language_code("SQ"), "sqi");
+        assert_eq!(language_code("sq+en"), "sqi+eng");
         assert_eq!(language_code("klingon"), "eng", "unknown → eng");
         assert_eq!(language_code(""), "eng");
         // The security property: whatever the settings say, only allow-listed codes reach a
@@ -693,6 +715,15 @@ mod tests {
             let mapped = language_code(code);
             assert!(LANGUAGE_CODES.iter().any(|(_, v)| *v == mapped), "{code:?} → {mapped:?} is not allow-listed");
         }
+    }
+
+    #[test]
+    fn a_missing_pack_is_named_not_replaced_by_english() {
+        let installed = |codes: &[&str]| codes.iter().map(|c| ((*c).to_string(), (*c).to_string())).collect::<Vec<_>>();
+        assert_eq!(missing_packs("sqi", &installed(&["eng", "osd"])).as_deref(), Some("sqi"));
+        assert_eq!(missing_packs("sqi+eng", &installed(&["eng"])).as_deref(), Some("sqi"));
+        assert_eq!(missing_packs("sqi+eng", &installed(&["sqi", "eng"])), None);
+        assert_eq!(missing_packs("sqi", &[]), None, "nothing known: Tesseract decides");
     }
 
     #[test]

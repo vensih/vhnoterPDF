@@ -2,7 +2,7 @@
 //!
 //! **These are never-crash tests.** They assert that a stranger's broken annotation data produces an
 //! error or a defined degradation instead of a panic. Where the current behaviour is questionable,
-//! that is said out loud and pinned as it is: an expected value below is *what PdfCraft does today*,
+//! that is said out loud and pinned as it is: an expected value below is *what vhnoterPDF does today*,
 //! not a claim that it is right. Each such place carries a `NOTE` comment naming the alternative a
 //! reader could reasonably choose, so a later fix shows up as a changed expectation here rather than a
 //! silent edit. (app-agents.md rule 13 and `CLAUDE.md` Fidelity: no crash, and never repair silently.)
@@ -337,7 +337,7 @@ fn wrong_typed_flag_opacity_and_colour_entries_fall_back_without_panicking() {
 
 /// `move_annotation` shifts the numbers of every geometry key, but only the first four of an array
 /// it treats as a rectangle (`every || i < 4`, `crates/annot/src/modify.rs:302`). A `/Rect` with
-/// more than four numbers is not something PdfCraft writes, so the guard only shows up on damaged
+/// more than four numbers is not something vhnoterPDF writes, so the guard only shows up on damaged
 /// data — which is precisely why it is pinned here: without this test the rule can be deleted
 /// silently. What must hold is that the four rectangle numbers move together and whatever strays
 /// the file carries are left exactly as they were, rather than being dragged along by half a point.
@@ -694,7 +694,7 @@ fn tag(path: Save) -> String {
 }
 
 /// The kinds of damage a stranger's annotation data can carry. Twelve wreck the dictionary of a
-/// comment PdfCraft wrote, so the file stays structurally valid around one wrong entry; the
+/// comment vhnoterPDF wrote, so the file stays structurally valid around one wrong entry; the
 /// duplicate-entry kind instead repeats that comment's entry in the page's `/Annots`.
 #[derive(Copy, Clone, Debug, PartialEq, Eq)]
 enum Damage {

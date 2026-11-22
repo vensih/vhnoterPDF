@@ -414,10 +414,10 @@ impl Session {
 /// text and choice field is drawn from its value first, as the document is displayed
 /// ([`pdfcraft_forms::with_field_appearances`]), and the signature covers that look.
 ///
-/// One exception: where PdfCraft's drawing would show a character as `?` (the field's font can't
+/// One exception: where vhnoterPDF's drawing would show a character as `?` (the field's font can't
 /// hold it) and the field's own appearance draws text, the field keeps its own appearance, which
 /// the program that filled it drew with a font that has the character. A field whose own
-/// appearance draws no text gets PdfCraft's drawing, `?` and all. Later signatures change
+/// appearance draws no text gets vhnoterPDF's drawing, `?` and all. Later signatures change
 /// nothing here: redrawing would count as a change to the earlier signatures.
 fn drawn_for_first_signature(cos: std::borrow::Cow<'_, pdfcraft_cos::Document>) -> std::borrow::Cow<'_, pdfcraft_cos::Document> {
     use pdfcraft_forms::FieldKind;

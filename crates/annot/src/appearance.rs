@@ -1,4 +1,4 @@
-//! Appearance streams (§12.5.5) for the comment types PdfCraft creates, execution plan M5.2.
+//! Appearance streams (§12.5.5) for the comment types vhnoterPDF creates, execution plan M5.2.
 //!
 //! [`build`] draws a normal appearance (`/AP /N`) from the annotation dictionary and the
 //! objects it points at, so the same code serves new comments and restyled ones. Drawings are in page space with
@@ -8,7 +8,7 @@
 //! itself; for the other values, callers that hold the document follow references first
 //! (`draw::with_direct_values`).
 //!
-//! The note icons are PdfCraft's own drawings (clean-room.md and licences.md). Text boxes use a standard text
+//! The note icons are vhnoterPDF's own drawings (clean-room.md and licences.md). Text boxes use a standard text
 //! font with WinAnsi encoding: Helvetica, or the face their `/DA` or `/DS` asks for
 //! ([`crate::text_style`]), and draw Thai from the craft-fonts Thai face as Type 3 glyphs
 //! (`pdfcraft_fonts::shaped_text`, the writer Add text uses); lines break at that face's
@@ -62,7 +62,7 @@ pub fn arrow_size(w: f64) -> f64 {
 }
 
 /// Nominal radius of a cloudy border's bumps for a line of width `w` (intensity 1). ISO 32000-2
-/// Table 169 leaves the size open; this is the size PdfCraft's polygon clouds already had, so
+/// Table 169 leaves the size open; this is the size vhnoterPDF's polygon clouds already had, so
 /// squares, circles and text boxes match them.
 pub fn cloud_radius(w: f64) -> f64 {
     6.0 + 1.5 * w.max(0.0)
@@ -452,7 +452,7 @@ pub fn parse_da(d: &Dict) -> (Rgb, f64) {
 
 /// How opaque a comment's parts are drawn, 0–1: its line or border (`/CA`); its fill or
 /// background (`/ca`, which PDF 2.0 gives the non-stroking operations; without it, as the line);
-/// and a text box's text (`/PCTextOpacity`, PdfCraft's own; without it, as the fill, since text
+/// and a text box's text (`/PCTextOpacity`, vhnoterPDF's own; without it, as the fill, since text
 /// is filled too). A comment with only `/CA` is drawn at that opacity throughout, as before.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct PartOpacity {
@@ -894,7 +894,7 @@ fn draw_body(context: &AppearanceContext<'_>, drawing: &mut AppearanceDrawing) -
 }
 
 fn finish_appearance(context: &AppearanceContext<'_>, mut drawing: AppearanceDrawing) -> Option<Stream> {
-    // PdfCraft measurement captions are kept separate from the comment's free-form text.
+    // vhnoterPDF measurement captions are kept separate from the comment's free-form text.
     // A restyle regenerates the path and its value together.
     let mut out = drawing.content.into_bytes();
     out.extend(drawing.tail);
@@ -1336,7 +1336,7 @@ fn draw_stamp(context: &AppearanceContext<'_>, mut drawing: AppearanceDrawing) -
         }
         return Some(stream);
     }
-    // Only PdfCraft's own Fill & Sign marks are drawn here.
+    // Only vhnoterPDF's own Fill & Sign marks are drawn here.
     let name = d.name(b"Name")?;
     let col = stroke.unwrap_or([0.0; 3]);
     // A mark or stamp placed on a turned page is drawn upright in its displayed box, then
@@ -1383,7 +1383,7 @@ fn draw_stamp(context: &AppearanceContext<'_>, mut drawing: AppearanceDrawing) -
         }
         b"PCLine" => c.push_str(&format!("{}{} w 1 J\n{}", rg_stroke(col), n(h.clamp(0.5, 2.0)), path(crate::FillMark::Line))),
         other => {
-            // Only stamps PdfCraft made: others keep their own artwork.
+            // Only stamps vhnoterPDF made: others keep their own artwork.
             if !matches!(d.get(b"PCStamp"), Some(Object::Bool(true))) {
                 return None;
             }

@@ -169,7 +169,9 @@ foreach ($f in 'NOTICE', 'LICENSE-document.txt') {
   Copy-Item (Join-Path $Stage $f) $Portable
 }
 Copy-Item -Recurse $Models (Join-Path $Portable 'models')
-foreach ($f in 'README.md', 'LICENSE', 'LICENSE-MIT', 'LICENSE-APACHE') {
+# The portable copy's README is vhnoterPDF's own (packaging/windows/PORTABLE-README.md).
+Copy-Item (Join-Path $PSScriptRoot 'PORTABLE-README.md') (Join-Path $Portable 'README.md')
+foreach ($f in 'LICENSE', 'LICENSE-MIT', 'LICENSE-APACHE') {
   $p = Join-Path $Root $f
   if (Test-Path $p) { Copy-Item $p $Portable }
 }

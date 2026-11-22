@@ -7,7 +7,7 @@
 //! The catalogs live in [storytold/craft-i18n](https://github.com/storytold/craft-i18n)
 //! (`locales/<code>/common.tsv`, shared by the Crafting Apps, and `pdfcraft.tsv`), not in this
 //! repository. `build.rs` embeds them from `CRAFT_I18N_DIR` (CI and releases check out the commit
-//! in `craft-i18n.rev`); without it the build is English only. Lookup, fallback (PdfCraft's rows
+//! in `craft-i18n.rev`); without it the build is English only. Lookup, fallback (vhnoterPDF's rows
 //! over shared ones), plural forms (CLDR) and language names are the `craft-i18n` crate's
 //! (craft-libs). Which languages are offered, how the system locale picks one, right to left and
 //! `{name}` placeholders stay here.
@@ -54,7 +54,7 @@ static I18N: LazyLock<I18n> = LazyLock::new(|| {
 /// The `language` preference value that follows the system locale.
 pub const AUTO: &str = "auto";
 
-/// One UI language PdfCraft offers, when its catalogs are embedded: what the app needs beyond
+/// One UI language vhnoterPDF offers, when its catalogs are embedded: what the app needs beyond
 /// them. Its name and translations come from craft-i18n.
 pub struct LangInfo {
     /// BCP 47 code, lowercase (`ja`, `zh-hans`, `pt-br`). Also the `language` preference value and
@@ -68,7 +68,7 @@ pub struct LangInfo {
 /// How many languages [`LANGUAGES`] lists.
 const LANGUAGE_COUNT: usize = 36;
 
-/// The languages PdfCraft offers. English first: it is the fallback and the source language.
+/// The languages vhnoterPDF offers. English first: it is the fallback and the source language.
 pub static LANGUAGES: [LangInfo; LANGUAGE_COUNT] = [
     LangInfo { code: "en", rtl: false },
     LangInfo { code: "ja", rtl: false },
@@ -155,7 +155,7 @@ pub static LANGUAGES: [LangInfo; LANGUAGE_COUNT] = [
     LangInfo { code: "nb", rtl: false },
 ];
 
-/// Per language of [`LANGUAGES`], the (context, source) keys of PdfCraft's own catalog as written
+/// Per language of [`LANGUAGES`], the (context, source) keys of vhnoterPDF's own catalog as written
 /// (escaped), read on first use ([`Lang::has_own`]).
 static OWN_ROWS: [OnceLock<HashSet<(&'static str, &'static str)>>; LANGUAGE_COUNT] = [const { OnceLock::new() }; LANGUAGE_COUNT];
 
@@ -301,10 +301,10 @@ impl Lang {
         self.info().is_some_and(|l| l.rtl)
     }
 
-    /// Whether PdfCraft's own catalog (`pdfcraft.tsv`, not the shared `common.tsv`) has the row
+    /// Whether vhnoterPDF's own catalog (`pdfcraft.tsv`, not the shared `common.tsv`) has the row
     /// (`context`, `source`). The shared catalog's `@id` rows are keyed by the other apps' command
     /// ids, which can name another command (in Bulgarian and Indonesian its `file.close` row holds
-    /// an id rather than a label), so command-id lookups ask this; every `@id` row PdfCraft had is
+    /// an id rather than a label), so command-id lookups ask this; every `@id` row vhnoterPDF had is
     /// in its own catalog. A test fixture has no shared catalog: its rows are its own.
     fn has_own(self, context: &str, source: &str) -> bool {
         if let Some(fixture) = self.catalogs {
@@ -326,7 +326,7 @@ impl Lang {
         rows.contains(&(escape(context).as_str(), escape(source).as_str()))
     }
 
-    /// The embedded catalog texts this language reads, the shared one then PdfCraft's; none for
+    /// The embedded catalog texts this language reads, the shared one then vhnoterPDF's; none for
     /// English. For checks that the interface fonts draw every translation.
     pub fn catalog_texts(self) -> impl Iterator<Item = &'static str> {
         let code = self.code();
@@ -564,12 +564,12 @@ pub fn tr_ctx<'a>(lang: Lang, context: &str, s: &'a str) -> &'a str {
 }
 
 /// A string keyed by its command id, falling back to the translation of the English `label`. Only
-/// PdfCraft's own `@id` rows count ([`own_id`]).
+/// vhnoterPDF's own `@id` rows count ([`own_id`]).
 pub fn tr_id<'a>(lang: Lang, id: &str, label: &'a str) -> &'a str {
     if own_id(lang, id, label) { lang.i18n().tid(lang.lang, id, label) } else { tr(lang, label) }
 }
 
-/// Whether `lang` has PdfCraft's own `@id` row for `id` ([`Lang::has_own`]: command ids are each
+/// Whether `lang` has vhnoterPDF's own `@id` row for `id` ([`Lang::has_own`]: command ids are each
 /// app's own) and it keeps the `{placeholders}` and trailing `…` of the English `label`. craft-i18n
 /// can't check that, because an `@id` row's source is the id, so a row that doesn't is skipped
 /// here and the label's translation shows instead.
@@ -675,7 +675,7 @@ pub fn command_label(text: &str) -> String {
     t(text).to_owned()
 }
 
-/// A registered command's menu label: its `@id` entry in PdfCraft's own catalog if there is one
+/// A registered command's menu label: its `@id` entry in vhnoterPDF's own catalog if there is one
 /// that keeps the label's shape ([`own_id`]), otherwise [`command_label`] of the current English
 /// label.
 pub fn menu_label(id: &str, label: &str) -> String {
@@ -688,7 +688,7 @@ pub fn menu_label(id: &str, label: &str) -> String {
 
 /// A plural-aware message: `one`/`other` are the English forms (with `{n}` where the count goes).
 /// The form is the language's CLDR category; `{n}` is written in `0`–`9` without grouping or
-/// isolate marks, as PdfCraft always has.
+/// isolate marks, as vhnoterPDF always has.
 pub fn trn(lang: Lang, n: u64, one: &str, other: &str) -> String {
     lang.i18n().trn_plain(lang.lang, n, one, other)
 }
@@ -714,7 +714,7 @@ fn name_sort_key(name: &str) -> String {
         .collect()
 }
 
-/// A test language whose PdfCraft catalog is `source` (catalog format), so tests of lookup code
+/// A test language whose vhnoterPDF catalog is `source` (catalog format), so tests of lookup code
 /// don't depend on the embedded catalogs' wording. `code` picks the CLDR plural rules.
 #[cfg(test)]
 pub(crate) fn fixture_lang(code: &'static str, source: &'static str) -> Lang {

@@ -254,7 +254,7 @@ fn table_body(ui: &mut egui::Ui, context: TableBody<'_>) {
                                     events.range_changed = true;
                                 }
                                 let count = match (&check, f.problem.is_some()) {
-                                    (_, true) => "—".to_string(),
+                                    (_, true) => "–".to_string(),
                                     (Ok(k), _) => crate::i18n::fmt(tl!("{k} of {n}"), &[("k", &k.to_string()), ("n", &f.pages.to_string())]),
                                     (Err(_), _) => crate::i18n::fmt(tl!("? of {n}"), &[("n", &f.pages.to_string())]),
                                 };
@@ -268,7 +268,7 @@ fn table_body(ui: &mut egui::Ui, context: TableBody<'_>) {
                                     ui.label(egui::RichText::new(ago(m)).color(t.text_muted)).on_hover_text(utc_stamp(m));
                                 }
                                 None => {
-                                    ui.label(egui::RichText::new("—").color(t.text_faint));
+                                    ui.label(egui::RichText::new("–").color(t.text_faint));
                                 }
                             },
                             // Blocking problems first, in red.

@@ -315,7 +315,7 @@ fn mac_command_m_stays_available_for_minimize() {
 
     let bar = h.state().menu_bar(&h.ctx);
     assert!(bar.find(&craft_menu::CommandRef::new("comment.list")).unwrap().shortcut.is_none());
-    let layout = craft_menu::mac_layout(&bar, &craft_menu::LayoutOptions::new("PdfCraft"));
+    let layout = craft_menu::mac_layout(&bar, &craft_menu::LayoutOptions::new("vhnoterPDF"));
     assert!(!layout.clashes.iter().any(|clash| clash.system == "Minimize"));
     assert!(
         layout

@@ -561,7 +561,7 @@ pub(crate) fn import_fdf(doc: &mut Document, bytes: &[u8]) -> Result<Report, Dat
         // anyway points into the file and is replaced below, so it is not copied (nor what it
         // reaches).
         src.remove(b"P");
-        // A redaction mark is always drawn by PdfCraft (see `place`): its appearance is not copied.
+        // A redaction mark is always drawn by vhnoterPDF (see `place`): its appearance is not copied.
         if src.get(b"Subtype").is_some_and(|s| fdf.resolve(s).as_name() == Some(b"Redact".as_slice())) {
             src.remove(b"AP");
         }

@@ -316,7 +316,7 @@ impl RecoveryStore {
     }
 }
 
-/// The most a sidecar may hold. One PdfCraft writes is a name, a path and a few fields, well under
+/// The most a sidecar may hold. One vhnoterPDF writes is a name, a path and a few fields, well under
 /// this; anything longer is not one of ours (#3923).
 const MAX_META_BYTES: u64 = 64 * 1024;
 
@@ -737,7 +737,7 @@ mod sidecar_tests {
         assert!(app.save_active(SaveTarget::InPlace));
     }
 
-    /// #3923: a sidecar longer than any PdfCraft writes is not read whole; its snapshot is
+    /// #3923: a sidecar longer than any vhnoterPDF writes is not read whole; its snapshot is
     /// offered without metadata, so it has no path to save to.
     #[test]
     fn an_oversized_sidecar_is_not_read() {

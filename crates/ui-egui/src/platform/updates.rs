@@ -9,8 +9,8 @@ use craft_update::{CheckResultDialog, CheckResultResponse};
 
 use crate::PdfCraftApp;
 
-/// Where every PdfCraft release is listed.
-pub const RELEASES_PAGE: &str = "https://github.com/storytold/pdfcraft/releases";
+/// Where every vhnoterPDF release is listed (the fork's own; never upstream's).
+pub const RELEASES_PAGE: &str = "https://github.com/vensih/vhnoterPDF/releases";
 
 /// Stands in for the network in tests.
 #[cfg(not(target_arch = "wasm32"))]
@@ -323,7 +323,7 @@ mod tests {
         app.updates.updater.offer(craft_update::Release {
             tag: "v99.0.0".into(),
             version: craft_update::parse_version("99.0.0"),
-            name: "PdfCraft 99.0.0".into(),
+            name: "vhnoterPDF 99.0.0".into(),
             html_url: "https://github.com/storytold/pdfcraft/releases/tag/v99.0.0".into(),
             ..Default::default()
         });
@@ -332,6 +332,14 @@ mod tests {
         assert!(!app.updates.open, "the result dialog closes");
         assert!(app.updates.updater.prompt_open(), "the prompt stays");
         assert!(app.close_request.is_none(), "the prompt carries the restart");
+    }
+
+    /// A merge from upstream could bring its suite entry back; then a vhnoterPDF install would
+    /// download and install upstream's builds.
+    #[test]
+    fn updates_come_only_from_the_fork() {
+        assert_ne!(crate::UPDATE_APP.repo, craft_update::suite::PDFCRAFT.repo);
+        assert!(!RELEASES_PAGE.contains(craft_update::suite::PDFCRAFT.repo));
     }
 
     #[test]

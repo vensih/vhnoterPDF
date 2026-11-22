@@ -1,4 +1,4 @@
-//! pdfcraft-ui-egui — the first PdfCraft shell (L7).
+//! pdfcraft-ui-egui — the first vhnoterPDF shell (L7).
 //!
 //! Layout grammar follows plan/acrobat/02-ui-ux.md §1: tab strip, mode bar, left tool panel,
 //! floating quick-action bar, document area, right panel + right rail with page navigation.
@@ -9,12 +9,18 @@
 // The settings object in `persist` is one `json!` literal past the default limit of 128.
 #![recursion_limit = "256"]
 
-/// PdfCraft as craft-update knows it, with its 128 px icon and accent colour: the update
+/// vhnoterPDF as craft-update knows it, with its 128 px icon and accent colour: the update
 /// prompt shows both, and an AppImage's menu entry gets the icon.
 #[cfg(not(target_arch = "wasm32"))]
 pub const UPDATE_APP: craft_update::app::App = craft_update::app::App {
     icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/ai.storyteller.pdfcraft.png")),
     accent: Some([0xb7, 0x02, 0x28]),
+    name: "vhnoterPDF",
+    // Installs made before the rename still register under the upstream names.
+    former_names: &["PdfCraft", "PrintCraft"],
+    developer: "vhnoterPDF",
+    // Only the fork's own releases: a vhnoterPDF install must never take an upstream build.
+    repo: "vensih/vhnoterPDF",
     ..craft_update::suite::PDFCRAFT
 };
 
@@ -429,7 +435,7 @@ pub struct PdfCraftApp {
     pub fill_tool: fill_sign::FillTool,
     /// Colour for new Fill & Sign text and dates, kept across launches.
     pub fill_text_color: [f64; 3],
-    /// Border around new Fill & Sign text and dates, in points (0: none), until PdfCraft quits:
+    /// Border around new Fill & Sign text and dates, in points (0: none), until vhnoterPDF quits:
     /// each launch starts from [`Self::fill_text_default`].
     pub fill_text_border: f64,
     /// That border's own colour (`None`: the text's).
@@ -471,14 +477,14 @@ pub struct PdfCraftApp {
     pub recent: Vec<RecentFile>,
     /// How many recent files to keep, 0 for no list (Preferences ▸ Documents and view, #5572).
     pub recent_limit: usize,
-    /// Preferences: reopen the files that were open when PdfCraft last closed (#442).
+    /// Preferences: reopen the files that were open when vhnoterPDF last closed (#442).
     pub reopen_last_session: bool,
     /// Restore last view settings when reopening documents (Preferences ▸ Documents and view;
     /// #1767): the page, zoom and page display a file was last shown with. On by default.
     pub restore_last_view: bool,
     /// How files were last shown, most recent first (see `last_view`).
     pub last_views: Vec<last_view::LastView>,
-    /// The files open when PdfCraft last closed, read from the settings for
+    /// The files open when vhnoterPDF last closed, read from the settings for
     /// [`PdfCraftApp::reopen_last_files`].
     pub last_session: last_session::LastSession,
     /// Quitting closes unsaved tabs one by one: what was open when the quit began.
@@ -861,8 +867,6 @@ pub struct PdfCraftApp {
     pub replace_draft: Option<files::ReplaceDraft>,
     /// The last web link the app asked the system to open (tests and automation).
     pub last_opened_url: Option<String>,
-    /// The home screen's community card was closed; it comes back next launch (not remembered).
-    pub community_card_closed: bool,
     /// A document asked to open this address; the user hasn't answered yet (#90, #91).
     pub pending_link: Option<PendingLink>,
     /// A document just opened asks to be shown in Full Screen mode (`/PageMode /FullScreen`):

@@ -212,7 +212,7 @@ fn signed(n: i128) -> String {
 }
 
 fn day(iso: &str) -> &str {
-    if iso.is_empty() { "—" } else { iso.get(..10).unwrap_or(iso) }
+    if iso.is_empty() { "–" } else { iso.get(..10).unwrap_or(iso) }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -564,7 +564,7 @@ mod tests {
         assert_eq!(group(12), "12");
         assert_eq!(signed(-1000), "−1,000");
         assert_eq!(day("2026-10-07T18:45:23Z"), "2026-10-07");
-        assert_eq!(day(""), "—");
+        assert_eq!(day(""), "–");
     }
 
     #[test]

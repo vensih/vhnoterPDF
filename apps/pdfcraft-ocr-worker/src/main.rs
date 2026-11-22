@@ -1,4 +1,4 @@
-//! PdfCraft in the browser: the Web Worker that recognises text, so reading a scanned page doesn't
+//! vhnoterPDF in the browser: the Web Worker that recognises text, so reading a scanned page doesn't
 //! stop the page responding and several pages are read at once. Trunk builds it alongside
 //! `pdfcraft-web` (see apps/pdfcraft-web/index.html); the page starts and feeds the workers
 //! (crates/ui-egui/src/workflows/ocr_ui.rs).

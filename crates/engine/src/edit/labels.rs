@@ -30,8 +30,8 @@ pub const EDIT_LABELS: &[&str] = &[
     "Change Keywords",
     "Change {key}",
     "Insert pages from {name}",
-    "Insert pages from {name} — 1 field renamed",
-    "Insert pages from {name} — fields renamed",
+    "Insert pages from {name} (1 field renamed)",
+    "Insert pages from {name} (fields renamed)",
     "Attach {name}",
     "Delete attachment {key}",
     "Edit attachment description",
@@ -198,7 +198,7 @@ impl Edit {
             Edit::SetPageBox { pages, which: PageBox::Crop, .. } => plural("Crop page", "Crop pages", pages.len()),
             Edit::SetPageBox { .. } => Label::of("Set page boxes"),
             Edit::SetTransition { .. } => Label::of("Set page transitions"),
-            // The four `/Info` keys PdfCraft itself offers get a wording of their own, so each can
+            // The four `/Info` keys vhnoterPDF itself offers get a wording of their own, so each can
             // be said in another language; any other key is the document's and goes in as it stands.
             Edit::SetInfo { key, .. } => match key.as_str() {
                 "Title" => Label::of("Change Title"),

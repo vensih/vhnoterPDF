@@ -244,7 +244,7 @@ fn remove_kid(dst: &mut Document, field: ObjRef, kid: ObjRef) -> Result<(), Orga
     Ok(())
 }
 
-/// PdfCraft patch (#1810): split a widget that doubles as its own field into a parent field
+/// vhnoterPDF patch (#1810): split a widget that doubles as its own field into a parent field
 /// holding the field keys (name, value, flags…) and a widget child holding the annotation keys
 /// (rectangle, appearance, page). The parent takes the widget's place among the top-level fields;
 /// later copies of the page add widget children of it, so every page has its own widget and the

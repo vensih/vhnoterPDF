@@ -187,10 +187,10 @@ fn tool_row(ui: &mut egui::Ui, t: &Tokens, g: &ToolGroup, is_pinned: bool) -> (e
 
     let tip = match g.availability {
         Availability::Ready => tl!("Available").to_string(),
-        Availability::Planned(m) => format!("{} {m} — {}", tl!("Planned for milestone"), tl!("open to see what it will include")),
+        Availability::Planned(m) => format!("{} {m}. {}", tl!("Planned for milestone"), tl!("Open it to see what it will include.")),
         Availability::Provider => tl!("Optional: needs an AI provider you configure").into(),
     };
-    let tip = if clipped { format!("{} — {tip}", tl!(g.label)) } else { tip };
+    let tip = if clipped { format!("{}: {tip}", tl!(g.label)) } else { tip };
     (theme::hand(resp).on_hover_text(tip), pin_clicked)
 }
 
@@ -285,7 +285,7 @@ fn tool_detail(app: &mut PdfCraftApp, ui: &mut egui::Ui, t: &Tokens, g: &'static
                 row_label(ui, tl!(item.label), theme::regular(13.0), fg, body.left_center() + vec2(34.0, 0.0), r.left() - body.left() - 42.0);
                 ui.painter().rect_filled(r, CornerRadius::same(4), fill);
                 ui.painter().text(r.center(), Align2::CENTER_CENTER, chip_label, font, cfg);
-                let resp = theme::hand(resp).on_hover_text(format!("{} — {}", tl!(item.label), item.command));
+                let resp = theme::hand(resp).on_hover_text(format!("{} ({})", tl!(item.label), item.command));
                 // An entry with further commands opens a menu; its caret goes before the chip.
                 if item.actions.is_empty() {
                     if resp.clicked() {

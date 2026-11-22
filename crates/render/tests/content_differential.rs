@@ -1,4 +1,4 @@
-//! The two content-stream parsers PdfCraft runs, operator by operator on the same bytes.
+//! The two content-stream parsers vhnoterPDF runs, operator by operator on the same bytes.
 //!
 //! The renderer, text extraction and Find read a page through hayro's tokenizer
 //! (`hayro_syntax::content::UntypedIter`, typed through `TypedIter`). Edit text, redaction,

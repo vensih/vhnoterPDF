@@ -67,7 +67,7 @@ pub struct ExportSource {
 
 impl Document {
     /// What an export reads, for exporting on another thread. These are the displayed
-    /// bytes, so they may carry appearances PdfCraft drew that the file itself does not hold:
+    /// bytes, so they may carry appearances vhnoterPDF drew that the file itself does not hold:
     /// missing comment appearances, and the signature states of named-layer signature
     /// appearances. Exports and Print as Image follow the page as shown; the viewer's badges
     /// are not document content and never enter them. Saving uses the working file.

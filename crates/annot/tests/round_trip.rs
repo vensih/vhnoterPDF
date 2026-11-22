@@ -277,7 +277,7 @@ fn shapes_keep_rectangles_fills_borders_and_stamp_identity() {
         assert_eq!(name_of(&reopened, &st, b"Subtype").as_deref(), Some("Stamp"), "{path:?}");
         assert_eq!(name_of(&reopened, &st, b"Name").as_deref(), Some("Approved"), "{path:?}: a standard stamp keeps its Table 184 name");
         assert_eq!(nums(&reopened, &st, b"Rect").as_deref(), Some(&[40.0, 600.0, 180.0, 650.0][..]), "{path:?}");
-        assert!(st.contains(b"PCStamp"), "{path:?}: PdfCraft's own artwork is marked as such");
+        assert!(st.contains(b"PCStamp"), "{path:?}: vhnoterPDF's own artwork is marked as such");
         assert_eq!(str_of(&reopened, &st, b"PCByLine").as_deref(), Some("Ada"), "{path:?}");
         if !matches!(path, Save::FullStreams) {
             assert_eq!(bytes::numbers_of(&file, "IC").first(), Some(&vec![0.0, 0.5, 0.0]), "{path:?}");
@@ -791,7 +791,7 @@ fn removing_all_links_keeps_comments() {
 
 // ── data the crate does not understand, and nothing at all ─────────────────────────────────────
 
-/// A stranger's file can hold inline annotation dictionaries and keys PdfCraft has never heard of.
+/// A stranger's file can hold inline annotation dictionaries and keys vhnoterPDF has never heard of.
 /// Fidelity says they are preserved rather than dropped (`CLAUDE.md`: preserve unknown data).
 #[test]
 fn inline_annotations_and_unknown_keys_survive_every_save_path() {

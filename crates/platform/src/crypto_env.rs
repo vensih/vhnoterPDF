@@ -1,14 +1,14 @@
-//! An `OPENSSL_ia32cap` left in the environment must not stop PdfCraft (#2916).
+//! An `OPENSSL_ia32cap` left in the environment must not stop vhnoterPDF (#2916).
 //!
 //! aws-lc, the cryptography library behind digital signatures (through `aws-lc-rs`) and TLS,
 //! reads `OPENSSL_ia32cap` when it detects the CPU's features on x86 and x86-64. A value that
 //! asks for a feature the processor doesn't have makes it print "Fatal Error: HW capability
 //! found: …, but HW capability requested: …" and call `abort()`. On Windows that is exit code
 //! 0xC0000409 with no window, no message and nothing in the log. Tuning guides and other
-//! programs leave the variable set for every program, so PdfCraft never started on those PCs
+//! programs leave the variable set for every program, so vhnoterPDF never started on those PCs
 //! while other apps did.
 //!
-//! Two parts keep PdfCraft running:
+//! Two parts keep vhnoterPDF running:
 //! - `.cargo/config.toml` builds aws-lc with `BORINGSSL_NO_STATIC_INITIALIZER`, so it detects
 //!   the CPU when `CRYPTO_library_init` is called instead of in a static initializer before
 //!   `main`.

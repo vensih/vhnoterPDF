@@ -1003,7 +1003,7 @@ fn a_password_prompt_keeps_a_place_in_the_open_queue_for_its_retry() {
     assert!(app.password_retry.is_some());
 }
 
-/// A Word document built from the synthetic fixture (PdfCraft's own Word export).
+/// A Word document built from the synthetic fixture (vhnoterPDF's own Word export).
 #[allow(clippy::expect_used)]
 fn synthetic_docx() -> Vec<u8> {
     let mut session = pdfcraft_engine::Session::new();

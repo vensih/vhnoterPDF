@@ -210,4 +210,4 @@ pub const FLAG_PRINT: i64 = 1 << 2; // bit 3
 pub const FLAG_NO_ZOOM: i64 = 1 << 3; // bit 4
 pub const FLAG_NO_ROTATE: i64 = 1 << 4; // bit 5
 pub const FLAG_NO_VIEW: i64 = 1 << 5; // bit 6
-pub const FLAG_READONLY: i64 = 1 << 7; // bit 8 (`/ReadOnly`, PdfCraft's Locked)
+pub const FLAG_READONLY: i64 = 1 << 7; // bit 8 (`/ReadOnly`, vhnoterPDF's Locked)

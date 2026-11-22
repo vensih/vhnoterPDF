@@ -289,9 +289,9 @@ fn wait_value(h: &mut Harness<'static, PdfCraftApp>, name: &str, expected: &str)
 /// Every native script prompt identifies its document, even with misleading or empty titles.
 fn native_script_prompts_show_an_app_owned_caption() {
     for (script, body, title) in [
-        ("app.response({cQuestion:'Type a value',cTitle:'PdfCraft security',bPassword:true});", "Type a value", Some("PdfCraft security")),
+        ("app.response({cQuestion:'Type a value',cTitle:'vhnoterPDF security',bPassword:true});", "Type a value", Some("vhnoterPDF security")),
         ("app.response({cQuestion:'Empty title prompt',cTitle:''});", "Empty title prompt", None),
-        ("app.alert({cMsg:'Script message',cTitle:'PdfCraft security'});", "Script message", Some("PdfCraft security")),
+        ("app.alert({cMsg:'Script message',cTitle:'vhnoterPDF security'});", "Script message", Some("vhnoterPDF security")),
         ("app.alert({cMsg:'Untitled alert',cTitle:''});", "Untitled alert", None),
         ("app.popUpMenuEx({cName:'Pick a value',cReturn:'yes'});", "Pick a value", None),
     ] {
@@ -301,7 +301,7 @@ fn native_script_prompts_show_an_app_owned_caption() {
         wait_for(&mut h, body);
         assert!(h.query_by_label("This document's script is asking").is_some(), "{script}");
         assert_eq!(
-            h.query_by_label("This request comes from the document, not PdfCraft. Only enter a password if you trust this document.").is_some(),
+            h.query_by_label("This request comes from the document, not vhnoterPDF. Only enter a password if you trust this document.").is_some(),
             script.contains("bPassword:true"),
             "{script}"
         );
@@ -333,7 +333,7 @@ fn native_script_prompt_uses_the_german_catalog_when_available() {
     wait_for(&mut h, heading);
     assert!(h.query_by_label("Dokument: form.pdf").is_some());
     // The warning in the catalog's words, which translators may reword, and never the English.
-    let warning = "This request comes from the document, not PdfCraft. Only enter a password if you trust this document.";
+    let warning = "This request comes from the document, not vhnoterPDF. Only enter a password if you trust this document.";
     assert_ne!(tr(german, warning), warning, "the German catalog translates the password warning");
     assert!(h.query_by_label(tr(german, warning)).is_some());
 }

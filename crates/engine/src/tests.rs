@@ -1435,7 +1435,7 @@ fn insert_from_file_renames_colliding_fields_and_notes_it() {
         doc.repair_log()
     );
     let label = s.undo(id).unwrap();
-    assert_eq!(label.as_str(), "Insert pages from b.pdf — 1 field renamed");
+    assert_eq!(label.as_str(), "Insert pages from b.pdf (1 field renamed)");
     let doc = s.get(id).unwrap();
     let names: Vec<&str> = doc.form.iter().map(|f| f.name.as_str()).collect();
     assert_eq!(names, ["Text1"], "undo restores the single original field");
@@ -3322,7 +3322,7 @@ fn normal_appearance(doc: &pdfcraft_cos::Document, num: u32) -> String {
 /// #5939 review: the first signature removes `/NeedAppearances`, so the fields are drawn from
 /// their values first; without that, `name` and `town` would show their empty placeholders. A
 /// field whose own appearance draws its value keeps it rather than get a `?` for `北`, which no
-/// font PdfCraft draws with has; `ň` is drawn from the bundled Inter face (#6822).
+/// font vhnoterPDF draws with has; `ň` is drawn from the bundled Inter face (#6822).
 #[test]
 fn the_first_signature_draws_the_fields_need_appearances_left_to_the_viewer() {
     let p12 = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../sign/tests/data/ec-p256.p12")).unwrap();
@@ -7422,7 +7422,7 @@ fn scripts_in_an_xfa_form_see_the_xfa_plugin_installed() {
     assert_eq!((o.error, o.result.as_deref()), (None, Some("undefined number 3.5")));
 }
 
-/// #3940: a document-level script that defines the helper and then calls a method PdfCraft lacks
+/// #3940: a document-level script that defines the helper and then calls a method vhnoterPDF lacks
 /// (an Acrobat form copying a button icon at open) left every calculated field blank. The
 /// helper stays defined, the form calculates, and the error is reported once.
 #[test]

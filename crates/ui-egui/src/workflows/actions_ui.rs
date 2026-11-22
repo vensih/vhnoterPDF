@@ -1,4 +1,4 @@
-//! Action Wizard: the actions (PdfCraft's and your own), running one over files in the
+//! Action Wizard: the actions (vhnoterPDF's and your own), running one over files in the
 //! background, and creating or editing an action's steps. Your actions are remembered.
 
 #[cfg(not(target_arch = "wasm32"))]

@@ -2173,7 +2173,7 @@ fn outline_items_carry_their_colour_and_style() {
 /// A bookmark's action (`/A`, ISO 32000-2 §12.3.3 Table 151) is read as a link's is. Only a
 /// go-to's `/D` is a page of this document: a remote go-to's names a page or destination of the
 /// other file (§12.6.4.3), so `[0 /FitH 200]` there is not this file's first page. A web address,
-/// another PDF and actions PdfCraft doesn't run are kept for the bookmark to run or report. An
+/// another PDF and actions vhnoterPDF doesn't run are kept for the bookmark to run or report. An
 /// action without a type is still read as the go-to its `/D` suggests.
 #[test]
 fn bookmark_actions_are_read_as_links_read_them() {

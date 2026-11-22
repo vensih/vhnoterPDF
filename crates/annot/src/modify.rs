@@ -20,7 +20,7 @@ pub(crate) fn refuse_foreign_text(doc: &Document, d: &Dict) -> Result<(), AnnotE
         d.get(b"AP").is_some_and(|ap| doc.resolve(ap).as_dict().is_some_and(|ap| ap.contains(b"N"))) && pdfcraft_fonts::undrawn_mark(d).is_none();
     if drawn_elsewhere && let Some((what, c)) = appearance::undrawable_text(d) {
         return Err(AnnotError::Undrawable(format!(
-            "PdfCraft can't redraw this comment: the standard fonts can't draw \"{}\" (U+{:04X}) in {what}, which would then show as ? (the comment was left as it is)",
+            "vhnoterPDF can't redraw this comment: the standard fonts can't draw \"{}\" (U+{:04X}) in {what}, which would then show as ? (the comment was left as it is)",
             c.escape_debug(),
             u32::from(c)
         )));
@@ -46,7 +46,7 @@ pub(crate) fn n(v: f64) -> String {
 
 // ── edits ───────────────────────────────────────────────────────────────────────────────────
 
-/// [`rich_text_in`] for a text box whose `/DA` was just written (in Helvetica, as PdfCraft writes it).
+/// [`rich_text_in`] for a text box whose `/DA` was just written (in Helvetica, as vhnoterPDF writes it).
 pub(crate) fn rich_text(d: &mut Dict) {
     let (color, size) = appearance::parse_da(d);
     rich_text_in(d, TextStyle { face: Std14::Helvetica, size, color });
@@ -96,7 +96,7 @@ fn rich_text_in(d: &mut Dict, style: TextStyle) {
     let rc = format!(
         "<?xml version=\"1.0\"?><body xmlns=\"http://www.w3.org/1999/xhtml\" xmlns:xfa=\"http://www.xfa.org/schema/xfa-data/1.0/\" xfa:spec=\"2.0.2\" style=\"{style}\">{body}</body>"
     );
-    // "font: Helvetica 12pt" for PdfCraft's own boxes; other faces add their slant and weight.
+    // "font: Helvetica 12pt" for vhnoterPDF's own boxes; other faces add their slant and weight.
     let keywords = format!("{}{}", if slant == "normal" { "" } else { "italic " }, if weight == "normal" { "" } else { "bold " });
     d.set(b"DS".to_vec(), PdfString::text(&format!("font: {keywords}{family} {}pt; text-align:{align}; color:{hex}", n(size))));
     d.set(b"RC".to_vec(), PdfString::text(&rc));
@@ -255,7 +255,7 @@ fn hangs_off(doc: &Document, d: &Dict) -> [Option<ObjRef>; 2] {
 /// Whether the annotation `d` stays when its group's primary is deleted: a group subordinate
 /// (`/RT /Group`) does, as Acrobat deletes only the member clicked, unless it is half of Replace
 /// Text, which Acrobat deletes as one comment: the strikeout (`/IT /StrikeOutTextEdit`) under its
-/// caret, or a caret under such a strikeout, as earlier PdfCraft builds wrote the pair.
+/// caret, or a caret under such a strikeout, as earlier vhnoterPDF builds wrote the pair.
 fn own_deletion(doc: &Document, d: &Dict) -> bool {
     let edit = |d: &Dict| d.name(b"IT") == Some(b"StrikeOutTextEdit".as_slice());
     let under_edit =
@@ -956,7 +956,7 @@ pub(crate) fn callout_text_box(doc: &Document, d: &Dict) -> Option<[f64; 4]> {
 ///   line doesn't change;
 /// - otherwise (that side moved): the line meets the middle of that side, the knee
 ///   [`CALLOUT_KNEE_LINE`] out from it ([`callout_knee_on`]). Acrobat also moves the box next to
-///   the arrow point then; PdfCraft leaves the box where it was put.
+///   the arrow point then; vhnoterPDF leaves the box where it was put.
 ///
 /// With `lead`, the end stays where it is while it is on the side facing the knee (dragging the
 /// knee or the arrow point leaves it in Acrobat), and otherwise meets the middle of that side.

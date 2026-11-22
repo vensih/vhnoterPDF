@@ -239,7 +239,7 @@ impl Session {
         let label = match (&edit, cx.renamed_fields.len()) {
             (_, 0) => edit.label(),
             (Edit::InsertPagesFrom { name, .. }, n) => Label::with(
-                if n == 1 { "Insert pages from {name} — 1 field renamed" } else { "Insert pages from {name} — fields renamed" },
+                if n == 1 { "Insert pages from {name} (1 field renamed)" } else { "Insert pages from {name} (fields renamed)" },
                 name.as_str(),
             ),
             _ => edit.label(),

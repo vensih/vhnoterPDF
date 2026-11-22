@@ -1,4 +1,4 @@
-PdfCraft
+vhnoterPDF, adapted from PdfCraft (https://github.com/storytold/pdfcraft).
 Copyright (c) 2026 ArtCraft Team and the PdfCraft contributors.
 Licensed under the MIT License or the Apache License, Version 2.0, at your option
 (LICENSE-MIT, LICENSE-APACHE).
@@ -14,14 +14,14 @@ Third-party material
 This product bundles third-party material under its own licenses, listed below. The per-file
 list (author, source, license) is in ATTRIBUTION.md.
 
-- Lucide icons (assets/icons/*.svg) — ISC and MIT licences (Feather-derived icons). See assets/icons/LICENSE-lucide.txt.
+- Lucide icons (assets/icons/*.svg): ISC and MIT licences (Feather-derived icons). See assets/icons/LICENSE-lucide.txt.
   The Windows PDF file icon (assets/app-icon/pdfcraft-document.svg and .ico) adapts Lucide's
   file-text outline and combines it with contributor-original artwork. See
   assets/app-icon/LICENSE-document.txt (ISC AND (MIT OR Apache-2.0)), packaged as
   LICENSE-document.txt beside the Windows executables.
-- Inter typeface (assets/fonts/Inter-*.ttf) — SIL Open Font License 1.1. See assets/fonts/OFL-Inter.txt.
-- JetBrains Mono typeface (assets/fonts/JetBrainsMono-*.ttf) — SIL Open Font License 1.1. See assets/fonts/OFL-JetBrainsMono.txt.
-- Dancing Script typeface (assets/fonts/DancingScript.ttf), Copyright 2016 The Dancing Script Project Authors — SIL Open Font License 1.1 (Reserved Font Name "Dancing Script"). See assets/fonts/OFL-DancingScript.txt.
+- Inter typeface (assets/fonts/Inter-*.ttf): SIL Open Font License 1.1. See assets/fonts/OFL-Inter.txt.
+- JetBrains Mono typeface (assets/fonts/JetBrainsMono-*.ttf): SIL Open Font License 1.1. See assets/fonts/OFL-JetBrainsMono.txt.
+- Dancing Script typeface (assets/fonts/DancingScript.ttf), Copyright 2016 The Dancing Script Project Authors: SIL Open Font License 1.1 (Reserved Font Name "Dancing Script"). See assets/fonts/OFL-DancingScript.txt.
 - Fonts from craft-fonts (https://github.com/storytold/craft-fonts), an optional build input
   (CRAFT_FONTS_DIR) that is not part of this repository. Builds made with it, which includes every
   official release, embed the fonts listed in
@@ -31,14 +31,14 @@ list (author, source, license) is in ATTRIBUTION.md.
   pinned in .github/workflows/ also include Noto Sans Thai (in the web build too), Copyright 2022
   The Noto Project Authors (https://github.com/notofonts/thai), under SIL OFL 1.1; its licence is
   fonts/noto-sans-thai/OFL.txt in the craft-fonts build input.
-- hayro (rendering, via crates.io) — Apache-2.0 OR MIT. Its `embed-fonts` feature bundles the Foxit
+- hayro (rendering, via crates.io): Apache-2.0 OR MIT. Its `embed-fonts` feature bundles the Foxit
   standard-14 Type 1 fonts under BSD-3-Clause ("Copyright 2014 PDFium Authors"), and hayro-cmap bundles
   Adobe CMap resources under BSD-3-Clause.
-- lopdf (bootstrap document inspection, via crates.io) — MIT.
-- egui default fonts (epaint_default_fonts, via eframe) — Ubuntu Light (Ubuntu Font Licence 1.0),
+- lopdf (bootstrap document inspection, via crates.io): MIT.
+- egui default fonts (epaint_default_fonts, via eframe): Ubuntu Light (Ubuntu Font Licence 1.0),
   Hack (MIT / Bitstream Vera licence), Noto Emoji (SIL OFL 1.1), emoji-icon-font (MIT).
-- Colour profile in hayro-interpret — CGATS001Compat-v2-micro.icc (CC0-1.0, Clinton Ingram).
-- ICU4X line-breaking data (icu_segmenter_data, via crates.io) — Unicode-3.0. Its Thai, Lao, Khmer
+- Colour profile in hayro-interpret: CGATS001Compat-v2-micro.icc (CC0-1.0, Clinton Ingram).
+- ICU4X line-breaking data (icu_segmenter_data, via crates.io): Unicode-3.0. Its Thai, Lao, Khmer
   and Burmese word dictionaries are compiled in for wrapping Thai text; notice below, full licence in
   licenses/ICU4X-LICENSE.txt.
 
@@ -80,15 +80,15 @@ Required notices:
     Software without prior written authorization of the copyright holder.
 
 Showcase PDF (built by `cargo xtask demo-pdf`, not committed): fonts are downloaded at build time from
-google/fonts at a pinned commit, verified by SHA-256, all under the SIL Open Font License 1.1 — see the
+google/fonts at a pinned commit, verified by SHA-256, all under the SIL Open Font License 1.1: see the
 "Downloaded at build time" table in ATTRIBUTION.md.
 
 Asset licences are not visible to cargo-deny; keep this file current whenever assets or asset-bundling
 dependencies change (plan/adr/0002, 0006).
 
 Shared PDF backend (pinned in Cargo.lock / licenses/pdf-backend/):
-- hayro 0.7.1 — Apache-2.0 OR MIT, Copyright the hayro authors (licence files kept in licenses/pdf-backend/hayro).
-- hayro-interpret 0.7.0 — Apache-2.0 OR MIT, Copyright the hayro authors (licence files kept in licenses/pdf-backend/hayro-interpret).
+- hayro 0.7.1: Apache-2.0 OR MIT, Copyright the hayro authors (licence files kept in licenses/pdf-backend/hayro).
+- hayro-interpret 0.7.0: Apache-2.0 OR MIT, Copyright the hayro authors (licence files kept in licenses/pdf-backend/hayro-interpret).
 
 Bundled egui font icons
 

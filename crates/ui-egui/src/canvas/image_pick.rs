@@ -334,7 +334,7 @@ pub(crate) fn paint(painter: &egui::Painter, xf: &PageXform, page: usize, info: 
 pub(crate) fn safe_name(s: &str) -> String {
     let cleaned: String = s.chars().map(|c| if c.is_control() || r#"/\:*?"<>|"#.contains(c) { '_' } else { c }).take(80).collect();
     let cleaned = cleaned.trim().trim_matches('.').to_string();
-    if cleaned.is_empty() { "PdfCraft".into() } else { cleaned }
+    if cleaned.is_empty() { "vhnoterPDF".into() } else { cleaned }
 }
 
 /// The per-user folder that holds the file of the last Copy Image in Original Format: `Clipboard`
@@ -374,7 +374,7 @@ fn is_copied_image_name(name: &str) -> bool {
 }
 
 /// Makes `dir` (a real folder, not a link, owned by us and private to us on Unix), removes the
-/// earlier copies PdfCraft wrote there, and writes `bytes` as a new file `name`. Links are never
+/// earlier copies vhnoterPDF wrote there, and writes `bytes` as a new file `name`. Links are never
 /// followed and nothing else in the folder is touched.
 #[cfg(not(target_arch = "wasm32"))]
 fn write_clipboard_file(dir: &std::path::Path, name: &str, bytes: &[u8]) -> Result<std::path::PathBuf, String> {
@@ -470,7 +470,7 @@ impl PdfCraftApp {
         }
     }
 
-    /// Writes `bytes` to PdfCraft's private clipboard folder ([`clipboard_dir`]), replacing the
+    /// Writes `bytes` to vhnoterPDF's private clipboard folder ([`clipboard_dir`]), replacing the
     /// previous copy, and puts that file on the system clipboard.
     #[cfg(not(target_arch = "wasm32"))]
     fn put_file_on_clipboard(&self, name: &str, bytes: &[u8]) -> Result<(), String> {
@@ -500,7 +500,7 @@ mod tests {
     #[test]
     fn file_names_are_safe() {
         assert_eq!(safe_name("a/b:c"), "a_b_c");
-        assert_eq!(safe_name("  ..  "), "PdfCraft");
+        assert_eq!(safe_name("  ..  "), "vhnoterPDF");
         assert_eq!(safe_name("Relazione 2026"), "Relazione 2026");
     }
 
@@ -525,7 +525,7 @@ mod tests {
         std::fs::write(dir.join("Old p1 img1.png"), b"old").unwrap();
         let path = write_clipboard_file(&dir, "New p2 img1.jpg", b"new").unwrap();
         assert_eq!(std::fs::read(&path).unwrap(), b"new");
-        assert!(dir.join("keep.txt").exists(), "files PdfCraft didn't write are kept");
+        assert!(dir.join("keep.txt").exists(), "files vhnoterPDF didn't write are kept");
         assert!(!dir.join("Old p1 img1.png").exists(), "the previous copy is removed");
         assert!(write_clipboard_file(&dir, "../escape p1 img1.png", b"x").is_err());
         #[cfg(unix)]

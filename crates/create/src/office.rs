@@ -1,6 +1,6 @@
 //! Office documents (Word, Excel, PowerPoint, OpenDocument, RTF) to PDF through an installed
 //! LibreOffice, run as a separate process: the "LibreOffice sidecar" of
-//! `docs/file-format-parity.md`. PdfCraft never parses these formats itself.
+//! `docs/file-format-parity.md`. vhnoterPDF never parses these formats itself.
 //!
 //! Detection ([`is_office`]) is pure and works everywhere. Conversion ([`office_to_pdf`]) runs
 //! only on desktop builds: each run gets its own temporary folder and a fresh LibreOffice
@@ -591,7 +591,7 @@ mod tests {
                 eprintln!("skipped: LibreOffice isn't installed");
                 return;
             };
-            let rtf = b"{\\rtf1\\ansi{\\fonttbl\\f0\\fswiss Helvetica;}\\f0\\pard Hello from PdfCraft.\\par}";
+            let rtf = b"{\\rtf1\\ansi{\\fonttbl\\f0\\fswiss Helvetica;}\\f0\\pard Hello from vhnoterPDF.\\par}";
             let pdf = convert_with(&program, "hello.rtf", rtf, super::super::TIMEOUT).unwrap();
             assert!(pdf.starts_with(b"%PDF-"));
         }

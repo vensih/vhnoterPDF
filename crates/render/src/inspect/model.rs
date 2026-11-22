@@ -242,7 +242,7 @@ pub enum LinkTarget {
     },
     /// A local-file remote Go-To action. The caller resolves `file` relative to the source path.
     /// `launch` marks a Launch action that names a PDF file (see `launch_pdf`), opened the same
-    /// way: as a document in PdfCraft, never by the operating system.
+    /// way: as a document in vhnoterPDF, never by the operating system.
     RemoteGoTo {
         launch: bool,
         file: String,
@@ -414,7 +414,7 @@ pub fn group_primaries(all: &[Annotation]) -> Vec<Option<usize>> {
 
 /// Give a group's StrikeOut primary with no text of its own (`/Contents` missing or empty) the
 /// text of its first Caret subordinate that has some. A reader ignores a subordinate's
-/// `/Contents` (ISO 32000-2 §12.5.6.2), but Replace Text groups written by earlier PdfCraft builds
+/// `/Contents` (ISO 32000-2 §12.5.6.2), but Replace Text groups written by earlier vhnoterPDF builds
 /// made the strikeout the primary, with no text, and kept the replacement only on the caret:
 /// without this they would list as a comment with no text. A primary's own text always wins, no
 /// other subordinate lends its text, and no other kind of primary borrows one. Only the listing
@@ -935,7 +935,7 @@ mod review_state_tests {
             ("m3", Some("c"), "Carol", Some("Marked")),
             ("n", None, "Alice", None),
             ("n1", Some("n"), "Bob", Some("Completed")),
-            ("n2", Some("n"), "Bob", Some("None")), // unchained, as PdfCraft wrote it before
+            ("n2", Some("n"), "Bob", Some("None")), // unchained, as vhnoterPDF wrote it before
             // A loop of state replies belongs to nothing.
             ("x", Some("y"), "Eve", Some("Accepted")),
             ("y", Some("x"), "Eve", Some("Accepted")),

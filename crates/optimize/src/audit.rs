@@ -233,7 +233,7 @@ pub fn audit_space(doc: &Document, file_len: u64) -> Vec<SpaceUse> {
     let cat = doc.root().and_then(|r| doc.get(r).as_dict().cloned()).unwrap_or_default();
     let pages = pdfcraft_model::pages(doc);
     // Order matters: the most specific owners first. Resources by kind before anything that
-    // uses them: a content stream's dictionary may point at what it draws (PdfCraft's /PCAdded
+    // uses them: a content stream's dictionary may point at what it draws (vhnoterPDF's /PCAdded
     // records an added image), and form fields and comments draw with fonts and images too.
     for p in &pages {
         a.resources_of(p.dict.get(b"Resources"), 0);

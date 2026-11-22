@@ -1193,7 +1193,7 @@ impl Session {
         let doc = self.get(id).ok_or(EditError::NoDocument)?;
         let cos = doc.editor.as_ref().map(|e| e.cos.clone()).ok_or_else(|| EditError::ReadOnly(doc.read_only_reason.clone().unwrap_or_default()))?;
         validate_script_target(target, target_id, &doc.form)?;
-        // A button PdfCraft generated from an XFA template runs its XFA click script.
+        // A button vhnoterPDF generated from an XFA template runs its XFA click script.
         if let Some(t) = target
             && event_name.is_none_or(|n| n == "Mouse Up")
             && let Some(tpl) = doc.xfa_template.clone()

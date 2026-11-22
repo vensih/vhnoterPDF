@@ -207,7 +207,7 @@ fn manual(test: &str) -> String {
 #[cfg(not(target_arch = "wasm32"))]
 #[test]
 fn a_file_named_with_open_parameters_opens_at_their_destination() {
-    // #3425: a help system starts PdfCraft with `manual.pdf#nameddest=…`. Files named at launch
+    // #3425: a help system starts vhnoterPDF with `manual.pdf#nameddest=…`. Files named at launch
     // open before the first frame.
     let path = manual("launch");
     for (parameters, page) in [("#nameddest=Load Flow", 3), ("#nameddest=intro", 1), ("#intro", 1), ("#page=5", 4), ("#zoom=200", 2)] {

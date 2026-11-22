@@ -374,10 +374,10 @@ impl OcrVerify {
     }
 
     /// The info strip's PAGE cell: the shown page's number in the document over the document's
-    /// page count (`page_count`), the numbering the page list uses; "—" before a reading.
+    /// page count (`page_count`), the numbering the page list uses; "–" before a reading.
     fn page_indicator(&self, page_count: Option<usize>) -> String {
         if self.pages.is_empty() {
-            return "—".into();
+            return "–".into();
         }
         let shown = self.current.saturating_add(1);
         match page_count {
@@ -1172,11 +1172,11 @@ impl OcrVerify {
         let total = self.pages.len();
         self.message = if cancelled {
             crate::i18n::fmt(
-                tl!("Cancelled — {n} words were read on {m} of {t} pages; the rest were not read"),
+                tl!("Cancelled: {n} words were read on {m} of {t} pages; the rest were not read"),
                 &[("n", &found_words.to_string()), ("m", &read.to_string()), ("t", &total.to_string())],
             )
         } else if found_words == 0 {
-            tl!("OCR complete — no text recognized on this page.").to_string()
+            tl!("OCR complete. No text recognized on this page.").to_string()
         } else {
             crate::i18n::fmt(
                 tl!("Read {n} words on {m} of {t} pages"),
@@ -1456,7 +1456,7 @@ fn toolbar(app: &mut PdfCraftApp, ui: &mut egui::Ui, n: &mut Intents) {
     ui.horizontal_wrapped(|ui| {
         craft_ui::ComboBox::from_id_salt("ocr-verify-language").width(150.0).selected_text(language_name(&d.language)).show_ui(ui, |ui| {
             for (code, name) in pdfcraft_engine::ocr::LANGUAGES {
-                ui.selectable_value(&mut d.language, (*code).to_string(), *name);
+                ui.selectable_value(&mut d.language, (*code).to_string(), tl!(*name));
             }
         });
         engine_combo(ui, &mut d.engine, &mut d.strategy);
@@ -1468,7 +1468,7 @@ fn toolbar(app: &mut PdfCraftApp, ui: &mut egui::Ui, n: &mut Intents) {
             (&mut d.denoise, tl!("Denoise"), tl!("A 3×3 median filter against scan speckle")),
             (&mut d.binarize, tl!("Binarize"), tl!("Sauvola binarization: ink to black, paper to white")),
         ] {
-            ui.add(crate::widgets::checkbox(flag, label)).on_hover_text(format!("{label} \u{2014} {why}"));
+            ui.add(crate::widgets::checkbox(flag, label)).on_hover_text(format!("{label}: {why}"));
         }
     });
 
@@ -1533,7 +1533,7 @@ fn toolbar(app: &mut PdfCraftApp, ui: &mut egui::Ui, n: &mut Intents) {
 
 /// A language code's dropdown text: its name and its code ("English (en)").
 fn language_name(code: &str) -> String {
-    pdfcraft_engine::ocr::LANGUAGES.iter().find(|l| l.0 == code).map_or_else(|| code.to_owned(), |l| format!("{} ({})", l.1, l.0))
+    pdfcraft_engine::ocr::LANGUAGES.iter().find(|l| l.0 == code).map_or_else(|| code.to_owned(), |l| format!("{} ({})", tl!(l.1), l.0))
 }
 
 /// The Engine dropdown's text.
@@ -1636,12 +1636,12 @@ fn info_strip(app: &PdfCraftApp, ui: &mut egui::Ui, t: &Tokens) {
     let avg = v.page(v.current).and_then(pdfcraft_engine::ocr::OcrPage::mean_confidence);
     let cells = [
         (tl!("PAGE"), v.page_indicator(v.doc.and_then(|d| app.session.get(d)).map(|d| d.info.pages.len()))),
-        (tl!("AVG CONFIDENCE"), avg.map_or_else(|| "—".into(), |c| format!("{c:.0}%"))),
+        (tl!("AVG CONFIDENCE"), avg.map_or_else(|| "–".into(), |c| format!("{c:.0}%"))),
         (tl!("LOW-CONFIDENCE WORDS"), v.suspect_count().to_string()),
         (tl!("VERIFIED %"), format!("{}%", (v.verified_fraction() * 100.0).round() as i64)),
         (
             tl!("ENGINE · STRATEGY"),
-            if read == 0 { "—".into() } else { format!("{} · {}", engine_label(app.ocr_draft.engine), strategy_label(app.ocr_draft.strategy)) },
+            if read == 0 { "–".into() } else { format!("{} · {}", engine_label(app.ocr_draft.engine), strategy_label(app.ocr_draft.strategy)) },
         ),
     ];
     ui.horizontal(|ui| {
@@ -1926,7 +1926,7 @@ fn text_pane(app: &mut PdfCraftApp, ui: &mut egui::Ui, t: &Tokens, n: &mut Inten
         return;
     }
     if pg.words.is_empty() {
-        ui.label(egui::RichText::new(tl!("OCR complete — no text recognized on this page.")).small().color(t.text_muted));
+        ui.label(egui::RichText::new(tl!("OCR complete. No text recognized on this page.")).small().color(t.text_muted));
         return;
     }
     egui::ScrollArea::vertical().max_height(180.0).show(ui, |ui| {
@@ -1967,7 +1967,7 @@ fn inspector(app: &mut PdfCraftApp, ui: &mut egui::Ui, t: &Tokens, n: &mut Inten
         let w = v.word(key);
         (
             key.1 + 1,
-            w.and_then(|w| w.confidence).map_or_else(|| "—".to_owned(), |c| format!("{c:.0}%")),
+            w.and_then(|w| w.confidence).map_or_else(|| "–".to_owned(), |c| format!("{c:.0}%")),
             w.map(|w| w.source.clone()).unwrap_or_default(),
         )
     };
@@ -2320,7 +2320,7 @@ mod tests {
         let mut v = OcrVerify::default();
         v.finished(vec![OcrPage { already_on_page: 0, page: 0, words: vec![], skipped: None, notes: Vec::new() }], false);
         assert_eq!(v.phase, Phase::ReviewReady);
-        assert_eq!(v.message, "OCR complete — no text recognized on this page.");
+        assert_eq!(v.message, "OCR complete. No text recognized on this page.");
         v.finished(
             vec![OcrPage {
                 already_on_page: 0,
@@ -2331,7 +2331,7 @@ mod tests {
             }],
             true,
         );
-        assert!(v.message.starts_with("Cancelled — 2 words were read on 1 of 1 pages"), "{}", v.message);
+        assert!(v.message.starts_with("Cancelled: 2 words were read on 1 of 1 pages"), "{}", v.message);
         assert_eq!(v.phase, Phase::ReviewReady, "a cancel keeps the pages already read, in review");
         assert_eq!(v.page(0).expect("the cancelled run's page is kept").words.len(), 2);
     }
@@ -3160,7 +3160,7 @@ mod tests {
     #[test]
     fn page_indicator_numbers_pages_in_the_document() {
         let mut v = OcrVerify::default();
-        assert_eq!(v.page_indicator(Some(5)), "—", "no reading yet");
+        assert_eq!(v.page_indicator(Some(5)), "–", "no reading yet");
         v.finished(vec![OcrPage { already_on_page: 0, page: 2, words: vec![word("w", Some(95.0))], skipped: None, notes: Vec::new() }], false);
         assert_eq!(v.page_indicator(Some(5)), "3 / 5");
         assert_eq!(v.page_indicator(None), "3", "no count when the document is gone");

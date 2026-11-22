@@ -11,7 +11,7 @@ const TELUGU: &str = "తెలుగు ఫైల్";
 const HEBREW: &str = "ייפוי כח.pdf";
 const DEVANAGARI: &str = "हिंदी पाठ सम्पादन";
 
-/// The embedded craft-i18n catalogs `code` reads (the shared one and PdfCraft's), one text; empty
+/// The embedded craft-i18n catalogs `code` reads (the shared one and vhnoterPDF's), one text; empty
 /// in a build without them.
 fn catalog(code: &str) -> String {
     pdfcraft_ui_egui::i18n::Lang::from_code(code).map(|l| l.catalog_texts().collect::<Vec<_>>().join("\n")).unwrap_or_default()
@@ -161,7 +161,7 @@ fn system_fallback_fills_missing_scripts() {
     let mut fonts = Fonts::new(TextOptions::default(), defs);
     for id in families() {
         assert!(fonts.has_glyphs(&id, ARABIC), "{id:?} lacks {ARABIC}");
-        assert!(fonts.has_glyphs(&id, "PdfCraft"), "{id:?}");
+        assert!(fonts.has_glyphs(&id, "vhnoterPDF"), "{id:?}");
     }
     assert!(layout_widths(&mut fonts, ARABIC).iter().all(|w| w.is_finite() && *w > 0.0));
 }
@@ -371,11 +371,11 @@ fn non_chinese_ui_keeps_the_installed_face_last() {
 fn ui_fonts_work_without_craft_fonts() {
     let mut fonts = Fonts::new(TextOptions::default(), theme::font_definitions());
     for id in families() {
-        assert!(fonts.has_glyphs(&id, "PdfCraft"), "{id:?}");
+        assert!(fonts.has_glyphs(&id, "vhnoterPDF"), "{id:?}");
         assert_eq!(fonts.has_glyphs(&id, JAPANESE), !pdfcraft_fonts::ui_japanese_fonts().is_empty(), "{id:?}");
     }
     assert!(layout_widths(&mut fonts, JAPANESE).iter().all(|w| w.is_finite() && *w > 0.0));
-    assert!(layout_widths(&mut fonts, "PdfCraft").iter().all(|w| *w > 20.0));
+    assert!(layout_widths(&mut fonts, "vhnoterPDF").iter().all(|w| *w > 20.0));
     let ctx = egui::Context::default();
     theme::install_fonts(&ctx);
 }

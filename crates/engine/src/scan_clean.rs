@@ -10,7 +10,7 @@
 //!
 //! A page is a scan when its pictures cover at least half of it (as for Recognize text); the
 //! pictures each covering at least a tenth of the page are its scan. What is not cleaned is
-//! reported, never skipped silently: pages that are no scan, and scan images in a form PdfCraft
+//! reported, never skipped silently: pages that are no scan, and scan images in a form vhnoterPDF
 //! can't rewrite yet (CMYK, indexed, JPEG 2000, JBIG2, CCITT fax, a stencil mask, a remapping
 //! decode array, a scan drawn inside grouped Form artwork) or whose data is broken.
 //!

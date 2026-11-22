@@ -49,7 +49,7 @@ pub const MAX_PIXELS: u32 = 64_000_000;
 
 #[derive(Debug, thiserror::Error)]
 pub enum OcrError {
-    #[error("the text recognition models are not installed (reinstall PdfCraft, or set PDFCRAFT_MODELS to the folder that holds them)")]
+    #[error("the text recognition models are not installed (reinstall vhnoterPDF, or set PDFCRAFT_MODELS to the folder that holds them)")]
     NoModels,
     #[error("loading {0}: {1}")]
     Load(String, String),
@@ -69,6 +69,19 @@ pub enum OcrError {
     OutputTooLarge(u64),
     #[error("tesseract failed: {0}")]
     Process(String),
+    /// Tesseract runs, but lacks a language pack the job asks for (`sqi`).
+    #[error("the Tesseract language data {0}.traineddata is not installed (add it to the tessdata folder)")]
+    MissingLanguage(String),
+}
+
+/// Every document language the app offers, by code, with its English name. The ocrs models read
+/// only [`LANGUAGES`]; the others need Tesseract and its language pack ([`needs_tesseract`]).
+pub const DOCUMENT_LANGUAGES: &[(&str, &str)] = &[("en", "English"), ("sq", "Albanian"), ("sq+en", "Albanian + English")];
+
+/// Whether `language` has letters the ocrs models cannot read (Albanian `ë`, `ç`), so only
+/// Tesseract may recognise it: reading it with ocrs would silently drop them.
+pub fn needs_tesseract(language: &str) -> bool {
+    !LANGUAGES.iter().any(|(c, _)| c.eq_ignore_ascii_case(language.trim()))
 }
 
 /// An RGBA8 raster, row-major, top-left origin: what the engines read. The fields are private

@@ -27,7 +27,7 @@ fn rows(text: &str) -> Vec<(String, String, String)> {
         .collect()
 }
 
-/// The embedded PdfCraft catalog of `code` (not the shared one), `""` without one.
+/// The embedded vhnoterPDF catalog of `code` (not the shared one), `""` without one.
 fn app_catalog(code: &str) -> &'static str {
     CRAFT_I18N.iter().find(|(c, ..)| *c == code).map_or("", |(_, _, app)| *app)
 }
@@ -117,7 +117,7 @@ fn candidates_walk_from_specific_to_general() {
 }
 
 /// The locale variables, the first detection step: `LC_ALL` over `LC_MESSAGES` over `LANG`, an
-/// unsupported value passed over, and PdfCraft's own mappings (`no`/`nn` → Bokmål, Portuguese →
+/// unsupported value passed over, and vhnoterPDF's own mappings (`no`/`nn` → Bokmål, Portuguese →
 /// Brazilian, Chinese by region), which the crate's matching doesn't all make.
 #[cfg(not(target_arch = "wasm32"))]
 #[test]
@@ -227,7 +227,7 @@ fn preferences_resolve_with_fallback() {
     assert_eq!(normalize_pref("JA"), Some("ja"));
 }
 
-/// PdfCraft offers exactly the languages in `LANGUAGES` when craft-i18n is embedded, and English
+/// vhnoterPDF offers exactly the languages in `LANGUAGES` when craft-i18n is embedded, and English
 /// alone when it isn't: a missing catalog never fails, it shows English.
 #[test]
 fn the_languages_offered_are_the_embedded_ones_of_the_list() {
@@ -241,11 +241,11 @@ fn the_languages_offered_are_the_embedded_ones_of_the_list() {
         return;
     }
     let listed: Vec<&str> = LANGUAGES.iter().map(|l| l.code).collect();
-    assert_eq!(all, listed, "every language PdfCraft lists has its catalog in craft-i18n");
+    assert_eq!(all, listed, "every language vhnoterPDF lists has its catalog in craft-i18n");
     assert!(Lang::from_code("pseudo").is_none(), "the pseudo locale is never a setting");
-    // craft-i18n has catalogs PdfCraft doesn't offer (yet); they are never offered here.
+    // craft-i18n has catalogs vhnoterPDF doesn't offer (yet); they are never offered here.
     for code in CRAFT_I18N.iter().map(|(c, ..)| *c).filter(|c| !listed.contains(c)) {
-        assert_eq!(Lang::from_code(code), None, "{code} is not one of PdfCraft's languages");
+        assert_eq!(Lang::from_code(code), None, "{code} is not one of vhnoterPDF's languages");
     }
 }
 
@@ -457,7 +457,7 @@ fn an_id_row_that_changes_the_label_s_shape_is_not_used() {
     assert!(!same_shape("{name}} öffnen", "Open {name}"), "a second closing brace");
 }
 
-/// Command ids go by PdfCraft's own `@id` rows only: the shared catalog's are keyed by the other
+/// Command ids go by vhnoterPDF's own `@id` rows only: the shared catalog's are keyed by the other
 /// apps' command ids (in Bulgarian its `file.close` row is the id itself). The Undo/Redo phrases
 /// are used only as a pair: a shared "Undo {action}" comes without its "Redo {action}".
 #[test]
@@ -519,7 +519,7 @@ fn plurals_and_placeholders() {
     assert_eq!(trn(JA(), 7, "{n} test item", "{n} test items"), "7 test items");
 }
 
-/// PdfCraft's plural rules before craft-i18n (form index by count), kept to show the crate's
+/// vhnoterPDF's plural rules before craft-i18n (form index by count), kept to show the crate's
 /// CLDR categories pick the same form of the same rows.
 fn pdfcraft_plural_rule(code: &str) -> fn(u64) -> usize {
     fn one_other(n: u64) -> usize {
@@ -611,14 +611,14 @@ fn plural_counts() -> impl Iterator<Item = u64> {
     (0..=200).chain([1000, 1001, 1002, 1003, 1011, 1012, 1021, 1100, 1_000_000, 1_000_001, 2_000_000, 123_456_789, u64::MAX - 13, u64::MAX])
 }
 
-/// craft-i18n picks plural forms by CLDR category, PdfCraft by its own rules: for every language
+/// craft-i18n picks plural forms by CLDR category, vhnoterPDF by its own rules: for every language
 /// the two choose the same form wherever they list as many forms. Where CLDR lists more (Hindi
-/// and Turkish have two where PdfCraft had one), the catalog repeats the form, so the text is the
+/// and Turkish have two where vhnoterPDF had one), the catalog repeats the form, so the text is the
 /// same; the embedded rows are checked for that and any that differ are reported.
 #[test]
 fn plural_forms_follow_the_rules_pdfcraft_had() {
     let mut split = Vec::new();
-    // English has no catalog: its own two forms, `one` for 1 alone, as PdfCraft's rule had it.
+    // English has no catalog: its own two forms, `one` for 1 alone, as vhnoterPDF's rule had it.
     assert_eq!(plural_counts().map(|n| trn(Lang::EN, n, "1", "x")).filter(|s| s == "1").count(), 1);
     for info in LANGUAGES.iter().filter(|l| l.code != "en") {
         let rule = pdfcraft_plural_rule(info.code);
@@ -632,7 +632,7 @@ fn plural_forms_follow_the_rules_pdfcraft_had() {
             (1..=6).map(|f| (f, fixture(f))).find(|(_, l)| trn(*l, 5, "{n} x", "{n} xs").starts_with('F')).expect("a form count loads");
         if forms != pdfcraft_forms {
             split.push((info.code, pdfcraft_forms, forms));
-            assert_eq!(pdfcraft_forms, 1, "{}: PdfCraft listed {pdfcraft_forms} forms, CLDR {forms}", info.code);
+            assert_eq!(pdfcraft_forms, 1, "{}: vhnoterPDF listed {pdfcraft_forms} forms, CLDR {forms}", info.code);
             continue;
         }
         for n in plural_counts() {
@@ -640,7 +640,7 @@ fn plural_forms_follow_the_rules_pdfcraft_had() {
         }
     }
     let codes: Vec<&str> = split.iter().map(|(c, ..)| *c).collect();
-    assert_eq!(codes, ["tr", "hi"], "the languages CLDR gives more forms than PdfCraft had");
+    assert_eq!(codes, ["tr", "hi"], "the languages CLDR gives more forms than vhnoterPDF had");
     if !needs_catalogs() {
         return;
     }
@@ -649,7 +649,7 @@ fn plural_forms_follow_the_rules_pdfcraft_had() {
         for (_, source, forms) in lang.catalog_texts().flat_map(rows).filter(|(c, ..)| c == "@plural") {
             let distinct: std::collections::BTreeSet<&str> = forms.split('|').collect();
             if distinct.len() > 1 {
-                println!("{code}: {source:?} has forms that differ, so PdfCraft's single form is no longer the only text: {forms:?}");
+                println!("{code}: {source:?} has forms that differ, so vhnoterPDF's single form is no longer the only text: {forms:?}");
             }
         }
     }
@@ -658,11 +658,14 @@ fn plural_forms_follow_the_rules_pdfcraft_had() {
 #[test]
 fn language_persists_and_invalid_input_keeps_current_language() {
     let mut app = crate::PdfCraftApp::default();
-    assert_eq!(app.language, AUTO);
+    // English on a fresh launch, even on an Albanian system: the system language is a choice.
+    assert_eq!(app.language, "en");
     assert!(app.set_option("language", "xx").is_err());
-    // Settings written before the system-locale default (no key) follow the system.
+    // Settings without the key open in English too; a saved Auto still follows the system.
     let mut legacy = crate::PdfCraftApp::default();
     legacy.restore("{}");
+    assert_eq!(legacy.language, "en");
+    legacy.restore(r#"{"language":"auto"}"#);
     assert_eq!(legacy.language, AUTO);
     needs_catalogs!();
     app.set_option("language", "JA").unwrap();
@@ -842,7 +845,7 @@ fn turkish_is_registered_and_persists() {
     assert_eq!(restored.language, "tr");
 }
 
-/// The code joins some labels with a space at either end, so these catalogs (PdfCraft's rows in
+/// The code joins some labels with a space at either end, so these catalogs (vhnoterPDF's rows in
 /// craft-i18n) keep exactly the source's, and write … rather than three dots.
 #[test]
 fn catalog_rows_keep_the_source_spacing_and_ellipsis() {
@@ -1332,7 +1335,7 @@ fn arabic_catalog_stays_logical() {
     needs_catalogs!();
     let ar = arabic();
     assert_eq!(tr(ar, "Save as…"), "حفظ باسم…");
-    assert_eq!(tr(ar, "About PdfCraft"), "حول PdfCraft");
+    assert_eq!(tr(ar, "About vhnoterPDF"), "حول vhnoterPDF");
     assert_eq!(tr(ar, "Name:"), "الاسم:");
     assert_eq!(tr(ar, "Issued by: "), "صادرة عن: ");
     // Placeholders survive in their logical positions.
@@ -1431,8 +1434,8 @@ fn arabic_labels_have_glyphs() {
 }
 
 /// The language list is well-formed. Problems in the embedded catalogs are not failed: craft-i18n
-/// checks its rows, a row PdfCraft can't use shows in English, and `translation_gaps_report`
-/// lists the `@id` rows PdfCraft doesn't use ([`unused_id_rows`]).
+/// checks its rows, a row vhnoterPDF can't use shows in English, and `translation_gaps_report`
+/// lists the `@id` rows vhnoterPDF doesn't use ([`unused_id_rows`]).
 #[test]
 fn bundled_catalogs_are_consistent() {
     let mut codes = std::collections::HashSet::new();
@@ -1450,8 +1453,8 @@ fn bundled_catalogs_are_consistent() {
     }
 }
 
-/// The `@id` rows of the embedded PdfCraft catalogs that are never shown, for the translation gaps
-/// report: a row for a command PdfCraft doesn't have, and one that doesn't keep its label's
+/// The `@id` rows of the embedded vhnoterPDF catalogs that are never shown, for the translation gaps
+/// report: a row for a command vhnoterPDF doesn't have, and one that doesn't keep its label's
 /// placeholders or trailing `…` ([`same_shape`]), whose label's translation shows instead. One
 /// line each under a heading; empty when there are none.
 fn unused_id_rows() -> String {
@@ -1462,7 +1465,7 @@ fn unused_id_rows() -> String {
                 continue;
             }
             let Some(command) = pdfcraft_engine::commands::command(&id) else {
-                out.push(format!("{}: @id {id:?} names a command PdfCraft doesn't have", lang.code()));
+                out.push(format!("{}: @id {id:?} names a command vhnoterPDF doesn't have", lang.code()));
                 continue;
             };
             if !same_shape(&translation, command.label) {
@@ -1477,8 +1480,8 @@ fn unused_id_rows() -> String {
     format!("{} @id rows not used (their label's translation shows):\n{}", out.len(), out.iter().map(|row| format!("  {row}\n")).collect::<String>())
 }
 
-/// The (context, English source) keys PdfCraft looks up: the UI source's literals, the commands,
-/// All tools, the engine's own wordings, and every key of every embedded PdfCraft catalog (which
+/// The (context, English source) keys vhnoterPDF looks up: the UI source's literals, the commands,
+/// All tools, the engine's own wordings, and every key of every embedded vhnoterPDF catalog (which
 /// covers contextual, plural and dynamically looked-up strings the scan can't see).
 fn english_keys() -> std::collections::BTreeSet<(String, String)> {
     use std::collections::BTreeSet;
@@ -1533,7 +1536,7 @@ fn english_keys() -> std::collections::BTreeSet<(String, String)> {
 /// catalogs it says so.
 ///
 /// The English strings are the UI source's literals, the commands, All tools, the engine's
-/// own wordings, and every key of every embedded PdfCraft catalog (which covers contextual,
+/// own wordings, and every key of every embedded vhnoterPDF catalog (which covers contextual,
 /// plural and dynamically looked-up strings the scan can't see).
 #[test]
 fn translation_gaps_report() {
@@ -1556,6 +1559,15 @@ fn translation_gaps_report() {
             })
             .collect();
         let kept = keys.iter().filter(|(context, source)| context.is_empty() && found("", source).as_ref() == Some(source)).count();
+        // `PDFCRAFT_I18N_GAPS=<dir>` also writes every missing key, one `context<TAB>English` row
+        // per line, to `<dir>/<code>.tsv`: the worklist for a translator.
+        if let Some(dir) = std::env::var_os("PDFCRAFT_I18N_GAPS") {
+            let rows: String = missing
+                .iter()
+                .map(|(context, source)| format!("{context}\t{}\n", source.replace('\\', "\\\\").replace('\n', "\\n").replace('\t', "\\t")))
+                .collect();
+            let _ = std::fs::write(std::path::Path::new(&dir).join(format!("{}.tsv", lang.code())), rows);
+        }
         let mut line = format!("  {:<8} {:>5} missing, {kept:>4} kept in English", lang.code(), missing.len());
         for (i, (context, source)) in missing.iter().take(SHOWN).enumerate() {
             let mut shown: String = source.chars().take(48).collect();

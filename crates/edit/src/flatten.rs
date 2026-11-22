@@ -28,7 +28,7 @@ const NO_VIEW: i64 = 32;
 /// its comment. A `/RT /Group` member is part of its group's look and is flattened as any other
 /// annotation. `/IRT` is a markup annotation's entry: a widget, link or pop-up with one is no
 /// reply, and is flattened (or kept) as it would be without. Keep in step with hayro-interpret's
-/// PdfCraft patch (81).
+/// vhnoterPDF patch (81).
 fn is_reply(doc: &Document, d: &Dict) -> bool {
     !matches!(d.name(b"Subtype"), Some(b"Widget" | b"Link" | b"Popup"))
         && d.get(b"IRT").is_some_and(|o| doc.resolve(o).as_dict().is_some())
@@ -320,7 +320,7 @@ pub fn flatten_fill_sign(doc: &mut Document, pages: &[usize]) -> Result<usize, E
 }
 
 /// The first annotation flattening would turn into page content with `?` in it, before anything
-/// changes: one whose appearance PdfCraft drew with `?` for characters its fonts can't draw
+/// changes: one whose appearance vhnoterPDF drew with `?` for characters its fonts can't draw
 /// (`pdfcraft_fonts::UNDRAWN_MARK`: a form field's value, a comment's text), or a comment without
 /// an appearance whose text the standard fonts can't draw. Its page (0-based), whether it is a
 /// form field, and the character.

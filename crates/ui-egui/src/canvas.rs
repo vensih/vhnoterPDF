@@ -1665,7 +1665,7 @@ fn paint_page_surface(ui: &mut egui::Ui, view: &mut DocView, frame: &mut PageFra
             None => {
                 let now = ui.input(|inp| inp.time);
                 let since = *view.waiting_since.entry(i).or_insert(now);
-                let msg = if now - since > 6.0 { "Still rendering — this page is unusually complex…" } else { "Rendering…" };
+                let msg = if now - since > 6.0 { "Still rendering. This page is unusually complex…" } else { "Rendering…" };
                 painter.text(r.center(), Align2::CENTER_CENTER, tl!(msg), theme::regular(12.0), t.text_faint);
             }
         }
