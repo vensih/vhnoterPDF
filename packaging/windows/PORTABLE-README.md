@@ -1,7 +1,8 @@
 # vhnoterPDF
 
-vhnoterPDF is a PDF viewer and editor. It reads, comments on, fills in, signs, organizes,
-combines, splits, protects and exports PDFs. Documents are processed on this computer.
+vhnoterPDF is a PDF viewer and editor, part of the vhnoter suite of internal tools (vhnoter.al).
+It reads, comments on, fills in, signs, organizes, combines, splits, protects and exports PDFs.
+Documents are processed on this computer.
 
 ## Portable copy
 
@@ -11,8 +12,8 @@ profile.
 
 ## Interface language
 
-The interface starts in English. To use Albanian, choose **Menu > Edit > Preferences… >
-Interface language > Shqip**. The choice is kept between launches.
+The interface starts in English and is also available in Italiano, Deutsch, Français and Shqip:
+choose **Menu > Edit > Preferences… > Interface language**. The choice is kept between launches.
 
 ## Albanian text recognition (OCR)
 

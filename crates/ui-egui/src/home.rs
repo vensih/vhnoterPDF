@@ -82,6 +82,18 @@ pub fn show(app: &mut PdfCraftApp, ui: &mut egui::Ui) {
                     .color(t.text_muted)
                     .font(theme::regular(14.0)),
             );
+            ui.add_space(6.0);
+            // vhnoterPDF's first-run tip: Albanian scans need Tesseract, which the OCR dialog installs.
+            ui.add(
+                egui::Label::new(
+                    egui::RichText::new(tl!(
+                        "Tip: Scan & OCR reads Albanian documents. If Tesseract isn't installed yet, the Recognize Text dialog installs it for you."
+                    ))
+                    .color(t.text_muted)
+                    .font(theme::regular(13.0)),
+                )
+                .wrap(),
+            );
             ui.add_space(22.0);
 
             egui::Frame::NONE

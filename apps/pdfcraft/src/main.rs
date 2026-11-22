@@ -95,7 +95,7 @@ const LEGACY_STORAGE_KEY: &str = "printcraft";
 /// it is `PdfCraftData` beside the executable (#157). XDG desktops use the configuration base;
 /// other platforms retain eframe's vhnoterPDF folder. Logs and recovery stay in the data folder.
 fn settings_dir() -> Option<std::path::PathBuf> {
-    let legacy = eframe::storage_dir("PdfCraft");
+    let legacy = eframe::storage_dir(pdfcraft_ui_egui::DATA_FOLDER);
     match settings::directory(
         cfg!(all(unix, not(target_os = "macos"))),
         pdfcraft_ui_egui::portable::data_dir(),
@@ -138,6 +138,48 @@ fn migrate_legacy_folders() {
             Err(e) => log::warn!("moving {} to {}: {e}", old.display(), new.display()),
         }
     }
+    // vhnoterPDF keeps its data in folders of its own name. The PdfCraft ones are copied once, not
+    // moved, so a PdfCraft installed beside it keeps its settings.
+    let mut copies = vec![(eframe::storage_dir(pdfcraft_ui_egui::LEGACY_DATA_FOLDER), eframe::storage_dir(pdfcraft_ui_egui::DATA_FOLDER))];
+    if cfg!(windows) {
+        let local = std::env::var_os("LOCALAPPDATA").filter(|v| !v.is_empty()).map(std::path::PathBuf::from);
+        copies.push((local.as_ref().map(|d| d.join(pdfcraft_ui_egui::LEGACY_DATA_FOLDER)), local.map(|d| d.join(pdfcraft_ui_egui::DATA_FOLDER))));
+    }
+    for (old, new) in copies {
+        let (Some(old), Some(new)) = (old, new) else { continue };
+        if !old.is_dir() || new.exists() {
+            continue;
+        }
+        match copy_folder(&old, &new) {
+            Ok(()) => log::info!("copied {} to {}", old.display(), new.display()),
+            Err(e) => log::warn!("copying {} to {}: {e}", old.display(), new.display()),
+        }
+    }
+}
+
+/// Copy `from` into a new folder `to`, files and subfolders; links are skipped. A partial copy is
+/// removed again, so the next start tries afresh.
+fn copy_folder(from: &std::path::Path, to: &std::path::Path) -> std::io::Result<()> {
+    fn copy(from: &std::path::Path, to: &std::path::Path, depth: usize) -> std::io::Result<()> {
+        if depth > 16 {
+            return Ok(());
+        }
+        std::fs::create_dir_all(to)?;
+        for entry in std::fs::read_dir(from)? {
+            let entry = entry?;
+            let kind = entry.file_type()?;
+            let target = to.join(entry.file_name());
+            if kind.is_dir() {
+                copy(&entry.path(), &target, depth + 1)?;
+            } else if kind.is_file() {
+                std::fs::copy(entry.path(), &target)?;
+            }
+        }
+        Ok(())
+    }
+    copy(from, to, 0).inspect_err(|_| {
+        let _ = std::fs::remove_dir_all(to);
+    })
 }
 
 /// Desktop launchers (GNOME Files, KDE Dolphin…) only recognise an app as the default handler for a
@@ -253,9 +295,10 @@ fn main() -> eframe::Result {
     // The log file stays in the data folder; opened after the arguments (so `--version` leaves
     // no file behind) and after the PrintCraft migration (which a fresh folder would block).
     // Records logged until now are written to it first.
-    if let (Some(logger), Some(dir)) =
-        (logger, pdfcraft_ui_egui::portable::data_dir().map(std::path::Path::to_path_buf).or_else(|| eframe::storage_dir("PdfCraft")))
-    {
+    if let (Some(logger), Some(dir)) = (
+        logger,
+        pdfcraft_ui_egui::portable::data_dir().map(std::path::Path::to_path_buf).or_else(|| eframe::storage_dir(pdfcraft_ui_egui::DATA_FOLDER)),
+    ) {
         match logger.attach_dir(&dir.join("logs")) {
             Ok(path) => log::info!("vhnoterPDF {}, log file {}", pdfcraft_engine::build_info::version(), path.display()),
             // Standard error only by now (`attach_dir` gave up on the file); unlike `eprintln!`, never panics.
@@ -338,6 +381,14 @@ fn renderer_choice(value: Option<&str>) -> RendererChoice {
 
 /// Whether a failed run should be retried with OpenGL: only when wgpu was tried first by choice of
 /// nobody, and it failed before the app was created (so while starting the renderer, not later).
+/// Whether the saved preferences hold a panel layout (the current `side_panels` or the old
+/// `docking` one), so the user's own Tools side wins over vhnoterPDF's starting one.
+fn saved_a_panel_layout(saved: Option<&str>) -> bool {
+    saved
+        .and_then(|json| serde_json::from_str::<serde_json::Value>(json).ok())
+        .is_some_and(|v| v.get("side_panels").is_some() || v.get("docking").is_some())
+}
+
 fn retry_with_gl(choice: RendererChoice, app_started: bool) -> bool {
     choice == RendererChoice::Auto && !app_started
 }
@@ -468,8 +519,13 @@ fn app_creator<'a>(
         app.enable_desktop_theme();
         // The system's reopen-windows choice (macOS) starts the preference; a saved choice replaces it.
         app.reopen_last_session = reopen::system_default();
-        if let Some(json) = cc.storage.and_then(|s| s.get_string("pdfcraft").or_else(|| s.get_string(LEGACY_STORAGE_KEY))) {
-            app.restore(&json);
+        let saved = cc.storage.and_then(|s| s.get_string("pdfcraft").or_else(|| s.get_string(LEGACY_STORAGE_KEY)));
+        if let Some(json) = &saved {
+            app.restore(json);
+        }
+        // vhnoterPDF starts with the Tools pane on the right; a saved layout keeps its own side.
+        if !saved_a_panel_layout(saved.as_deref()) {
+            app.side_panels.tools_side = pdfcraft_ui_egui::side_panels::ToolsSide::Right;
         }
         app.window_state = pdfcraft_ui_egui::window_state::WindowState::started_with(cc.storage);
         app.integrated_titlebar = integrated;

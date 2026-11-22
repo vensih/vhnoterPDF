@@ -386,7 +386,18 @@ pub fn lang_from_tag(tag: &str) -> Option<Lang> {
     cands.iter().find_map(|c| Lang::from_code(c))
 }
 
-/// The system language (cached). English when it can't be determined.
+/// The interface languages vhnoterPDF offers people: what Preferences lists and what Auto can
+/// pick from the system. The other catalogs stay embedded (automation and the tests can still
+/// select them through the `language` option).
+pub const OFFERED: &[&str] = &["en", "it", "de", "fr", "sq"];
+
+/// Whether `language` is one of [`OFFERED`].
+pub fn is_offered(language: Lang) -> bool {
+    OFFERED.contains(&language.code())
+}
+
+/// The system language (cached), when it is one of [`OFFERED`]; English otherwise, or when it
+/// can't be determined.
 pub fn system_lang() -> Lang {
     // Tests drive the UI by its English labels whatever the developer's locale is. This covers
     // the unit tests; the integration tests link the library as it ships, where `cfg!(test)` is
@@ -395,7 +406,7 @@ pub fn system_lang() -> Lang {
         return Lang::EN;
     }
     static SYSTEM: OnceLock<Lang> = OnceLock::new();
-    *SYSTEM.get_or_init(detect_system_lang)
+    *SYSTEM.get_or_init(|| Some(detect_system_lang()).filter(|l| is_offered(*l)).unwrap_or(Lang::EN))
 }
 
 #[cfg(not(target_arch = "wasm32"))]

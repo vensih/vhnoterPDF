@@ -110,6 +110,36 @@ fn path_from_arg_leaves_plain_paths_and_other_schemes_alone() {
     assert_eq!(super::path_from_arg("file://".to_string()), "file://");
 }
 
+/// The PdfCraft data folder is copied into vhnoterPDF's whole (subfolders included), and the
+/// original stays for a PdfCraft installed beside it.
+#[test]
+fn the_old_data_folder_is_copied_not_moved() {
+    let root = std::env::temp_dir().join(format!("vhnoterpdf-copy-{}", std::process::id()));
+    let _ = std::fs::remove_dir_all(&root);
+    let old = root.join("PdfCraft");
+    std::fs::create_dir_all(old.join("Recovery")).unwrap();
+    std::fs::write(old.join("app.ron"), b"settings").unwrap();
+    std::fs::write(old.join("Recovery").join("a.pdf"), b"%PDF").unwrap();
+    let new = root.join("vhnoterPDF");
+    super::copy_folder(&old, &new).unwrap();
+    assert_eq!(std::fs::read(new.join("app.ron")).unwrap(), b"settings");
+    assert_eq!(std::fs::read(new.join("Recovery").join("a.pdf")).unwrap(), b"%PDF");
+    assert!(old.join("app.ron").is_file(), "the original stays");
+    let _ = std::fs::remove_dir_all(&root);
+}
+
+/// vhnoterPDF puts the Tools pane on the right only when no panel layout was saved: a fresh
+/// install, or settings from before panels were saved. A saved layout, new or old, keeps its side.
+#[test]
+fn only_a_missing_panel_layout_gets_the_right_hand_tools_pane() {
+    use super::saved_a_panel_layout;
+    assert!(!saved_a_panel_layout(None), "first start");
+    assert!(!saved_a_panel_layout(Some(r#"{"language":"en"}"#)), "settings without a layout");
+    assert!(!saved_a_panel_layout(Some("not json")), "unreadable settings");
+    assert!(saved_a_panel_layout(Some(r#"{"side_panels":{"version":1,"tools_side":"left"}}"#)));
+    assert!(saved_a_panel_layout(Some(r#"{"docking":{"layout":{}}}"#)), "the old layout");
+}
+
 #[test]
 fn opengl_is_the_fallback_unless_a_renderer_was_chosen() {
     use super::{RendererChoice, native_options, renderer_choice, retry_with_gl};

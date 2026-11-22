@@ -8,6 +8,19 @@
   "unattributed_commits": 0,
   "contributors": [
     {
+      "login": "vensih",
+      "people_entry": true,
+      "github_name": null,
+      "prs": 5,
+      "commits": 9,
+      "lines_added": 1837,
+      "lines_deleted": 1183,
+      "binary_added": 12,
+      "binary_deleted": 0,
+      "first_commit": "2026-11-21T22:59:52Z",
+      "last_commit": "2026-11-22T00:49:19Z"
+    },
+    {
       "login": "echelon",
       "people_entry": true,
       "github_name": null,

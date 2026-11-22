@@ -11,6 +11,12 @@
 
 /// vhnoterPDF as craft-update knows it, with its 128 px icon and accent colour: the update
 /// prompt shows both, and an AppImage's menu entry gets the icon.
+/// The per-user data folder's name on Windows (`%LOCALAPPDATA%\vhnoterPDF`, `%APPDATA%\vhnoterPDF`):
+/// recovery, the OCR dictionary, new digital IDs, the clipboard cache and the settings.
+pub const DATA_FOLDER: &str = "vhnoterPDF";
+/// The name those folders had before vhnoterPDF, copied once at the first start (`apps/pdfcraft`).
+pub const LEGACY_DATA_FOLDER: &str = "PdfCraft";
+
 #[cfg(not(target_arch = "wasm32"))]
 pub const UPDATE_APP: craft_update::app::App = craft_update::app::App {
     icon_png: Some(include_bytes!("../../../assets/app-icon/hicolor/128x128/apps/ai.storyteller.pdfcraft.png")),
@@ -23,7 +29,7 @@ pub const UPDATE_APP: craft_update::app::App = craft_update::app::App {
     name: "vhnoterPDF",
     // Installs made before the rename still register under the upstream names.
     former_names: &["PdfCraft", "PrintCraft"],
-    developer: "vhnoterPDF",
+    developer: "vhnoter",
     // Only the fork's own releases: a vhnoterPDF install must never take an upstream build.
     repo: "vensih/vhnoterPDF",
     ..craft_update::suite::PDFCRAFT

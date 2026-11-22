@@ -85,11 +85,22 @@ fn locales(dir: &std::path::Path) -> Result<Vec<Locale>, String> {
     }
     // Before read_dir, so a checkout that appears later reruns the script.
     println!("cargo::rerun-if-changed={}", dir.display());
+    // `CRAFT_I18N_LOCALES` (comma-separated codes) embeds only those catalogs: release packages
+    // carry just the interface languages vhnoterPDF offers. Unset, every catalog is embedded (the
+    // tests switch to many languages).
+    println!("cargo::rerun-if-env-changed=CRAFT_I18N_LOCALES");
+    let only: Option<Vec<String>> = std::env::var("CRAFT_I18N_LOCALES")
+        .ok()
+        .filter(|v| !v.trim().is_empty())
+        .map(|v| v.split(',').map(|c| c.trim().to_ascii_lowercase()).collect());
     let list = std::fs::read_dir(dir).map_err(|e| format!("{} is not a craft-i18n checkout ({e})", dir.display()))?;
     let mut out = Vec::new();
     for entry in list.flatten() {
         let path = entry.path();
         let Some(code) = path.file_name().and_then(|n| n.to_str()).map(str::to_string) else { continue };
+        if only.as_ref().is_some_and(|only| !only.contains(&code.to_ascii_lowercase())) {
+            continue;
+        }
         let app = path.join(APP_CATALOG);
         if !app.is_file() {
             continue;

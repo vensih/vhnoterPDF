@@ -59,6 +59,28 @@ fn tools_panel_side_preference_moves_and_persists() {
     assert!(!h.state().side_panels.tools_on_right());
 }
 
+/// Preferences lists only the interface languages vhnoterPDF offers (Auto, English, Italiano,
+/// Deutsch, Français, Shqip), although the other catalogs are built in.
+#[test]
+fn preferences_offer_only_the_five_interface_languages() {
+    use pdfcraft_ui_egui::Dialog;
+
+    let mut h = harness(|app| app.dialog = Some(Dialog::Preferences));
+    h.run_steps(3);
+    if !pdfcraft_ui_egui::i18n::Lang::all().any(|l| l.code() == "sq") {
+        eprintln!("skipped: built without craft-i18n catalogs");
+        return;
+    }
+    h.get_by_label_contains("Interface language").click();
+    h.run_steps(3);
+    for offered in ["English", "Italiano", "Deutsch", "Français", "Shqip"] {
+        assert!(h.query_all_by_label(offered).next().is_some(), "{offered} is offered");
+    }
+    for other in ["日本語", "Español", "Čeština", "Русский", "العربية"] {
+        assert!(h.query_all_by_label(other).next().is_none(), "{other} is not offered");
+    }
+}
+
 /// Every piece of text painted on the last frame: its whole text, whether it was cut with "…",
 /// and where it was drawn.
 fn painted_text(h: &Harness<'static, PdfCraftApp>) -> Vec<(String, bool, egui::Rect)> {

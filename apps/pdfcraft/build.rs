@@ -36,6 +36,7 @@ fn main() {
         .set_icon_with_id("../../assets/app-icon/pdfcraft-document.ico", "2")
         .set_manifest(windows_manifest::WINDOWS_MANIFEST)
         .set("ProductName", "vhnoterPDF")
+        .set("CompanyName", "vhnoter")
         .set("FileDescription", "vhnoterPDF PDF workbench")
         .set("LegalCopyright", "Copyright (c) the vhnoterPDF contributors. MIT OR Apache-2.0.")
         .set("OriginalFilename", "vhnoterpdf.exe")

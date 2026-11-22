@@ -132,6 +132,6 @@ modules:
       # The interface translations at the commit in craft-i18n.rev (a test keeps the two equal).
       - type: git
         url: https://github.com/vensih/craft-i18n
-        commit: 2b61501bf1a4e781c591a949876ef5f382918ded
+        commit: 8380d3afe6765f7464aea300122524050fadb5fc
         dest: craft-i18n
       - cargo-sources.json

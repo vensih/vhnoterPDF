@@ -17,6 +17,11 @@
 [people.YouseifUS]
 sync_github_name = true
 
+# vhnoterPDF's maintainer, who asked to be credited (2026-11-22).
+[people.vensih]
+display_name = "vhnoter"
+sync_github_name = false
+
 [people.brian-moon]
 real_name = "Il Min Brian Moon"
 display_name = "Il Min Brian Moon"

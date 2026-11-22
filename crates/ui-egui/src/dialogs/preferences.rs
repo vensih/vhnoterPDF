@@ -566,6 +566,7 @@ fn card_general(ui: &mut egui::Ui, app: &mut PdfCraftApp, t: &Tokens, ctx: &mut 
                 .map_or_else(|| tl!("Auto").to_owned(), |language| language.picker_name(drawable).to_owned());
             let picker = crate::i18n::Lang::for_picker_by(|language| language.picker_name(drawable))
                 .into_iter()
+                .filter(|language| crate::i18n::is_offered(*language))
                 .map(|language| (language, language.picker_name(drawable)))
                 .collect::<Vec<_>>();
             (selected, picker)

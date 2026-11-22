@@ -3,8 +3,8 @@
   <?ifndef HasCraftFontLicences ?>
   <?define HasCraftFontLicences=0 ?>
   <?endif?>
-  <Package Name="vhnoterPDF" Manufacturer="Learning Machines LLC" Version="$(var.Version)" UpgradeCode="EA00C367-7270-4C50-9D8B-A7A5C88AD27F" Scope="perUserOrMachine" Compressed="yes" Language="1033">
-    <SummaryInformation Description="vhnoterPDF PDF workbench" Manufacturer="Learning Machines LLC" />
+  <Package Name="vhnoterPDF" Manufacturer="vhnoter" Version="$(var.Version)" UpgradeCode="EA00C367-7270-4C50-9D8B-A7A5C88AD27F" Scope="perUserOrMachine" Compressed="yes" Language="1033">
+    <SummaryInformation Description="vhnoterPDF PDF workbench" Manufacturer="vhnoter" />
     <?include $(sys.SOURCEFILEDIR)install-policy.wxi?>
     <!-- HKLM registrations must never point into a per-user installation (#305). Allow removal
          of an existing installation even if an older MSI let it install per-user. -->
@@ -66,8 +66,8 @@
     <UIRef Id="PdfcraftInstallerUI" />
 
     <StandardDirectory Id="ProgramFiles6432Folder">
-      <Directory Id="CraftSuiteFolder" Name="ArtCraft">
-        <Directory Id="INSTALLFOLDER" Name="PdfCraft">
+      <Directory Id="CraftSuiteFolder" Name="vhnoter">
+        <Directory Id="INSTALLFOLDER" Name="vhnoterPDF">
         <Directory Id="ModelsFolder" Name="models" />
       </Directory>
       </Directory>
@@ -204,10 +204,6 @@
         <RegistryValue Root="HKMU" Key="Software\Classes\SystemFileAssociations\.jpx\shell\PdfCraft.CreatePdf" Value="Create PDF with vhnoterPDF…" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Classes\SystemFileAssociations\.jpx\shell\PdfCraft.CreatePdf" Name="MultiSelectModel" Value="Single" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Classes\SystemFileAssociations\.jpx\shell\PdfCraft.CreatePdf\command" Value="&quot;[#PdfcraftExe]&quot; --create-images &quot;%1&quot;" Type="string" />
-      </Component>
-
-      <Component Id="PdfcraftCli">
-        <File Id="PdfcraftCliExe" Source="$(var.BinDir)\pdfcraft-cli.exe" KeyPath="yes" />
       </Component>
       <!-- The embedded PDF icon's ISC notice and project licences travel with the binaries. -->
       <Component Id="PdfcraftDocumentIconLicense">

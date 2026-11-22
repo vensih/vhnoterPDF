@@ -41,7 +41,12 @@ fn main() {
 fn craft_fonts(dir: &std::path::Path, required: bool) -> Result<String, String> {
     let wasm = std::env::var("CARGO_CFG_TARGET_ARCH").is_ok_and(|a| a == "wasm32");
     let mut out = manifest(dir, &dir.join("fonts/manifest.txt"), wasm, false)?;
-    if !wasm {
+    // `CRAFT_FONTS_NO_CHINESE=1` leaves out the Simplified Chinese UI face (LXGW WenKai Lite, up
+    // to 16 MiB): vhnoterPDF has no Chinese interface, and Chinese text in documents still shows
+    // through the installed system fonts. It also lifts the requirement for that manifest.
+    println!("cargo::rerun-if-env-changed=CRAFT_FONTS_NO_CHINESE");
+    let no_chinese = std::env::var("CRAFT_FONTS_NO_CHINESE").is_ok_and(|v| v.trim() == "1");
+    if !wasm && !no_chinese {
         let chinese = dir.join("fonts/simplified-chinese-manifest.txt");
         println!("cargo::rerun-if-changed={}", chinese.display());
         match chinese.try_exists() {

@@ -1,58 +1,38 @@
 <p align="center">
-  <a href="https://getartcraft.com/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/brand/artcraft-logo-white.svg">
-      <img alt="ArtCraft" src="docs/brand/artcraft-logo.svg" width="200">
-    </picture>
-  </a>
+  <img src="assets/app-icon/hicolor/256x256/apps/ai.storyteller.pdfcraft.png" width="128" height="128" alt="vhnoterPDF icon: a gold folded-ribbon V">
 </p>
 
+<h1 align="center">vhnoterPDF</h1>
 
 <p align="center">
-  <img src="assets/app-icon/hicolor/256x256/apps/ai.storyteller.pdfcraft.png" width="128" height="128" alt="PdfCraft icon: a gold folded-ribbon V">
-</p>
-
-<h1 align="center">PdfCraft</h1>
-
-<p align="center">
-  <b>The PDF workbench; an open-source, modern PDF reader and editor, built in pure Rust.</b><br>
-  Read, organize, combine, split and secure PDFs in a fast, native app, written in Rust from the ground up.<br>
-  macOS · Windows · Linux · FreeBSD · the web
+  <b>An open-source PDF reader and editor for Windows, with an Albanian interface and Albanian OCR, built in pure Rust.</b><br>
+  Read, organize, combine, split, secure and scan PDFs in a fast, native app.<br>
+  Part of <b>vhnoter</b>, a suite of tools for our own internal work (vhnoter.al). A fork of <a href="https://github.com/storytold/pdfcraft">PdfCraft</a>.
 </p>
 
 <p align="center">
   <img alt="License: MIT OR Apache-2.0" src="https://img.shields.io/badge/license-MIT%20OR%20Apache--2.0-b70228?style=flat-square">
   <img alt="Written in Rust" src="https://img.shields.io/badge/written%20in-Rust-8a011e?style=flat-square">
-  <img alt="Platforms: macOS, Windows, Linux, FreeBSD, web" src="https://img.shields.io/badge/runs%20on-macOS%20%C2%B7%20Windows%20%C2%B7%20Linux%20%C2%B7%20FreeBSD%20%C2%B7%20web-b70228?style=flat-square">
+  <img alt="Platform: Windows" src="https://img.shields.io/badge/runs%20on-Windows-b70228?style=flat-square">
   <img alt="No account, no telemetry" src="https://img.shields.io/badge/no%20account-no%20telemetry-8a011e?style=flat-square">
-  <br>
-  <a href="https://sonarcloud.io/project/overview?id=storytold_pdfcraft"><img alt="Scanned by SonarCloud" src="https://img.shields.io/badge/Scanned_by-SonarCloud-4b9fd5?style=flat-square&logo=sonarqubecloud&logoColor=white"></a>
-  <a href="https://coderabbit.ai"><img alt="Reviewed by CodeRabbit" src="https://img.shields.io/coderabbit/prs/github/storytold/pdfcraft?style=flat-square&label=Reviewed%20by%20CodeRabbit&logo=coderabbit"></a>
 </p>
 
 <p align="center">
-  <a href="https://discord.gg/artcraft"><img alt="Join the ArtCraft community on Discord" src="https://img.shields.io/badge/Join%20us%20on%20Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" height="40"></a>
-</p>
-
-<p align="center">
-  <a href="https://getartcraft.com/apps/pdfcraft"><b>PdfCraft on getartcraft.com</b></a> ·
-  <a href="https://getartcraft.com/">ArtCraft</a> ·
-  <a href="https://getartcraft.com/apps">All Crafting Apps</a>
+  <a href="https://github.com/vensih/vhnoterPDF"><b>Source code</b></a> ·
+  <a href="https://github.com/vensih/vhnoterPDF/releases/latest">Latest release</a> ·
+  <a href="docs/fork-maintenance.md">Fork maintenance notes</a>
 </p>
 
 <br>
 
 <p align="center">
-  <img src="docs/images/pdfcraft-viewer.png" alt="PdfCraft with the PdfCraft Showcase cover page open, the All tools panel on the left and 20 threaded comments on the right" width="100%">
+  <img src="docs/images/pdfcraft-viewer.png" alt="The app with the Showcase cover page open, the All tools panel on the left and 20 threaded comments on the right" width="100%">
   <br>
-  <sub>The PdfCraft Showcase, a 13-page specimen PDF, open with the All tools panel and threaded comments.</sub>
+  <sub>The Showcase, a 13-page specimen PDF, open with the All tools panel and threaded comments. Screenshots come from upstream PdfCraft and may still show its name.</sub>
 </p>
 
-> [!NOTE]
-> **ArtCraft is a community of artists from all walks of life.** Digital, generative, music,
-> games &mdash; if you make things, you're one of us. **[Come say hi on Discord](https://discord.gg/artcraft).**
-
 <p align="center">
+  <a href="#what-vhnoterpdf-changes">What vhnoterPDF changes</a> ·
   <a href="#highlights">Highlights</a> ·
   <a href="#read-anything-beautifully">Read</a> ·
   <a href="#find-it-select-it-copy-it">Find</a> ·
@@ -60,26 +40,33 @@
   <a href="#combine-and-split-without-losing-a-thing">Combine &amp; split</a> ·
   <a href="#open-protected-documents-and-respect-their-rules">Protect</a> ·
   <a href="#comments-forms-layers-and-attachments">Forms &amp; layers</a> ·
-  <a href="#runs-everywhere-stays-yours">Everywhere</a> ·
+  <a href="#native-and-stays-yours">Native</a> ·
   <a href="#built-for-agents-too">Agents</a> ·
   <a href="#how-its-built">How it's built</a> ·
   <a href="#get-started">Get started</a> ·
   <a href="#whats-next">What's next</a> ·
-  <a href="#downloads">Downloads</a> ·
-  <a href="#the-crafting-apps">Crafting Apps</a>
+  <a href="#downloads">Downloads</a>
 </p>
 
 ---
 
-## Community
+## What vhnoterPDF changes
 
-PdfCraft is part of [ArtCraft](https://getartcraft.com). Come say hello, get help and follow development:
+vhnoterPDF is the PDF tool of **vhnoter**, a suite of tools made for our own internal work (vhnoter.al). It is a fork of [storytold/pdfcraft](https://github.com/storytold/pdfcraft): it keeps the engine and the tools, and changes these things:
 
-- **Discord: [discord.gg/artcraft](https://discord.gg/artcraft)**. This is the fastest way to get help and share feedback. The app has a Discord button in its title bar.
-- **Web page:** [getartcraft.com/apps/pdfcraft](https://getartcraft.com/apps/pdfcraft)
-- **Source:** [github.com/storytold/pdfcraft](https://github.com/storytold/pdfcraft)
+- **Name, publisher and version.** The app is called vhnoterPDF everywhere you see it, its publisher is **vhnoter**, the desktop executable is `vhnoterpdf.exe`, and it installs to `Programs\vhnoter\vhnoterPDF`. Versions start at 1.0.0. Crate names, `PDFCRAFT_*` environment variables, settings folders and registry keys keep their upstream names, so settings carry over from PdfCraft.
+- **Interface languages.** English, Italiano, Deutsch, Français and Shqip (Albanian). A fresh launch starts in English; choose another in **Menu → Edit → Preferences… → Interface language**. Auto follows the Windows language when it is one of these, and English otherwise. The catalogs come from the [vensih/craft-i18n](https://github.com/vensih/craft-i18n) fork, branch `vhnoterpdf`; the Albanian translation has been reviewed by a native speaker.
+- **Tools pane on the right** on a fresh install (Preferences → Tools panel side moves it).
+- **A lean Windows package.** The installer and portable zip carry the desktop app only: no `pdfcraft-cli`, only the five interface languages and no Chinese interface font. The CLI and MCP server are still in the source and build with `cargo build -p pdfcraft-cli`.
+- **Albanian OCR through Tesseract.** Albanian text is read with Tesseract (`sqi`, and `sqi+eng` for mixed pages), never with the built-in engine, which cannot read it. The Albanian (`tessdata_best`) and English (`tessdata_fast`) data files ship in `models/`, so only Tesseract itself needs installing. If a language pack is missing, the app names it instead of quietly reading the page as English.
+- **Install Tesseract…** If Tesseract is missing when Albanian is chosen, the Recognize Text dialog offers to install it. On Windows this runs `winget install UB-Mannheim.TesseractOCR` (or opens the download page). Tesseract is also found in `%ProgramFiles%\Tesseract-OCR` and `%LOCALAPPDATA%\Programs\Tesseract-OCR` when it is not on the PATH.
+- **Updates come from this repository.** The built-in updater asks only [vensih/vhnoterPDF releases](https://github.com/vensih/vhnoterPDF/releases).
+- **No promotion links.** The Discord, ArtCraft and getartcraft.com links are removed from the app; only the source code link stays.
+- **New icons.** A gold folded-ribbon V for the app, and a cream page with the same V for PDF documents.
+- **No em dashes** in the interface text.
+- **Windows only.** CI and releases build and test Windows only. The Linux, macOS and FreeBSD packaging files stay in the tree, unused, to keep upstream merges small.
 
-The ArtCraft name and logos in `docs/brand/` are trademarks of the ArtCraft Team and are not open source. They may be used only unmodified, and only as part of PdfCraft (see `docs/brand/LICENSE-brand.txt`). Forks and modified versions must remove them.
+What the fork changes file by file, what it keeps on purpose and how to merge upstream are in [docs/fork-maintenance.md](docs/fork-maintenance.md).
 
 ## Highlights
 
@@ -110,7 +97,7 @@ No account, no telemetry, no cloud. It works offline and opens instantly. The en
 
 ## Read anything, beautifully
 
-PdfCraft renders PDFs with care for the details that make a page feel right: kerning and ligatures, right-to-left and complex scripts, vertical CJK, colour emoji, shadings, blend modes, soft masks and optional content.
+vhnoterPDF renders PDFs with care for the details that make a page feel right: kerning and ligatures, right-to-left and complex scripts, vertical CJK, colour emoji, shadings, blend modes, soft masks and optional content.
 
 <p align="center">
   <img src="docs/images/pdfcraft-scripts.png" alt="The Scripts of the World page: Arabic, Hebrew, Devanagari, Thai, Greek, Cyrillic, Chinese, Korean, IPA, Armenian, Georgian and Tamil samples, with vertical Japanese in the right margin" width="100%">
@@ -187,7 +174,7 @@ Open **Organize pages** to see every page at once:
 
 When open documents exceed the window width, scroll over the tab strip with the mouse wheel or trackpad, or use its horizontal scrollbar. Opening or switching to a document brings its tab into view.
 
-Unsaved documents carry a dot on their tab, and closing or quitting asks before anything is lost. Changes are autosaved every minute. If PdfCraft ever quits unexpectedly, it offers to recover your work the next time it opens. Encrypted documents stay encrypted on disk.
+Unsaved documents carry a dot on their tab, and closing or quitting asks before anything is lost. Changes are autosaved every minute. If vhnoterPDF ever quits unexpectedly, it offers to recover your work the next time it opens. Encrypted documents stay encrypted on disk.
 
 </td>
 <td width="50%" valign="top"><img src="docs/images/pdfcraft-split.png" alt="The Split document dialog over the organize view, set to one page per file and reporting that it creates 13 files from 13 pages"><br><sub>Split document: one page per file makes 13 files.</sub></td>
@@ -218,12 +205,12 @@ pdfcraft-cli split   report.pdf --every 10 --out-dir parts/
 
 ## Open protected documents and respect their rules
 
-PdfCraft implements the PDF standard security handler completely:
+vhnoterPDF implements the PDF standard security handler completely:
 - every revision, from 40-bit RC4 to AES-256;
 - user and owner passwords, including Unicode passwords normalised with SASLprep;
 - crypt filters and attachment-only encryption.
 
-Documents restricted by their author show a clear notice, and PdfCraft honours their permissions. Enter the owner password and the restrictions lift. Edits to encrypted documents are saved encrypted, under the same keys.
+Documents restricted by their author show a clear notice, and vhnoterPDF honours their permissions. Enter the owner password and the restrictions lift. Edits to encrypted documents are saved encrypted, under the same keys.
 
 <table>
 <tr>
@@ -255,39 +242,39 @@ Documents restricted by their author show a clear notice, and PdfCraft honours t
 
 ## Scan pages, then read the words back before trusting them
 
-**Scan & OCR ▸ Recognize text** turns a scan into searchable text — the current page, a range, or a folder of files written as searchable copies — with optional cleanup before reading (auto-rotate, deskew, denoise, binarize; word boxes map back to the original scan) and a second engine: an installed Tesseract joins the built-in one, merged per your strategy. A searchable result applies as one undoable step; the **Editable text** output opens the **OCR Verify screen** instead, where each word carries the engine's confidence as a colour, suspects are one keypress away, and corrections, a user dictionary and Re-OCR of a region or a page happen before Accept writes the new document. **Scan & OCR ▸ Correct recognized text** reviews any recognition there before it is applied.
+**Scan & OCR ▸ Recognize text** turns a scan into searchable text, the current page, a range, or a folder of files written as searchable copies, with optional cleanup before reading (auto-rotate, deskew, denoise, binarize; word boxes map back to the original scan) and a second engine: an installed Tesseract joins the built-in one, merged per your strategy. A searchable result applies as one undoable step; the **Editable text** output opens the **OCR Verify screen** instead, where each word carries the engine's confidence as a colour, suspects are one keypress away, and corrections, a user dictionary and Re-OCR of a region or a page happen before Accept writes the new document. **Scan & OCR ▸ Correct recognized text** reviews any recognition there before it is applied.
 
 <p align="center">
   <img src="docs/images/pdfcraft-ocr-verify.png" alt="The OCR Verify screen: a scanned note with each recognized word boxed in its confidence colour, the info strip reporting a 95% average confidence and one low-confidence word, and the confidence legend with its thresholds below" width="100%">
   <br>
-  <sub>The OCR Verify screen: words coloured by confidence — the legend spells the thresholds out — reviewed and corrected before anything is applied.</sub>
+  <sub>The OCR Verify screen: words coloured by confidence, the legend spells the thresholds out, reviewed and corrected before anything is applied.</sub>
 </p>
 
 ---
 
 ## Every tool, one keystroke away
 
-Press <kbd>⌘K</kbd> to search every tool and command, or browse the **All tools** catalogue. Tools that are still in development are marked with the milestone that will ship them.
+Press <kbd>Ctrl+K</kbd> to search every tool and command, or browse the **All tools** catalogue. Tools that are still in development are marked with the milestone that will ship them.
 
 <table>
 <tr>
 <td width="50%"><img src="docs/images/pdfcraft-palette.png" alt="The command palette searching for 'page', listing Page grid, Page labels, Rotate pages, Insert pages, Delete pages, Extract pages and more, each with the tool it belongs to"></td>
-<td width="50%"><img src="docs/images/pdfcraft-tools.png" alt="The Welcome to PdfCraft home screen with recommended tools, a recent file, a privacy note, and the full tool catalogue in the side panel"></td>
+<td width="50%"><img src="docs/images/pdfcraft-tools.png" alt="The Welcome to vhnoterPDF home screen with recommended tools, a recent file, a privacy note, and the full tool catalogue in the side panel"></td>
 </tr>
 <tr>
-<td align="center"><sub>The <kbd>⌘K</kbd> command palette</sub></td>
+<td align="center"><sub>The <kbd>Ctrl+K</kbd> command palette</sub></td>
 <td align="center"><sub>The home screen and the All tools catalogue</sub></td>
 </tr>
 </table>
 
 ---
 
-## Runs everywhere, stays yours
+## Native, and stays yours
 
-- **Native on macOS, Windows, Linux and FreeBSD**, and **in the browser** through WebAssembly, from the same Rust codebase. Windows builds come for x64, x86 and ARM64 (Windows on ARM, no emulation); every ARM64 change is tested on ARM64 hardware in CI.
+- **Native on Windows.** vhnoterPDF ships for Windows. The Rust codebase still builds for macOS, Linux, FreeBSD and the web (upstream PdfCraft releases those), but this fork does not build, test or release them.
 - **Private by design.** Documents never leave your machine. There's no account, no telemetry and no cloud processing.
 - **Engine first.** Parsing, rendering and editing live in reusable library crates. The interface is one swappable layer on top.
-- **Scriptable.** The `pdfcraft-cli` tool (see [Built for agents, too](#built-for-agents-too)) covers inspecting, rendering, extracting text, editing, combining, extracting pages and splitting. Robustness sweeps run on the same engine as the app.
+- **Scriptable.** The `pdfcraft-cli` tool (built from source, not in the Windows package; see [Built for agents, too](#built-for-agents-too)) covers inspecting, rendering, extracting text, editing, combining, extracting pages and splitting. Robustness sweeps run on the same engine as the app.
 
 ```sh
 pdfcraft-cli info  form.pdf                                  # structure as JSON
@@ -313,7 +300,7 @@ Every engine feature is reachable without the GUI, through one table of JSON-Sch
 
   With `--root`, every file the script's steps read or write stays in that directory, including the PNG a step saves with `"out"` (the script itself is read from wherever you name it).
 
-- **An MCP server**, for AI agents such as Claude. **It is opt-in:** PdfCraft never starts it on its own, and it opens no network port. It runs only while an agent launches `pdfcraft-cli mcp`, talks over stdin/stdout, and stops when the agent disconnects. To enable it, add it to your agent's MCP configuration:
+- **An MCP server**, for AI agents such as Claude. **It is opt-in:** vhnoterPDF never starts it on its own, and it opens no network port. It runs only while an agent launches `pdfcraft-cli mcp`, talks over stdin/stdout, and stops when the agent disconnects. To enable it, add it to your agent's MCP configuration:
 
   ```json
   { "mcpServers": { "pdfcraft": { "command": "pdfcraft-cli", "args": ["mcp", "--root", "/path/to/your/pdfs"] } } }
@@ -361,7 +348,7 @@ the document or the panels.
 
 ## How it's built
 
-PdfCraft is a Cargo workspace of focused crates, layered so the core never depends on the UI:
+vhnoterPDF is a Cargo workspace of focused crates, layered so the core never depends on the UI:
 
 | Crate | What it does |
 |---|---|
@@ -390,27 +377,41 @@ On top of those, two corpus sweeps run over real-world files:
 The output is verified against independent implementations: hayro and qpdf on every CI run, and
 poppler over the corpus on demand (`cargo xtask text-oracle`).
 
-PdfCraft is a clean-room implementation. Its behaviour comes from the ISO 32000 specification and black-box observation, never from anyone else's code. Every icon, font and image is openly licensed and listed in [ATTRIBUTION.md](ATTRIBUTION.md).
+vhnoterPDF is a clean-room implementation. Its behaviour comes from the ISO 32000 specification and black-box observation, never from anyone else's code. Every icon, font and image is openly licensed and listed in [ATTRIBUTION.md](ATTRIBUTION.md).
 
 ## Get started
 
 Building needs Rust 1.95 or later.
 
 ```sh
-git clone https://github.com/storytold/pdfcraft
-cd pdfcraft
-cargo xtask models                                # fetch the OCR models Scan & OCR needs (release builds include them)
-cargo run --release -p pdfcraft -- some.pdf     # desktop app
+git clone https://github.com/vensih/vhnoterPDF
+cd vhnoterPDF
+cargo xtask models                                # fetch the OCR models and the Albanian and English Tesseract data
+cargo run --release -p pdfcraft -- some.pdf       # desktop app (builds vhnoterpdf.exe)
 cargo xtask demo-pdf                              # build the showcase PDF used in these screenshots
 cargo xtask screenshots                           # regenerate every screenshot in this README
 ```
 
-The interface language is chosen in **Menu → Edit → Preferences…** (Command-comma on macOS,
-Ctrl-comma elsewhere, also with no document open; Auto follows the system language;
-see [docs/localization.md](docs/localization.md)) and saved. Japanese covers commands,
-dialogs, panels and keyboard shortcuts. Command search accepts the translated label, the
-English label and the stable command id; filenames, PDF contents, author names, custom
-action names and error details from the engine or the operating system keep their own text.
+For Albanian OCR, install Tesseract once: use **Install Tesseract…** in the app, or run
+
+```powershell
+winget install UB-Mannheim.TesseractOCR
+```
+
+The interface language is chosen in **Menu → Edit → Preferences…** (Ctrl-comma, also with no
+document open; see [docs/localization.md](docs/localization.md)) and saved. A fresh launch starts
+in English; Albanian and the other languages from craft-i18n are one click away. Command search
+accepts the translated label, the English label and the stable command id; filenames, PDF
+contents, author names, custom action names and error details from the engine or the operating
+system keep their own text.
+
+To build with translations from the catalog fork, check it out at the commit in `craft-i18n.rev`
+and point `CRAFT_I18N_DIR` at it:
+
+```sh
+git clone -b vhnoterpdf https://github.com/vensih/craft-i18n ../craft-i18n
+CRAFT_I18N_DIR=../craft-i18n cargo run --release -p pdfcraft -- some.pdf
+```
 
 Japanese fonts come from [craft-fonts](https://github.com/storytold/craft-fonts), an optional build
 input that every release includes. To build with them (Japanese interface text, and Japanese text in
@@ -421,30 +422,20 @@ git clone https://github.com/storytold/craft-fonts ../craft-fonts
 CRAFT_FONTS_DIR=../craft-fonts cargo run --release -p pdfcraft -- some.pdf
 ```
 
-Each [GitHub release](https://github.com/storytold/pdfcraft/releases) has ready-made builds for macOS,
-Windows, Linux (AppImage, Flatpak, `.deb`, `.rpm` and a tarball), FreeBSD and the web; see
-[Downloads](#downloads). On Gentoo, the community [::snakebyte
-overlay](https://github.com/switch87/snakebyte-overlay) packages the Linux release as
-`app-text/pdfcraft-bin` (not maintained by the PdfCraft team):
-
-```sh
-eselect repository add snakebyte git https://github.com/switch87/snakebyte-overlay.git
-emaint sync -r snakebyte
-echo 'app-text/pdfcraft-bin ~amd64' >> /etc/portage/package.accept_keywords/pdfcraft
-emerge --ask app-text/pdfcraft-bin
-```
+Ready-made Windows builds are on [GitHub releases](https://github.com/vensih/vhnoterPDF/releases); see
+[Downloads](#downloads).
 
 Logs, environment variables and other development notes are in [docs/development.md](docs/development.md).
 
 ## What's next
 
-PdfCraft is young and moving fast. The aim is a workbench where you can view, organize, annotate, fill, sign and edit PDFs, for professional and everyday workflows.
+vhnoterPDF is young and moving fast. The aim is a workbench where you can view, organize, annotate, fill, sign and edit PDFs, for professional and everyday workflows.
 
-**Where it stands (October 2026), honestly:** PdfCraft is **alpha**. Most essential offline PDF features exist in some form (57% of the features tracked in [docs/target-app-parity.md](docs/target-app-parity.md), 94% of core essentials). For everyday work (viewing, commenting, filling and signing forms, organizing pages) readiness is about 55%; across all professional workflows, about 49%; for someone who only needs the essentials, about 66%. Every everyday workflow can be completed, but converting and sharing is weak: no office-document-to-PDF, and .docx export that loses layout.
+**Where upstream stands (October 2026), honestly:** PdfCraft, and so vhnoterPDF, is **alpha**. Most essential offline PDF features exist in some form (57% of the features tracked in [docs/target-app-parity.md](docs/target-app-parity.md), 94% of core essentials). For everyday work (viewing, commenting, filling and signing forms, organizing pages) readiness is about 55%; across all professional workflows, about 49%; for someone who only needs the essentials, about 66%. Every everyday workflow can be completed, but converting and sharing is weak: no office-document-to-PDF, and .docx export that loses layout.
 
 - **Good today:** viewing and search; organizing, combining and splitting; most kinds of comment; filling and authoring forms (with sandboxed JavaScript); passwords, redaction and sanitizing; basic digital signatures; printing; the Accessibility Checker; agent control through the CLI and MCP.
 - **Still borrowed:** pages are drawn by the `hayro` crate while our own renderer is built.
-- **Thin or missing:** reliable editing of existing text (especially CJK and right-to-left), OCR beyond Latin script, office document import/export, signature tokens and online long-term validation, Preflight and PDF/X/UA, printing from the web build, physical printer fidelity, and full XFA forms.
+- **Thin or missing:** reliable editing of existing text (especially CJK and right-to-left), OCR beyond Latin script (Albanian works through Tesseract), office document import/export, signature tokens and online long-term validation, Preflight and PDF/X/UA, printing from the web build, physical printer fidelity, and full XFA forms.
 - **Hardening:** fuzzing still turns up crashes and hangs on hostile files; each one is fixed with a regression test. Quality has not yet been benchmarked side by side.
 
 **Next, in order:** office-document-to-PDF and a .docx export that keeps layout, the reported bugs and the Chinese interface font, a fidelity harness against a reference renderer, editing existing content, then professional workflows (OCR, office formats, Preflight, signatures, accessibility tagging) and 1.0 polish.
@@ -455,19 +446,16 @@ The summary is in **[ROADMAP.md](ROADMAP.md)**; the full assessment by dimension
 
 ## Downloads
 
-**New to PdfCraft?** Download it from the [PdfCraft page on getartcraft.com](https://getartcraft.com/apps/pdfcraft). That's the easiest way to install it.
-
-**Want a specific build or format?** On GitHub, the [latest release](https://github.com/storytold/pdfcraft/releases/latest) has every build listed below, and [all releases](https://github.com/storytold/pdfcraft/releases) has earlier versions and their notes. `<ver>` in the file names is the version number, and `SHA256SUMS.txt` lists a checksum for every file.
+The [latest release](https://github.com/vensih/vhnoterPDF/releases/latest) has every build listed below, and [all releases](https://github.com/vensih/vhnoterPDF/releases) has earlier versions and their notes. vhnoterPDF releases Windows builds only. `<ver>` in the file names is the version number, and `SHA256SUMS.txt` lists a checksum for every file.
 
 ### Windows
 
 | Build | Installer | Portable |
 |---|---|---|
-| x64 (64-bit Intel/AMD) | `pdfcraft-<ver>-windows-x64.msi` | `pdfcraft-<ver>-windows-x64-portable.zip` |
-| arm64 (Snapdragon and other ARM PCs) | `pdfcraft-<ver>-windows-arm64.msi` | `pdfcraft-<ver>-windows-arm64-portable.zip` |
-| x86 (32-bit) | `pdfcraft-<ver>-windows-x86.msi` | `pdfcraft-<ver>-windows-x86-portable.zip` |
+| x64 (64-bit Intel/AMD) | `vhnoterpdf-<ver>-windows-x64.msi` | `vhnoterpdf-<ver>-windows-x64-portable.zip` |
+| arm64 (Snapdragon and other ARM PCs) | `vhnoterpdf-<ver>-windows-arm64.msi` | `vhnoterpdf-<ver>-windows-arm64-portable.zip` |
 
-Installers and executables are code-signed.
+There is no 32-bit build.
 
 The portable zip runs from any folder, a USB stick included. Its `portable.txt` keeps the settings,
 logs and crash recovery in a `PdfCraftData` folder next to `vhnoterpdf.exe`, so nothing is written to
@@ -477,22 +465,22 @@ Windows doesn't offer the portable copy as a default PDF app on its own, since i
 
 The MSI installs for your account only by default, without administrator privileges. Choose
 "Everyone on this computer" on its first page, or pass `ALLUSERS=1` from an elevated terminal, to install
-for all users. It adds "Edit with PdfCraft"
-and "Combine files in PdfCraft" (select several PDFs: they land in the Combine files tab of the
-running PdfCraft) to the right-click menu of PDF files and "Create PDF with PdfCraft…" to the right-click menu of
+for all users. It adds "Edit with vhnoterPDF"
+and "Combine files in vhnoterPDF" (select several PDFs: they land in the Combine files tab of the
+running vhnoterPDF) to the right-click menu of PDF files and "Create PDF with vhnoterPDF…" to the right-click menu of
 images (.png .jpg .jpeg .tif .tiff .gif .bmp .jp2 .j2k .jpx) in File Explorer (on Windows 11, under
 "Show more options"), without changing which app opens them by default. For unattended deployment
 without a desktop shortcut (add `ALLUSERS=1`, from an elevated terminal, for an all-users install):
 
 ```powershell
-msiexec /i "pdfcraft-<ver>-windows-x64.msi" /qn /norestart INSTALLDESKTOPSHORTCUT=0
+msiexec /i "vhnoterpdf-<ver>-windows-x64.msi" /qn /norestart INSTALLDESKTOPSHORTCUT=0
 ```
 
 | Property | `=0` leaves out |
 |---|---|
 | `INSTALLDESKTOPSHORTCUT` | the desktop shortcut |
-| `INSTALLPDFCONTEXTMENU` | "Edit with PdfCraft" and "Combine files in PdfCraft" on PDF files |
-| `INSTALLIMAGECONTEXTMENU` | "Create PDF with PdfCraft…" on images |
+| `INSTALLPDFCONTEXTMENU` | "Edit with vhnoterPDF" and "Combine files in vhnoterPDF" on PDF files |
+| `INSTALLIMAGECONTEXTMENU` | "Create PDF with vhnoterPDF…" on images |
 
 All three are on for a first install. An upgrade keeps what the installed version has: a shortcut
 or menu entry that is there stays, and one that is missing (left out at install, or a desktop
@@ -502,9 +490,9 @@ didn't have a menu yet (0.6.0 and earlier for the PDF menu, 0.2.1 and earlier fo
 adds it, as a first install would. Use the MSI for your architecture. Per-user installation
 overrides are not supported.
 
-To install somewhere other than the default `ArtCraft\PdfCraft` folder, change the folder on the
+To install somewhere other than the default `Programs\vhnoter\vhnoterPDF` folder, change the folder on the
 welcome screen (type it, or Browse…) or pass it on the command line:
-`INSTALLFOLDER="D:\Apps\PdfCraft"`. It is installed for whoever the first screen chose (`ALLUSERS=1`
+`INSTALLFOLDER="D:\Apps\vhnoterPDF"`. It is installed for whoever the first screen chose (`ALLUSERS=1`
 on the command line for everyone). An upgrade keeps the folder the installed version uses unless
 the command line gives another one.
 
@@ -514,117 +502,24 @@ MSI of the same version replace the installed one without asking. Two different 
 be told apart by version, so if your deployment tool checks the file, pin its SHA-256 from
 `SHA256SUMS.txt` (`Get-FileHash <file> -Algorithm SHA256`).
 
-**Signing identities.** The Windows MSIs and both executables are signed through Azure Trusted
-Signing with a certificate issued to `Learning Machines Inc` (Atlanta, Georgia, US). The macOS app
-and command-line tool are signed with the Developer ID `Learning Machines LLC (DJ6XS33FX8)` and
-notarized. The MSI's manufacturer, shown as the publisher in Installed apps, is
-`Learning Machines LLC`.
-
-### macOS
-
-| Build | File | Notes |
-|---|---|---|
-| App, universal (Apple silicon + Intel) | `pdfcraft-<ver>-macos-universal.dmg` | Signed and notarized |
-| Command-line tool, universal | `pdfcraft-cli-<ver>-macos-universal.zip` | Signed and notarized |
-
-### Linux
-
-| Format | x86_64 | aarch64 (ARM64) | Notes |
-|---|---|---|---|
-| AppImage | `pdfcraft-<ver>-linux-x86_64.AppImage` | `pdfcraft-<ver>-linux-aarch64.AppImage` | Runs anywhere; updates itself with [AppImageUpdate](https://github.com/AppImageCommunity/AppImageUpdate) (`.zsync` files) |
-| Flatpak | `pdfcraft-<ver>-linux-x86_64.flatpak` | `pdfcraft-<ver>-linux-aarch64.flatpak` | Sandboxed; `flatpak install --user <file>` |
-| Debian/Ubuntu | `pdfcraft-<ver>-linux-x86_64.deb` | `pdfcraft-<ver>-linux-aarch64.deb` | |
-| Fedora/RHEL/openSUSE | `pdfcraft-<ver>-linux-x86_64.rpm` | `pdfcraft-<ver>-linux-aarch64.rpm` | |
-| Tarball | `pdfcraft-<ver>-linux-x86_64.tar.gz` | `pdfcraft-<ver>-linux-aarch64.tar.gz` | Unpack anywhere |
-| Command-line tool | `pdfcraft-cli-<ver>-linux-x86_64.tar.gz` | `pdfcraft-cli-<ver>-linux-aarch64.tar.gz` | `pdfcraft-cli` alone (and its opt-in MCP server), for servers, CI and agents |
-
-RISC-V (riscv64) builds come as tarballs only: `pdfcraft-<ver>-linux-riscv64.tar.gz` and `pdfcraft-cli-<ver>-linux-riscv64.tar.gz`. They are cross-compiled and need glibc 2.39 or newer (Ubuntu 24.04+, Debian 13+).
-
-Every other Linux build needs glibc 2.35 or newer (Ubuntu 22.04+, Debian 12+, Fedora 36+, RHEL 10).
-
-### FreeBSD
-
-| Build | File |
-|---|---|
-| x86_64 | `pdfcraft-<ver>-freebsd-x86_64.tar.gz` |
-
-### Web (WebAssembly)
-
-| Build | File | Notes |
-|---|---|---|
-| Static site | `pdfcraft-web-<ver>.zip` | Runs in a modern browser; host it on any static server |
-
----
-
-## The Crafting Apps
-
-PdfCraft is one of the **Crafting Apps**: free, open-source creative tools from the
-[ArtCraft](https://getartcraft.com/) team, each written from scratch in Rust and each able to
-stand on its own.
-
-| | App | What it's for | Code | Learn more |
-|:-:|---|---|---|---|
-| <img src="https://raw.githubusercontent.com/storytold/photocraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.photocraft.png" alt="" width="32" height="32"> | **PhotoCraft** | Image editing: layers, masks, type and real PSD files | [GitHub](https://github.com/storytold/photocraft) | [Website](https://getartcraft.com/apps/photocraft) |
-| <img src="https://raw.githubusercontent.com/storytold/vectorcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.vectorcraft.png" alt="" width="32" height="32"> | **VectorCraft** | Vector illustration | [GitHub](https://github.com/storytold/vectorcraft) | [Website](https://getartcraft.com/apps/vectorcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/filmcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.filmcraft.png" alt="" width="32" height="32"> | **FilmCraft** | Video editing, color and sound | [GitHub](https://github.com/storytold/filmcraft) | [Website](https://getartcraft.com/apps/filmcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/lightcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.lightcraft.png" alt="" width="32" height="32"> | **LightCraft** | Photo library and raw development | [GitHub](https://github.com/storytold/lightcraft) | [Website](https://getartcraft.com/apps/lightcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/pdfcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.pdfcraft.png" alt="" width="32" height="32"> | **PdfCraft** | Reading, organizing and protecting PDFs | [GitHub](https://github.com/storytold/pdfcraft) | [Website](https://getartcraft.com/apps/pdfcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/effectcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.effectcraft.png" alt="" width="32" height="32"> | **EffectCraft** | Motion graphics and visual effects | [GitHub](https://github.com/storytold/effectcraft) | [Website](https://getartcraft.com/apps/effectcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/designcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.designcraft.png" alt="" width="32" height="32"> | **DesignCraft** | Page layout and publishing | [GitHub](https://github.com/storytold/designcraft) | [Website](https://getartcraft.com/apps/designcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/figcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.figcraft.png" alt="" width="32" height="32"> | **FigCraft** | Interface design and prototyping | [GitHub](https://github.com/storytold/figcraft) | [Website](https://getartcraft.com/apps/figcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/wordcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.wordcraft.png" alt="" width="32" height="32"> | **WordCraft** | Word processing and documents | [GitHub](https://github.com/storytold/wordcraft) | [Website](https://getartcraft.com/apps/wordcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/soundcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.soundcraft.png" alt="" width="32" height="32"> | **SoundCraft** | Audio recording and editing | [GitHub](https://github.com/storytold/soundcraft) | [Website](https://getartcraft.com/apps/soundcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/deckcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.deckcraft.png" alt="" width="32" height="32"> | **DeckCraft** | Presentations and slide decks | [GitHub](https://github.com/storytold/deckcraft) | [Website](https://getartcraft.com/apps/deckcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/cadcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.cadcraft.png" alt="" width="32" height="32"> | **CADCraft** | Computer-aided design | [GitHub](https://github.com/storytold/cadcraft) | [Website](https://getartcraft.com/apps/cadcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/gridcraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.gridcraft.png" alt="" width="32" height="32"> | **GridCraft** | Spreadsheets and data | [GitHub](https://github.com/storytold/gridcraft) | [Website](https://getartcraft.com/apps/gridcraft) |
-| <img src="https://raw.githubusercontent.com/storytold/texturecraft/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.texturecraft.png" alt="" width="32" height="32"> | **TextureCraft** | 3D texture painting | [GitHub](https://github.com/storytold/texturecraft) | [Website](https://getartcraft.com/apps/texturecraft) |
-| <img src="https://raw.githubusercontent.com/storytold/craft-anything/main/assets/app-icon/hicolor/64x64/apps/ai.storyteller.craft-anything.png" alt="" width="32" height="32"> | **Craft Anything** | See how any software works, then build your own | [GitHub](https://github.com/storytold/craft-anything) | [Website](https://getartcraft.com/apps/craft-anything) |
-| <img src="https://raw.githubusercontent.com/tangency-labs/solidcraft/main/assets/icons/app/linux/exports/hicolor/64x64/apps/io.tangencylabs.solidcraft.png" alt="" width="32" height="32"> | **SolidCraft** | Parametric 3D CAD by Tangency Labs (community app) | [GitHub](https://github.com/tangency-labs/solidcraft) | |
-
-And [**ArtCraft**](https://getartcraft.com/) itself, our AI image and video studio for artists who want real control.
-
-<br>
-
-<p align="center">
-  <a href="https://discord.gg/artcraft"><img alt="Join the ArtCraft community on Discord" src="https://img.shields.io/badge/Join%20us%20on%20Discord-5865F2?style=for-the-badge&logo=discord&logoColor=white" height="40"></a>
-</p>
-
-<h3 align="center">Come make things with us</h3>
-
-<p align="center">
-  Our Discord is where artists of every kind hang out: people who paint, shoot, draw, cut film,
-  set type, and people still figuring out what they like to make. Share what you're working on,
-  ask for help, tell us what's broken, or tell us what you wish these tools could do.
-  Whatever your medium and however long you've been at it, you're welcome here.
-</p>
-
-<p align="center">
-  <a href="https://discord.gg/artcraft"><b>discord.gg/artcraft</b></a> ·
-  <a href="https://getartcraft.com/">getartcraft.com</a> ·
-  <a href="https://getartcraft.com/apps">The Crafting Apps</a> ·
-  <a href="https://getartcraft.com/apps/pdfcraft">PdfCraft</a>
-</p>
-
----
+**Unsigned builds.** vhnoterPDF builds are not code-signed. The browser may say the file "isn't
+commonly downloaded" (choose **Keep**), and Windows SmartScreen may show "Windows protected your PC"
+the first time you run the installer or the portable executable (choose **More info**, then
+**Run anyway**). In-app updates find new releases here; on an MSI install the update opens the
+release page, and you run the new installer.
 
 ## License and credits
 
-PdfCraft is dual-licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your option.
-Copyright (c) 2026 ArtCraft Team and the PdfCraft contributors. Required notices are in [NOTICE](NOTICE).
+vhnoterPDF, like PdfCraft, is dual-licensed under [MIT](LICENSE-MIT) or [Apache-2.0](LICENSE-APACHE), at your option.
+Copyright (c) 2026 ArtCraft Team, the PdfCraft contributors and the vhnoterPDF contributors. Required notices are in [NOTICE](NOTICE).
 
 Bundled fonts, icons, images and other assets keep their own open licenses; each one is listed
 with its author, source and license in [ATTRIBUTION.md](ATTRIBUTION.md). Release builds also embed
 the Japanese fonts of [craft-fonts](https://github.com/storytold/craft-fonts/blob/main/ATTRIBUTION.md)
-(SIL Open Font License 1.1).
+(SIL Open Font License 1.1), and release packages ship the Albanian and English Tesseract data (Apache-2.0) in `models/`.
 
-The ArtCraft name, wordmark and logos in [`docs/brand/`](docs/brand/) are trademarks of the
-ArtCraft Team and are not covered by this license. They may be used only unmodified, and only as
-part of this repository and PdfCraft, under [`docs/brand/LICENSE-brand.txt`](docs/brand/LICENSE-brand.txt).
-Forks and modified versions must remove them.
+vhnoterPDF is a fork of [PdfCraft](https://github.com/storytold/pdfcraft) by the ArtCraft Team and
+the PdfCraft contributors. The ArtCraft name and logos are their trademarks; vhnoterPDF does not use
+them and is not endorsed by them.
 
-<p align="center">
-  <a href="https://getartcraft.com/"><img alt="ArtCraft" src="docs/brand/artcraft-mark.svg" width="28"></a><br>
-  <sub>Made by the <a href="https://getartcraft.com/">ArtCraft</a> team and community.</sub>
-</p>
-
-The Tools panel sits on the left, or on the right with Preferences ▸ Tools panel side. The rail stays at the right edge and opens one side panel beside it. Drag a panel's inner edge to resize it; widths are remembered. F4 shows or hides the side panel and Shift+F4 the Tools panel (also in the View menu); View ▸ Reset side panels restores the default arrangement.
+The Tools panel sits on the right on a fresh install, or on the left with Preferences ▸ Tools panel side. The rail stays at the right edge and opens one side panel beside it. Drag a panel's inner edge to resize it; widths are remembered. F4 shows or hides the side panel and Shift+F4 the Tools panel (also in the View menu); View ▸ Reset side panels restores the default arrangement.

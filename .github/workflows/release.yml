@@ -1,65 +1,123 @@
 name: Release
 
+# vhnoterPDF's own release: Windows only (x64 and arm64), packaged by packaging/windows/package.ps1
+# (the desktop app, its OCR models, five interface languages, no CLI). It creates a draft GitHub
+# release named after the version, with the MSIs, the portable zips and SHA256SUMS.txt; publish it
+# from the Releases page. Builds are signed only when signing secrets are set (sign.ps1 leaves
+# them unsigned otherwise).
 on:
-  # A nightly dry run on main: every release build except macOS, nothing signed or released
-  # (craft-common-actions release.yml `dry-run`). Finds release-only breakage before release day.
-  schedule:
-    - cron: "20 2 * * *"
   push:
-    branches: [release]
+    tags: ["v*"]
   workflow_dispatch:
     inputs:
       version:
-        description: "Version override for a test run, e.g. 0.2.0-rc.1 (empty: Cargo.toml)"
+        description: "Version override, e.g. 1.0.1-rc.1 (empty: Cargo.toml)"
         type: string
         default: ""
 
 permissions:
-  contents: write
-  packages: write
+  contents: read
 
 concurrency:
   group: release-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  # Regenerates contributors/contributors.json for the release commit; every build bundles it.
-  credits:
+  windows:
+    name: Windows ${{ matrix.arch }}
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { arch: x64, target: x86_64-pc-windows-msvc, runner: windows-latest }
+          # Built natively on GitHub's Arm runner (free for public repositories).
+          - { arch: arm64, target: aarch64-pc-windows-msvc, runner: windows-11-arm }
+    env:
+      CARGO_TERM_COLOR: always
+      CARGO_INCREMENTAL: 0
+      RUST_BACKTRACE: 1
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Check out craft-fonts
+        uses: storytold/craft-common-actions/actions/checkout-craft-fonts@main
+        with:
+          ref: b076417b5880bd4154bd22f00695b1d28c6bea83
+      - name: Check out craft-i18n
+        uses: storytold/craft-common-actions/actions/checkout-craft-i18n@main
+      - id: rust
+        uses: storytold/craft-common-actions/actions/rust-channel@main
+        with:
+          targets: ${{ matrix.target }}
+      - uses: step-security/dtolnay-rust-toolchain@8dd607977d06adf4ed49b190381e74c17a9dd25f # v1.0.0
+        with:
+          toolchain: ${{ steps.rust.outputs.toolchain }}
+          targets: ${{ steps.rust.outputs.targets }}
+          components: ${{ steps.rust.outputs.components }}
+      - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+        with:
+          key: release-windows-${{ matrix.arch }}
+      - name: Apply version override
+        if: inputs.version != ''
+        shell: bash
+        env:
+          VERSION: ${{ inputs.version }}
+        run: cargo xtask version set "$VERSION"
+      - name: Install WiX
+        uses: storytold/craft-common-actions/actions/install-wix@main
+        with:
+          wix-version: "5.0.2"
+      - name: Build, sign if configured, package
+        shell: pwsh
+        env:
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+          AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+          AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+          AZURE_SIGNING_ENDPOINT: ${{ secrets.AZURE_SIGNING_ENDPOINT }}
+          AZURE_SIGNING_ACCOUNT: ${{ secrets.AZURE_SIGNING_ACCOUNT }}
+          AZURE_CERT_PROFILE: ${{ secrets.AZURE_CERT_PROFILE }}
+          CRAFT_FONTS_DIR: ${{ github.workspace }}/craft-fonts
+          CRAFT_FONTS_REQUIRED: "1"
+        run: ./packaging/windows/package.ps1 -Arch ${{ matrix.arch }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-windows-${{ matrix.arch }}
+          path: dist/release/*
+          if-no-files-found: error
+
+  draft:
+    name: Draft release
+    needs: windows
+    runs-on: ubuntu-24.04
     permissions:
-      contents: read
-      pull-requests: read
-    uses: storytold/craft-common-actions/.github/workflows/refresh-contributors.yml@main
-  release:
-    needs: credits
-    # Intentionally tracked at @main (not SHA-pinned) so org-wide CI improvements, security fixes, and build optimizations propagate without PR churn across all craftapp repos.
-    uses: storytold/craft-common-actions/.github/workflows/release.yml@main
-    with:
-      dry-run: ${{ github.event_name == 'schedule' }}
-      app-name: pdfcraft
-      app-title: PdfCraft
-      # vhnoterPDF ships for Windows only: no web, RISC-V, FreeBSD or Arch builds. The shared
-      # workflow has no switch for its Linux and macOS jobs, which run unsigned or fail without
-      # their secrets; the Windows packages are what gets published.
-      has-web: false
-      has-riscv64: false
-      has-freebsd: false
-      has-arch: false
-      craft-fonts-ref: b076417b5880bd4154bd22f00695b1d28c6bea83
-      version: ${{ inputs.version }}
-      contributors-artifact: ${{ needs.credits.outputs.artifact-name }}
-    secrets:
-      APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
-      APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      APPLE_ID: ${{ secrets.APPLE_ID }}
-      APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
-      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-      WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
-      WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-      AZURE_SIGNING_ENDPOINT: ${{ secrets.AZURE_SIGNING_ENDPOINT }}
-      AZURE_SIGNING_ACCOUNT: ${{ secrets.AZURE_SIGNING_ACCOUNT }}
-      AZURE_CERT_PROFILE: ${{ secrets.AZURE_CERT_PROFILE }}
-      LINUX_SIGNING_KEY: ${{ secrets.LINUX_SIGNING_KEY }}
+      contents: write
+    steps:
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          pattern: release-windows-*
+          path: dist
+          merge-multiple: true
+      - name: Create the draft release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+          cd dist
+          msi=$(ls vhnoterpdf-*-windows-x64.msi | head -n1)
+          version=${msi#vhnoterpdf-}
+          version=${version%-windows-x64.msi}
+          sha256sum vhnoterpdf-* > SHA256SUMS.txt
+          prerelease=""
+          case "$version" in *-*) prerelease="--prerelease" ;; esac
+          gh release create "v$version" --repo "$REPO" --target "$SHA" --draft $prerelease \
+            --title "vhnoterPDF $version" \
+            --notes "vhnoterPDF $version for Windows (x64 and arm64). Installer: the .msi; no installation: the -portable.zip. Builds are not code-signed: choose Keep / More info, then Run anyway, if the browser or SmartScreen asks. Checksums are in SHA256SUMS.txt." \
+            vhnoterpdf-* SHA256SUMS.txt
