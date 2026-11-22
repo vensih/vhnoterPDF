@@ -111,7 +111,8 @@ jobs:
         run: |
           set -euo pipefail
           cd dist
-          msi=$(ls vhnoterpdf-*-windows-x64.msi | head -n1)
+          msis=(vhnoterpdf-*-windows-x64.msi)
+          msi=${msis[0]}
           version=${msi#vhnoterpdf-}
           version=${version%-windows-x64.msi}
           sha256sum vhnoterpdf-* > SHA256SUMS.txt
