@@ -96,9 +96,9 @@
     <?endif?>
     <ComponentGroup Id="PdfcraftFiles" Directory="INSTALLFOLDER">
       <Component Id="PdfcraftApp" Guid="E724C1C6-091F-4E21-A685-80D089FDBE21">
-        <File Id="PdfcraftExe" Source="$(var.BinDir)\pdfcraft.exe" KeyPath="yes" />
+        <File Id="PdfcraftExe" Source="$(var.BinDir)\vhnoterpdf.exe" KeyPath="yes" />
 
-        <RegistryValue Root="HKMU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\pdfcraft.exe" Value="[#PdfcraftExe]" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\vhnoterpdf.exe" Value="[#PdfcraftExe]" Type="string" />
 
         <!-- PDF files (#107): PdfCraft is offered under "Open with" and in Settings ▸ Default
              apps, through Windows' Default Programs registration (a ProgID, OpenWithProgids,
@@ -117,10 +117,10 @@
              Handlers", Microsoft Learn). -->
         <RegistryValue Root="HKMU" Key="Software\Classes\PdfCraft.Document" Name="TypeOverlay" Value="" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Classes\.pdf\OpenWithProgids" Name="PdfCraft.Document" Value="" Type="string" />
-        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\pdfcraft.exe" Name="FriendlyAppName" Value="vhnoterPDF" Type="string" />
-        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\pdfcraft.exe\DefaultIcon" Value="&quot;[#PdfcraftExe]&quot;,-2" Type="string" />
-        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\pdfcraft.exe\SupportedTypes" Name=".pdf" Value="" Type="string" />
-        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\pdfcraft.exe\shell\open\command" Value="&quot;[#PdfcraftExe]&quot; &quot;%1&quot;" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\vhnoterpdf.exe" Name="FriendlyAppName" Value="vhnoterPDF" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\vhnoterpdf.exe\DefaultIcon" Value="&quot;[#PdfcraftExe]&quot;,-2" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\vhnoterpdf.exe\SupportedTypes" Name=".pdf" Value="" Type="string" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\Applications\vhnoterpdf.exe\shell\open\command" Value="&quot;[#PdfcraftExe]&quot; &quot;%1&quot;" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\PdfCraft\Capabilities" Name="ApplicationName" Value="vhnoterPDF" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\PdfCraft\Capabilities" Name="ApplicationDescription" Value="Open-source PDF workbench" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\PdfCraft\Capabilities" Name="ApplicationIcon" Value="[#PdfcraftExe],0" Type="string" />
@@ -129,12 +129,12 @@
       <RegistryValue Root="HKMU" Key="Software\PdfCraft" Name="InstallDir" Value="[INSTALLFOLDER]" Type="string" />
       </Component>
 
-      <!-- Shortcuts (#143) are plain links to pdfcraft.exe, not advertised MSI shortcuts: advertised
+      <!-- Shortcuts (#143) are plain links to vhnoterpdf.exe, not advertised MSI shortcuts: advertised
            ones point at a Windows Installer descriptor rather than the program, which Windows can't
            use as a file handler (#107), and 0.2.1's advertised one went missing from the Start menu
            (#143). Each has its own component with an HKLM key path, so Windows Installer removes it
            on uninstall; in this per-machine package both folders are the all-users ones. They take
-           their icon from pdfcraft.exe, not the Icon table: Windows Installer keeps that copy under
+           their icon from vhnoterpdf.exe, not the Icon table: Windows Installer keeps that copy under
            the ProductCode, which every release changes, so a taskbar pin made from a shortcut that
            named it shows a blank icon once an update removes the old release. -->
       <Component Id="PdfcraftStartMenuShortcut" Directory="ProgramMenuFolder" Guid="DC028192-C233-4F99-9A77-ED458C60DF26">
@@ -160,7 +160,7 @@
         <RegistryValue Root="HKMU" Key="Software\Classes\SystemFileAssociations\.pdf\shell\PdfCraft.Edit" Name="MultiSelectModel" Value="Document" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Classes\SystemFileAssociations\.pdf\shell\PdfCraft.Edit\command" Value="&quot;[#PdfcraftExe]&quot; &quot;%1&quot;" Type="string" />
         <!-- "Combine files in vhnoterPDF" (#585), on the same switch: each selected file starts one
-             launch of pdfcraft.exe with the combine option, and the running PdfCraft collects them into its Combine
+             launch of vhnoterpdf.exe with the combine option, and the running PdfCraft collects them into its Combine
              files tab (single_instance). -->
         <RegistryValue Root="HKMU" Key="Software\Classes\SystemFileAssociations\.pdf\shell\PdfCraft.Combine" Value="Combine files in vhnoterPDF" Type="string" />
         <RegistryValue Root="HKMU" Key="Software\Classes\SystemFileAssociations\.pdf\shell\PdfCraft.Combine" Name="Icon" Value="&quot;[#PdfcraftExe]&quot;,0" Type="string" />
@@ -224,7 +224,7 @@
       </Component>
     </ComponentGroup>
 
-    <!-- OCR models (#103), with their licences and ATTRIBUTION.txt, in models\ beside pdfcraft.exe
+    <!-- OCR models (#103), with their licences and ATTRIBUTION.txt, in models\ beside vhnoterpdf.exe
          where the app looks for them: every file `cargo xtask models` fetched (package.ps1), one
          component each, so new models ship without naming them here. -->
     <ComponentGroup Id="PdfcraftModels" Directory="ModelsFolder">

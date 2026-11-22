@@ -1,7 +1,7 @@
 //! One vhnoterPDF per Windows sign-in or Linux/BSD display: a launch that only names files hands them
 //! to the vhnoterPDF that is already running, where they open as tabs, and exits (#282, #317, #1726).
 //!
-//! Outlook attachments, Explorer double-clicks and Open With all start `pdfcraft.exe "<file>"`, and
+//! Outlook attachments, Explorer double-clicks and Open With all start `vhnoterpdf.exe "<file>"`, and
 //! a file manager or `xdg-open` starts `pdfcraft <file>` the same way, so until now every file got
 //! its own process and window. The first vhnoterPDF listens on a Unix domain socket. On Windows (10
 //! 1803 and later) it is in `%LOCALAPPDATA%\PdfCraft` (a portable copy's too, as
