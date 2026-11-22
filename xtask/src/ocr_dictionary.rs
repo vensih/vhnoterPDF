@@ -1,8 +1,15 @@
-//! `cargo xtask ocr-dictionary <out.txt> <source>...`: the Albanian OCR word list shipped beside
-//! the models (`models/ocr-dictionary-sq.txt`), built from the office's own document templates.
+//! `cargo xtask ocr-dictionary <out.txt> [--frequency <list>] [--reference <list>] [<source>...]`:
+//! the Albanian OCR word lists.
 //!
-//! The templates are private, so the list is built only on the packaging machine and goes into
-//! the installer, never into this repository. Only the text inside string literals is read
+//! - The public list shipped beside the models (`models/ocr-dictionary-sq.txt`) comes from a
+//!   word-frequency list (`--frequency`, FrequencyWords `sq_50k.txt`, `word count` per line,
+//!   fetched by `cargo xtask models`): its most frequent words.
+//! - The office list (`ocr-dictionary-sq-office.txt`, placed by `deploy.cmd`, never in the
+//!   installer) comes from the office's own templates (`<source>...`), with the public list as
+//!   `--reference` so that words typed without `ë` are recognised as such.
+//!
+//! The templates are private, so the office list is built only on the packaging machine and
+//! never enters this repository. Only the text inside string literals is read
 //! (template wording, not code), markup and `{placeholders}` are dropped, and a word is kept only
 //! when it also appears written in lower case: names of people and places, which are always
 //! capitalised, stay out. Files under a `people` folder are never read. The templates have their
@@ -21,21 +28,37 @@ const MAX_LETTERS: usize = 40;
 /// A word seen fewer times is left out: the templates are not free of typos, and a typo in the
 /// list would let the same misreading pass as correct.
 const MIN_SEEN: usize = 2;
+/// The fewest times a word must occur in the frequency list to be kept (subtitle text has typos).
+const MIN_FREQUENCY: usize = 30;
 /// From this length on, a spelling without `ë`/`ç` is dropped when the same word is also written
 /// with them (`sipermarresit` beside `sipërmarrësit`): OCR that loses the `ë` must stay flagged.
 /// Shorter words keep both, since many pairs are different words (`te`/`të`, `me`/`më`).
 const MIN_LETTERS_FOR_DIACRITIC_CHECK: usize = 5;
 
+const USAGE: &str = "usage: cargo xtask ocr-dictionary <out.txt> [--frequency <list>] [--reference <list>] [<source dir or file>...]";
+
 pub fn run(args: &[String]) -> Result<()> {
-    let [out, sources @ ..] = args else { bail!("usage: cargo xtask ocr-dictionary <out.txt> <source dir or file>...") };
-    if sources.is_empty() {
-        bail!("usage: cargo xtask ocr-dictionary <out.txt> <source dir or file>...");
+    let [out, rest @ ..] = args else { bail!(USAGE) };
+    let mut counts = Counts::default();
+    let mut sources = Vec::new();
+    let mut rest = rest.iter();
+    while let Some(arg) = rest.next() {
+        match arg.as_str() {
+            flag @ ("--frequency" | "--reference") => {
+                let Some(list) = rest.next() else { bail!(USAGE) };
+                let text = std::fs::read_to_string(list).with_context(|| format!("reading {list}"))?;
+                counts.add_frequency_list(&text, flag == "--frequency");
+            }
+            source => sources.push(source),
+        }
+    }
+    if sources.is_empty() && counts.seen.is_empty() {
+        bail!(USAGE);
     }
     let mut files = Vec::new();
     for s in sources {
         collect(Path::new(s), &mut files).with_context(|| format!("reading {s}"))?;
     }
-    let mut counts = Counts::default();
     for f in &files {
         let text = std::fs::read_to_string(f).with_context(|| format!("reading {}", f.display()))?;
         counts.add_source(&text);
@@ -71,9 +94,31 @@ fn collect(path: &Path, out: &mut Vec<PathBuf>) -> Result<()> {
 struct Counts {
     /// Lower-cased word: (times seen, seen written in lower case).
     seen: BTreeMap<String, (usize, bool)>,
+    /// Words of a `--reference` list: they only reveal `ë`-less twins, and are not output.
+    reference: BTreeSet<String>,
 }
 
 impl Counts {
+    /// A `word count` list. Kept words (`--frequency`) need [`MIN_FREQUENCY`] occurrences.
+    fn add_frequency_list(&mut self, text: &str, keep: bool) {
+        for line in text.lines() {
+            let mut parts = line.split_whitespace();
+            let (Some(word), Some(n)) = (parts.next(), parts.next().and_then(|n| n.parse::<usize>().ok())) else { continue };
+            let letters = word.chars().count();
+            if !(MIN_LETTERS..=MAX_LETTERS).contains(&letters) || !word.chars().all(is_albanian_letter) {
+                continue;
+            }
+            let lower = word.to_lowercase();
+            if !keep {
+                self.reference.insert(lower);
+            } else if n >= MIN_FREQUENCY {
+                let entry = self.seen.entry(lower).or_default();
+                entry.0 = entry.0.max(n);
+                entry.1 = true;
+            }
+        }
+    }
+
     fn add_source(&mut self, source: &str) {
         for literal in string_literals(source) {
             self.add_text(&strip_markup(&literal));
@@ -96,7 +141,8 @@ impl Counts {
     /// The words kept: written in lower case somewhere, seen [`MIN_SEEN`] times, not an `ë`-less
     /// twin of a longer word, most frequent first up to the cap, then sorted.
     fn words(&self) -> BTreeSet<String> {
-        let with_diacritics: BTreeSet<String> = self.seen.keys().filter(|w| w.contains(['ë', 'ç'])).map(|w| plain(w)).collect();
+        let with_diacritics: BTreeSet<String> =
+            self.seen.keys().chain(&self.reference).filter(|w| w.contains(['ë', 'ç'])).map(|w| plain(w)).collect();
         let mut kept: Vec<(&String, usize)> = self
             .seen
             .iter()
@@ -207,6 +253,34 @@ mod tests {
         assert!(!words.contains("sipermarresit"), "the ë-less twin of a long word");
         assert!(words.contains("te") && words.contains("të"), "short pairs are different words");
         assert!(!words.contains("shrkim"), "seen once: maybe a typo");
+    }
+
+    #[test]
+    fn a_frequency_list_keeps_frequent_words_and_a_reference_only_flags_twins() {
+        let mut counts = Counts::default();
+        counts.add_frequency_list(
+            "të 1000
+ngatërruar 40
+ngaterruar 35
+rrallë 3
+hello! 90
+",
+            true,
+        );
+        let words = counts.words();
+        assert!(words.contains("të") && words.contains("ngatërruar"));
+        assert!(!words.contains("ngaterruar"), "ë-less twin");
+        assert!(!words.contains("rrallë"), "too rare");
+        let mut office = Counts::default();
+        office.add_frequency_list(
+            "sigurojmë 500
+",
+            false,
+        );
+        office.add_text("sigurojme sigurojme noterit noterit");
+        let words = office.words();
+        assert!(!words.contains("sigurojme"), "the reference knows the ë spelling");
+        assert!(words.contains("noterit") && !words.contains("sigurojmë"), "reference words are not output");
     }
 
     #[test]

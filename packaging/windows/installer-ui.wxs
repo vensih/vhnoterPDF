@@ -6,8 +6,16 @@
       <TextStyle Id="InstallerTitle" FaceName="Segoe UI" Size="12" Bold="yes" />
       <Property Id="DefaultUIFont" Value="InstallerNormal" />
 
+      <!-- vhnoterPDF: the office logo in the corner of the first and last pages, when the build has
+           it (package.ps1 passes LogoBmp only with the private app.vhnoter.al checkout present). -->
+      <?ifdef LogoBmp?>
+      <Binary Id="InstallerLogo" SourceFile="$(var.LogoBmp)" />
+      <?endif?>
       <Dialog Id="InstallWelcome" Width="370" Height="210" Title="[ProductName] Setup">
-        <Control Id="Title" Type="Text" X="20" Y="20" Width="330" Height="25" Text="{\InstallerTitle}Install [ProductName]" />
+        <Control Id="Title" Type="Text" X="20" Y="20" Width="296" Height="25" Text="{\InstallerTitle}Install [ProductName]" />
+        <?ifdef LogoBmp?>
+        <Control Id="Logo" Type="Bitmap" X="322" Y="12" Width="32" Height="32" Text="InstallerLogo" />
+        <?endif?>
         <Control Id="Description" Type="Text" X="20" Y="50" Width="330" Height="30" Text="Setup will install [ProductName] for all users and add it to the Start menu. Click Install to continue." HideCondition="ALLUSERS &lt;&gt; 1" ShowCondition="ALLUSERS = 1" />
         <Control Id="DescriptionUser" Type="Text" X="20" Y="50" Width="330" Height="30" Text="Setup will install [ProductName] only for your account and add it to the Start menu. Click Install to continue." HideCondition="ALLUSERS = 1" ShowCondition="ALLUSERS &lt;&gt; 1" />
         <!-- The install folder (#1139): typed here, or picked in the browse dialog. It starts on the
@@ -110,7 +118,10 @@
       </Dialog>
 
       <Dialog Id="InstallComplete" Width="370" Height="180" Title="[ProductName] Setup">
-        <Control Id="Title" Type="Text" X="20" Y="20" Width="330" Height="25" Text="{\InstallerTitle}Setup completed successfully" />
+        <Control Id="Title" Type="Text" X="20" Y="20" Width="296" Height="25" Text="{\InstallerTitle}Setup completed successfully" />
+        <?ifdef LogoBmp?>
+        <Control Id="Logo" Type="Bitmap" X="322" Y="12" Width="32" Height="32" Text="InstallerLogo" />
+        <?endif?>
         <Control Id="Description" Type="Text" X="20" Y="55" Width="330" Height="70" Text="[ProductName] setup has completed successfully. Click Finish to close this window." />
         <Control Id="Finish" Type="PushButton" X="280" Y="145" Width="70" Height="23" Default="yes" Cancel="yes" Text="&amp;Finish">
           <Publish Event="EndDialog" Value="Return" />

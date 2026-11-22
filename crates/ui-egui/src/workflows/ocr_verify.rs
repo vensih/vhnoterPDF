@@ -294,17 +294,32 @@ fn dictionary_path(dir: &std::path::Path, language: &str) -> Result<PathBuf, Str
     Ok(dir.join(format!("ocr-dictionary-{language}.txt")))
 }
 
-/// The read-only word list shipped beside the OCR models (`models/ocr-dictionary-<lang>.txt`,
-/// built when the app is packaged), merged with the user's own list. Empty when none ships.
-fn shipped_dictionary(language: &str) -> BTreeSet<String> {
-    let Ok(name) = dictionary_path(std::path::Path::new(""), language) else { return BTreeSet::new() };
+/// The read-only word lists merged with the user's own: the public one shipped beside the OCR
+/// models (`models/ocr-dictionary-<lang>.txt`, built when the app is packaged) and the office's
+/// own (`ocr-dictionary-<lang>-office.txt` beside the user's list, placed by `deploy.cmd` and
+/// never shipped in the installer). Either may be missing; an unreadable one adds nothing.
+fn shipped_dictionary(user_dir: Option<&std::path::Path>, language: &str) -> BTreeSet<String> {
+    let mut words = BTreeSet::new();
+    let Ok(name) = dictionary_path(std::path::Path::new(""), language) else { return words };
+    let mut read = |path: PathBuf| {
+        if path.is_file()
+            && let Ok(found) = read_dictionary(&path).and_then(|text| pdfcraft_engine::ocr::dictionary::words(&text))
+        {
+            words.extend(found);
+            return true;
+        }
+        false
+    };
     for dir in pdfcraft_engine::ocr::Models::search_dirs() {
-        let path = dir.join(&name);
-        if path.is_file() {
-            return read_dictionary(&path).and_then(|text| pdfcraft_engine::ocr::dictionary::words(&text)).unwrap_or_default();
+        if read(dir.join(&name)) {
+            break;
         }
     }
-    BTreeSet::new()
+    if let Some(dir) = user_dir {
+        let office = name.to_string_lossy().replace(".txt", "-office.txt");
+        read(dir.join(office));
+    }
+    words
 }
 
 fn read_dictionary(path: &std::path::Path) -> Result<String, String> {
@@ -607,7 +622,7 @@ impl OcrVerify {
             }
             crate::editing::write_atomically(&path.to_string_lossy(), text.as_bytes()).map_err(|e| e.to_string())?;
         }
-        entries.extend(shipped_dictionary(&self.dictionary_language));
+        entries.extend(shipped_dictionary(self.dictionary_dir.as_deref(), &self.dictionary_language));
         Ok((entries, changed))
     }
 
@@ -623,7 +638,7 @@ impl OcrVerify {
         };
         match read_dictionary(&path).and_then(|text| pdfcraft_engine::ocr::dictionary::words(&text)) {
             Ok(mut words) => {
-                words.extend(shipped_dictionary(&self.dictionary_language));
+                words.extend(shipped_dictionary(Some(dir), &self.dictionary_language));
                 self.review.dictionary = words;
             }
             Err(why) => self.message = format!("OCR dictionary: {why}"),
@@ -2037,7 +2052,17 @@ fn inspector(app: &mut PdfCraftApp, ui: &mut egui::Ui, t: &Tokens, n: &mut Inten
         let v = &app.ocr_verify;
         (v.text_of(key).unwrap_or_default().to_owned(), v.page(key.0).map(|p| p.words.clone()).unwrap_or_default())
     };
-    let sugg = suggestions(&word_text, &app.ocr_verify.review.dictionary, &page_words);
+    // Computed once per word, page and dictionary size, not every frame: the shipped word lists
+    // hold tens of thousands of words.
+    let memo = egui::Id::unique(("ocr-suggestions", &word_text, key.0, page_words.len(), app.ocr_verify.review.dictionary.len()));
+    let sugg = match ui.data(|d| d.get_temp::<Vec<String>>(memo)) {
+        Some(found) => found,
+        None => {
+            let found = suggestions(&word_text, &app.ocr_verify.review.dictionary, &page_words);
+            ui.data_mut(|d| d.insert_temp(memo, found.clone()));
+            found
+        }
+    };
     if !sugg.is_empty() {
         ui.add_space(2.0);
         ui.horizontal_wrapped(|ui| {
@@ -2992,6 +3017,41 @@ mod tests {
         assert_eq!(v.suspect_count(), 2, "69 is Low, 40 is Low, 95 is High");
         v.add_to_dictionary("w", "en");
         assert_eq!(v.suspect_count(), 0, "dictionary words do not ask for review");
+    }
+
+    /// The office word list beside the user's own is read too, and survives adding a word, but
+    /// adding never writes into it: the user's list alone is the one changed.
+    #[test]
+    fn the_office_word_list_is_merged_and_never_written() {
+        let mut session = Session::new();
+        let (_, mut v) = loaded(&mut session, &[Some(40.0)]);
+        let dir = std::env::temp_dir().join(format!("pdfcraft-ocr-dictionary-office-{}", std::process::id()));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(
+            dir.join("ocr-dictionary-sq-office.txt"),
+            "vërtetoj
+prokurën
+",
+        )
+        .unwrap();
+        v.dictionary_dir = Some(dir.clone());
+        v.dictionary_language = "sq+en".into();
+        v.load_dictionary_pref();
+        assert!(v.review.dictionary.contains("vërtetoj") && v.review.dictionary.contains("prokurën"));
+        assert!(v.add_to_dictionary("Noterit", "sq+en"));
+        assert!(v.review.dictionary.contains("noterit") && v.review.dictionary.contains("vërtetoj"), "both lists after a change");
+        assert_eq!(
+            std::fs::read_to_string(dir.join("ocr-dictionary-sq-office.txt")).unwrap(),
+            "vërtetoj
+prokurën
+"
+        );
+        assert!(std::fs::read_to_string(dir.join("ocr-dictionary-sq.txt")).unwrap().contains(
+            "noterit
+"
+        ));
+        let _ = std::fs::remove_dir_all(&dir);
     }
 
     #[test]

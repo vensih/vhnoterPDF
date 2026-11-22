@@ -1547,6 +1547,55 @@ mod tests {
         assert!(!found[0].words.is_empty());
     }
 
+    /// A scan of Albanian notary wording, read with the office defaults (Albanian + English,
+    /// deskew, denoise): the words come back with their `ë` and `ç`. Needs Tesseract.
+    #[test]
+    fn an_albanian_scan_keeps_its_letters_with_the_office_defaults() {
+        let settings = OcrSettings { language: "sq+en".into(), engine: EngineChoice::Auto, deskew: true, denoise: true, ..Default::default() };
+        if let Err(why) = recognizers(&settings) {
+            eprintln!("skipped: {why}");
+            return;
+        }
+        let words = [
+            "Përkthim",
+            "i",
+            "noterizuar",
+            "Çështje",
+            "nënshkrimi",
+            "vërtetoj",
+            "prokurë",
+            "dëshmitarët",
+            "çmimi",
+            "përgjithshëm",
+            "Shqipërisë",
+            "pasurisë",
+            "që",
+            "është",
+            "dhënë",
+        ];
+        let mut s = Session::new().with_clock(|| 1_700_000_000);
+        let text = s.create_from_text("t", &words.join(" ")).unwrap();
+        let id = s.open("text.pdf", None, text, None).unwrap();
+        let png = crate::export::Exporter::new(s.get(id).unwrap()).png(0, 150.0).unwrap();
+        let scan = s.create_from_images(&[("scan.png".into(), png)]).unwrap();
+        let id = s.open("scan.pdf", None, scan, None).unwrap();
+        let found = s.recognize_text(id, &[], settings).unwrap();
+        assert!(found[0].skipped.is_none(), "{:?}", found[0].skipped);
+        let read = crate::tests::page_texts(&s, id)[0].clone();
+        let read_words: Vec<&str> = read.split_whitespace().collect();
+        let missed: Vec<&&str> = words.iter().filter(|w| !read_words.contains(w)).collect();
+        let marked = |t: &str| t.chars().filter(|c| matches!(c, 'ë' | 'ç' | 'Ë' | 'Ç')).count();
+        let expected = words.iter().map(|w| marked(w)).sum::<usize>();
+        eprintln!(
+            "albanian scan: {} of {} words exact, {} of {expected} ë/ç read; missed {missed:?}",
+            words.len() - missed.len(),
+            words.len(),
+            marked(&read)
+        );
+        assert!(missed.len() <= 1, "read {read:?}, missed {missed:?}");
+        assert!(marked(&read) + 1 >= expected, "ë and ç are kept: {read:?}");
+    }
+
     /// suspects(): only Low-band words, by index.
     #[test]
     fn page_suspects_are_the_low_band_words() {

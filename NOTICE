@@ -40,6 +40,10 @@ list (author, source, license) is in ATTRIBUTION.md.
 - ICU4X line-breaking data (icu_segmenter_data, via crates.io): Unicode-3.0. Its Thai, Lao, Khmer
   and Burmese word dictionaries are compiled in for wrapping Thai text; notice below, full licence in
   licenses/ICU4X-LICENSE.txt.
+- Albanian OCR word list (models/ocr-dictionary-sq.txt, built by `cargo xtask ocr-dictionary`): derived
+  from FrequencyWords (Hermit Dave, https://github.com/hermitdave/FrequencyWords, sq_50k.txt, from the
+  OpenSubtitles 2018 corpus), CC-BY-SA-4.0; the derived list is shared under CC-BY-SA-4.0 too. See
+  models/sq_50k.txt.LICENCE.txt.
 
 Required notices:
 

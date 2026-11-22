@@ -547,6 +547,9 @@ fn app_creator<'a>(
         // vhnoterPDF reads Albanian office scans: Recognize text starts on Albanian + English, with
         // the page straightened and cleaned first. The dialog still offers every other choice.
         app.ocr_draft.language = "sq+en".into();
+        // Automatic, not the built-in engine (the default), which refuses Albanian: Automatic reads
+        // Albanian with Tesseract and English with both engines.
+        app.ocr_draft.engine = pdfcraft_engine::ocr::EngineChoice::Auto;
         app.ocr_draft.deskew = true;
         app.ocr_draft.denoise = true;
         app.two_sided_source = Some(pdfcraft_ui_egui::system_two_sided());

@@ -126,16 +126,13 @@ Remove-Item -Force (Join-Path $Models '*.part') -ErrorAction SilentlyContinue
 if (-not (Test-Path (Join-Path $Models 'ATTRIBUTION.txt')) -or -not (Get-ChildItem (Join-Path $Models '*.LICENCE.txt'))) {
   throw "no OCR models in $Models after cargo xtask models"
 }
-# vhnoterPDF: the Albanian OCR word list, from the office's templates (the private app.vhnoter.al
-# checkout beside this repo, or VHNOTER_TEMPLATES). Private input: it ships in the installer only
-# and is never committed; a build without the templates (CI) simply has no shipped word list.
-$Templates = if ($env:VHNOTER_TEMPLATES) { $env:VHNOTER_TEMPLATES } else { Join-Path $Root 'app.vhnoter.al\js\data\documents' }
-if (Test-Path -LiteralPath $Templates) {
-  Push-Location $Root
-  try { Invoke-Native 'cargo xtask ocr-dictionary' { cargo xtask ocr-dictionary (Join-Path $Models 'ocr-dictionary-sq.txt') $Templates } } finally { Pop-Location }
-} else {
-  Write-Host "No office templates at ${Templates}: building without the Albanian OCR word list."
-}
+# vhnoterPDF: the public Albanian OCR word list (models\ocr-dictionary-sq.txt), derived from the
+# FrequencyWords list `cargo xtask models` fetched; the raw list itself is not shipped. The office's
+# private list is not built here: packaging/windows/deploy.ps1 puts it in the deploy folder.
+$Frequencies = Join-Path $Models 'sq_50k.txt'
+Push-Location $Root
+try { Invoke-Native 'cargo xtask ocr-dictionary' { cargo xtask ocr-dictionary (Join-Path $Models 'ocr-dictionary-sq.txt') --frequency $Frequencies } } finally { Pop-Location }
+Remove-Item -Force -LiteralPath $Frequencies
 
 # ---- font notices for the MSI ------------------------------------------------------------------
 # The portable ZIP already carries these notices; stage the complete files before MSI creation too.
@@ -156,11 +153,33 @@ if ($env:CRAFT_FONTS_DIR) {
 
 # ---- MSI ---------------------------------------------------------------------------------------
 $Msi = Join-Path $Dist "vhnoterpdf-$Version-windows-$Arch.msi"
+# vhnoterPDF: the office logo on the installer's first and last pages, from the private
+# app.vhnoter.al checkout (or VHNOTER_LOGO) when present; it is a trademark, never committed here.
+$LogoArgs = @()
+$LogoPng = if ($env:VHNOTER_LOGO) { $env:VHNOTER_LOGO } else { Join-Path $Root 'app.vhnoter.al\assets\images\logo.png' }
+if (Test-Path -LiteralPath $LogoPng) {
+  Add-Type -AssemblyName System.Drawing
+  $LogoBmp = Join-Path $Stage 'installer-logo.bmp'
+  $source = [System.Drawing.Image]::FromFile((Resolve-Path -LiteralPath $LogoPng).Path)
+  try {
+    $bitmap = New-Object System.Drawing.Bitmap 96, 96
+    $graphics = [System.Drawing.Graphics]::FromImage($bitmap)
+    try {
+      # Windows Installer draws bitmaps without transparency: the dialog colour behind the logo.
+      $graphics.Clear([System.Drawing.SystemColors]::Control)
+      $graphics.InterpolationMode = [System.Drawing.Drawing2D.InterpolationMode]::HighQualityBicubic
+      $graphics.DrawImage($source, 0, 0, 96, 96)
+    } finally { $graphics.Dispose() }
+    $bitmap.Save($LogoBmp, [System.Drawing.Imaging.ImageFormat]::Bmp)
+    $bitmap.Dispose()
+  } finally { $source.Dispose() }
+  $LogoArgs = @('-d', "LogoBmp=$LogoBmp")
+}
 Invoke-Native 'wix build' {
   wix build (Join-Path $PSScriptRoot 'pdfcraft.wxs') -arch $Arch `
     (Join-Path $PSScriptRoot 'installer-ui.wxs') `
     -d "Version=$MsiVersion" -d "BinDir=$Stage" -d "ModelsDir=$Models" -d "IconPath=$(Join-Path $Root 'assets\app-icon\pdfcraft.ico')" `
-    -d "DocsDir=$Docs" -d "HasCraftFontLicences=$HasCraftFontLicences" `
+    -d "DocsDir=$Docs" -d "HasCraftFontLicences=$HasCraftFontLicences" @LogoArgs `
     -o $Msi
 }
 # Inspect the built MSI, not just the XML, before signing/publishing it. In a child process, so

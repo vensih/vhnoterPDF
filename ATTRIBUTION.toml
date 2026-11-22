@@ -3178,6 +3178,19 @@ kind = "model"
 usage = "Scan & OCR: English beside the bundled Albanian data, for Albanian + English (cargo xtask models)"
 sha256 = "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
 
+[[fetched]]
+file = "sq_50k.txt"
+url = "https://raw.githubusercontent.com/hermitdave/FrequencyWords/525f9b560de45753a5ea01069454e72e9aa541c6/content/2018/sq/sq_50k.txt"
+title = "Albanian word frequencies (FrequencyWords, OpenSubtitles 2018)"
+author = "Hermit Dave (FrequencyWords), from the OpenSubtitles 2018 corpus (OPUS, opus.nlpl.eu)"
+source = "https://github.com/hermitdave/FrequencyWords/tree/525f9b560de45753a5ea01069454e72e9aa541c6/content/2018/sq"
+licence = "CC-BY-SA-4.0"
+licence_url = "https://creativecommons.org/licenses/by-sa/4.0/legalcode.txt"
+licence_sha256 = "28a9529c7d0bb4dc51f4bf5c116a3d16ef247a052f7591466768ddf563fd1cf5"
+kind = "model"
+usage = "Scan & OCR: the public Albanian word list models/ocr-dictionary-sq.txt is derived from it (cargo xtask ocr-dictionary --frequency); the list itself is not shipped"
+sha256 = "5a6d41243584b9c594b35191e9b5851ff8f9d3571e4ca71efde557a7af8f56b2"
+
 [[build_input]]
 name = "craft-i18n"
 option = "CRAFT_I18N_DIR"
