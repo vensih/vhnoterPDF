@@ -37,6 +37,10 @@ overrides:
       - libvulkan1 | libegl1
     recommends:
       - cups-client
+      # Scan & OCR: Tesseract reads Albanian (and every language the built-in engine can't);
+      # the Albanian data also ships in share/pdfcraft/models.
+      - tesseract-ocr
+      - tesseract-ocr-sqi
       - libwayland-client0
       - libx11-6
       - libx11-xcb1
@@ -58,6 +62,8 @@ overrides:
       - (libvulkan.so.1()(64bit) or libEGL.so.1()(64bit))
     recommends:
       - cups-client
+      - tesseract
+      - tesseract-langpack-sqi
       - libwayland-client
       - libX11
       - libXcursor

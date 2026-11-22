@@ -16,14 +16,15 @@ Interface language > Shqip**. The choice is kept between launches.
 
 ## Albanian text recognition (OCR)
 
-Albanian is recognized with Tesseract, installed separately:
+Albanian is recognized with Tesseract. The Albanian language data comes with vhnoterPDF (in
+`models\`); only Tesseract itself is installed separately:
 
-1. Install Tesseract 5.
-2. Add the Albanian language data, `sqi.traineddata`, to Tesseract's `tessdata` folder.
-3. Put `tesseract.exe` on the `PATH`, or set the `PDFCRAFT_TESSERACT` environment variable to
-   its full path.
-4. In **Scan & OCR**, choose **Albanian** (or **Albanian + English**) as the document language.
+1. In **Scan & OCR**, choose **Albanian** (or **Albanian + English**) as the document language.
    The document language is independent of the interface language.
+2. If Tesseract isn't installed, click **Install Tesseract…** in that dialog (it runs
+   `winget install UB-Mannheim.TesseractOCR`) and approve the Windows prompt. vhnoterPDF finds it
+   in `C:\Program Files\Tesseract-OCR`, on the `PATH`, or where the `PDFCRAFT_TESSERACT`
+   environment variable points.
 
 Recognition runs locally; no document data leaves the computer.
 

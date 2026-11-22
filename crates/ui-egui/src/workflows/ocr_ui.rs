@@ -245,6 +245,8 @@ const OCR_MIN_SCROLL: f32 = 40.0;
 /// `(recognize, cancel)`, which of those buttons was clicked this frame.
 pub(crate) fn body(ui: &mut egui::Ui, app: &mut PdfCraftApp, t: &Tokens) -> (bool, bool) {
     let pages = app.active_ids().and_then(|(_, id)| app.session.get(id)).map_or(1, |d| d.info.pages.len().max(1));
+    // Install Tesseract was clicked (run once the draft is no longer borrowed).
+    let mut install = false;
     let d = &mut app.ocr_draft;
     d.to = d.to.clamp(1, pages);
     d.from = d.from.clamp(1, d.to);
@@ -306,14 +308,20 @@ pub(crate) fn body(ui: &mut egui::Ui, app: &mut PdfCraftApp, t: &Tokens) -> (boo
                     ui.end_row();
                     if pdfcraft_engine::ocr::needs_tesseract(&d.language) {
                         ui.label("");
+                        let missing = pdfcraft_engine::ocr::engine_unavailable_reason(EngineChoice::Tesseract).is_some();
                         let note = if d.engine == EngineChoice::Ocrs {
                             tl!("The built-in engine cannot read Albanian letters. Choose Tesseract or Automatic.")
-                        } else if pdfcraft_engine::ocr::engine_unavailable_reason(EngineChoice::Tesseract).is_some() {
-                            tl!("Albanian needs Tesseract with its Albanian language data (sqi.traineddata), and Tesseract isn't available.")
+                        } else if missing {
+                            tl!("Albanian is read by Tesseract, which isn't installed. The Albanian language data comes with vhnoterPDF.")
                         } else {
                             tl!("Albanian is read by Tesseract with its Albanian language data (sqi.traineddata).")
                         };
-                        ui.add(egui::Label::new(egui::RichText::new(note).color(t.text_muted)).wrap());
+                        ui.vertical(|ui| {
+                            ui.add(egui::Label::new(egui::RichText::new(note).color(t.text_muted)).wrap());
+                            if missing && d.engine != EngineChoice::Ocrs && widgets::pill_button(ui, tl!("Install Tesseract…"), false).clicked() {
+                                install = true;
+                            }
+                        });
                         ui.end_row();
                     }
                     ui.label(tl!("Combine engines"));
@@ -445,10 +453,48 @@ pub(crate) fn body(ui: &mut egui::Ui, app: &mut PdfCraftApp, t: &Tokens) -> (boo
             }
         })
     });
+    if install {
+        app.execute("ocr.install_tesseract");
+    }
     (go, cancel)
 }
 
+/// The Windows command that installs Tesseract: winget, from its own console window, so the
+/// download and the Windows permission prompt are visible. The Albanian data comes with the app.
+pub const WINGET_TESSERACT: &[&str] =
+    &["install", "--id", "UB-Mannheim.TesseractOCR", "--exact", "--accept-package-agreements", "--accept-source-agreements"];
+
 impl PdfCraftApp {
+    /// OCR ▸ Install Tesseract (`ocr.install_tesseract`): on Windows, start winget in a console of
+    /// its own; elsewhere, say which packages to install. Albanian then works with the language
+    /// data shipped with the app. Nothing runs without this command.
+    pub fn install_tesseract(&mut self) {
+        self.tesseract_install = Some(if cfg!(windows) { format!("winget {}", WINGET_TESSERACT.join(" ")) } else { String::new() });
+        #[cfg(all(windows, not(test)))]
+        {
+            use std::os::windows::process::CommandExt as _;
+            /// Where Tesseract for Windows is published, for when winget can't be started.
+            const TESSERACT_DOWNLOADS: &str = "https://github.com/UB-Mannheim/tesseract/wiki";
+            // CREATE_NEW_CONSOLE: winget shows its progress, and Windows its permission prompt.
+            let started = std::process::Command::new("winget").args(WINGET_TESSERACT).creation_flags(0x0000_0010).spawn();
+            match started {
+                Ok(_) => self.notify_tr("Installing Tesseract. Approve the Windows prompt, then run Recognize text again."),
+                Err(_) => {
+                    self.notify_tr("Couldn't start winget. The Tesseract download page is opening instead.");
+                    self.open_url(TESSERACT_DOWNLOADS);
+                }
+            }
+        }
+        #[cfg(all(windows, test))]
+        self.notify_tr("Installing Tesseract. Approve the Windows prompt, then run Recognize text again.");
+        #[cfg(target_os = "macos")]
+        self.notify_tr("Install Tesseract with Homebrew: brew install tesseract tesseract-lang");
+        #[cfg(all(unix, not(target_os = "macos")))]
+        self.notify_tr("Install Tesseract with your package manager: tesseract-ocr and tesseract-ocr-sqi (Debian, Ubuntu) or tesseract and tesseract-langpack-sqi (Fedora).");
+        #[cfg(target_arch = "wasm32")]
+        self.notify_tr("Tesseract can't be installed from the web version. Use the desktop app.");
+    }
+
     /// Recognize text on the pages chosen in the dialog, in the background.
     pub fn start_ocr(&mut self) {
         let Some((vi, id)) = self.active_ids() else { return };
@@ -1110,6 +1156,19 @@ mod tests {
     use crate::{Dialog, LeftPanel, Mode, QuickTool};
     use pdfcraft_engine::ocr::{Recognizer, Recognizers};
     use pdfcraft_engine::{Edit, Session};
+
+    /// Install Tesseract is a registered command (so automation can run it too) that starts the
+    /// install on Windows and says what to install elsewhere; it never runs under test.
+    #[test]
+    fn install_tesseract_is_a_command_that_says_what_happens() {
+        let mut app = PdfCraftApp::new();
+        assert!(app.execute("ocr.install_tesseract"));
+        let started = app.tesseract_install.clone().expect("the command ran");
+        if cfg!(windows) {
+            assert!(started.starts_with("winget install") && started.contains("UB-Mannheim.TesseractOCR"), "{started}");
+        }
+        assert!(app.toast.is_some(), "the user is told what happens next");
+    }
 
     /// A one-page PDF that is one picture covering the page.
     fn scan() -> Vec<u8> {

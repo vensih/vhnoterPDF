@@ -575,7 +575,7 @@ pub fn ocrs_cannot_read() -> String {
 
 /// Why a language that only Tesseract reads cannot run.
 pub fn tesseract_needed() -> String {
-    "this language needs the tesseract program and its language data (for Albanian, sqi.traineddata)".into()
+    "this language needs the tesseract program (vhnoterPDF ships the Albanian language data)".into()
 }
 
 /// Why Tesseract cannot run, named for the user.
@@ -1521,8 +1521,10 @@ mod tests {
     /// yields the same words, in the same places (needs the models).
     #[test]
     fn preprocessing_flags_flow_through_the_job() {
-        if !available() {
-            eprintln!("skipped: no OCR engine available");
+        // The default engine is the one that reads here; another engine being installed (a
+        // Tesseract on the PATH) doesn't make these runnable.
+        if recognizers(&OcrSettings::default()).is_err() {
+            eprintln!("skipped: the default OCR engine isn't available");
             return;
         }
         let mut s = Session::new().with_clock(|| 1_700_000_000);
@@ -1651,8 +1653,10 @@ mod tests {
     /// edited document applies.
     #[test]
     fn stale_results_are_refused_end_to_end_through_the_recognition_flow() {
-        if !available() {
-            eprintln!("skipped: no OCR engine available");
+        // The default engine is the one that reads here; another engine being installed (a
+        // Tesseract on the PATH) doesn't make these runnable.
+        if recognizers(&OcrSettings::default()).is_err() {
+            eprintln!("skipped: the default OCR engine isn't available");
             return;
         }
         let mut s = Session::new().with_clock(|| 1_700_000_000);
